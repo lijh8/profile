@@ -1,0 +1,6 @@
+# ~/.editrc
+
+# vi mode for programs use editline
+# Shell, lldb, ..
+# TAB for filename complition
+bind -v

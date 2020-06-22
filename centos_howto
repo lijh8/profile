@@ -1,0 +1,83 @@
+https://access.redhat.com/articles/1189123
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/index
+
+CentOS 6
+
+- Check: Configure Network / [*] Connect automatically
+- Choose: Basic Server
+
+$ cat /etc/centos-release
+CentOS release 6.10 (Final)
+$
+
+$ su -c visudo
+## Same thing without a password
+# %wheel        ALL=(ALL)       NOPASSWD: ALL
+user123         ALL=(ALL)       NOPASSWD: ALL
+$
+
+$ yum list installed *network*
+Installed Packages
+system-config-network-tui.noarch 1.6.0.el6.3-4.el6 @anaconda-CentOS-201806291108.x86_64/6.10
+$ sudo system-config-network-tui
+
+# GCC, C++, GDB, make, ..
+$ sudo yum groupinstall "Development Tools"
+
+$ sudo vi /etc/inittab
+#id:5:initdefault:
+id:3:initdefault:
+$ sudo init 3
+
+$ sudo vi /etc/selinux/config
+# disable SELINUX, restart required
+SELINUX=disabled
+$
+
+$ sudo chkconfig iptables off
+$ sudo chkconfig ip6tables off
+
+$ sudo yum install samba
+$ sudo chkconfig smb on
+$ sudo chkconfig nmb on
+$ sudo service smb start
+$ sudo service nmb start
+$ sudo smbpasswd -a user123
+
+# devtoolset (DTS) - newer version Development Tools
+# from software collections (SCL)
+$ sudo yum install centos-release-scl
+$ sudo yum install devtoolset-8
+$ vi ~/.bashrc
+source scl_source enable devtoolset-8
+$
+# or,
+$ scl enable devtoolset-8 bash
+$
+
+$ sudo blkid
+/dev/sr0: UUID="2020-06-xxx" LABEL="CentOS-8-xxx" TYPE="iso9660"
+$ sudo mkdir /mnt/data
+$ sudo mount /dev/sr0 /mnt/data/
+
+# mount on boot by name
+$ sudo vi /etc/fstab
+/dev/sr0            /mnt/data    iso9660    defaults    0    0
+$
+# or, mount on boot by UUID
+$ sudo vi /etc/fstab
+UUID=2020-06-xxx    /mnt/data    iso9660    defaults    0    0
+$
+$ mount /mnt/data/
+
+
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/managing_file_systems/index
+
+CentOS 8
+
+# chkconfig, service
+$ systemctl enable smb
+$ systemctl start smb
+
+# yum
+$ dnf list installed samba*

@@ -1,0 +1,31 @@
+# Fedora
+
+$ su -c visudo
+# add user123
+root        ALL=(ALL)       ALL
+user123     ALL=(ALL)       NOPASSWD: ALL
+$
+# GCC, C++, GDB, make, ..
+$ sudo dnf group group install "Development Tools"
+
+$ sudo vi /etc/selinux/config
+# disable SELINUX, restart required
+SELINUX=disabled
+$
+$ sudo systemctl stop firewalld
+$ sudo systemctl disable firewalld
+
+$ sudo dnf install NetworkManager-tui
+$ sudo nmtui
+# static ip
+# ipv4 <Manual>
+# Address 192.168.1.23
+# Gateway 192.168.1.1
+$
+$ sudo dnf install samba
+$ sudo systemctl enable smb
+$ sudo systemctl enable nmb
+$ sudo systemctl start smb
+$ sudo systemctl start nmb
+$ sudo smbpasswd -a user123
+$
