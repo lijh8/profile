@@ -75,6 +75,10 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/ma
 
 CentOS 8
 
+Network & Host name / [*] Ethernet
+Time & Date / [*] Network Time
+Software Selection / Server (without GUI)
+
 # chkconfig, service
 $ systemctl enable smb
 $ systemctl start smb
