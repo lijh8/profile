@@ -88,6 +88,7 @@ $ systemctl start smb
 $ dnf list *samba*
 $ dnf list installed *samba*
 
+$ sudo dnf install samba
 $ sudo smbpasswd -a ljh
 $ sudo systemctl enable smb
 $ sudo systemctl enable nmb
