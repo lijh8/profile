@@ -16,6 +16,7 @@ $ su -c visudo
 user123         ALL=(ALL)       NOPASSWD: ALL
 $
 
+$ yum list *network*
 $ yum list installed *network*
 Installed Packages
 system-config-network-tui.noarch 1.6.0.el6.3-4.el6 @anaconda-CentOS-201806291108.x86_64/6.10
@@ -84,5 +85,19 @@ $ systemctl enable smb
 $ systemctl start smb
 
 # yum
-$ dnf list samba*
-$ dnf list installed samba*
+$ dnf list *samba*
+$ dnf list installed *samba*
+
+$ sudo smbpasswd -a ljh
+$ sudo systemctl enable smb
+$ sudo systemctl enable nmb
+$ sudo systemctl start smb
+$ sudo systemctl start nmb
+
+# firewall / iptables
+$ sudo firewall-cmd --permanent --add-service=samba
+$ sudo firewall-cmd --reload
+
+# selinux
+$ sudo getsebool -a | grep samba
+$ sudo setsebool -P samba_enable_home_dirs on
