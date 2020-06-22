@@ -84,4 +84,5 @@ $ systemctl enable smb
 $ systemctl start smb
 
 # yum
+$ dnf list samba*
 $ dnf list installed samba*
