@@ -1,49 +1,73 @@
 https://access.redhat.com/articles/1189123
 https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/index
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/managing_file_systems/index
 
-CentOS 6
+CentOS 8
 
-- Check: Configure Network / [*] Connect automatically
-- Choose: Basic Server
+- Network & Host name / [*] Ethernet
+- Time & Date / [*] Network Time
+- Software Selection / Server (without GUI)
 
 $ cat /etc/centos-release
-CentOS release 6.10 (Final)
-$
 
 $ su -c visudo
 ## Same thing without a password
-# %wheel        ALL=(ALL)       NOPASSWD: ALL
-user123         ALL=(ALL)       NOPASSWD: ALL
+# %wheel    ALL=(ALL)    NOPASSWD: ALL
+user123     ALL=(ALL)    NOPASSWD: ALL
 $
-
-$ yum list *network*
-$ yum list installed *network*
-Installed Packages
-system-config-network-tui.noarch 1.6.0.el6.3-4.el6 @anaconda-CentOS-201806291108.x86_64/6.10
-$ sudo system-config-network-tui
-
-# GCC, C++, GDB, make, ..
-$ sudo yum groupinstall "Development Tools"
 
 $ sudo vi /etc/inittab
 #id:5:initdefault:
 id:3:initdefault:
 $ sudo init 3
 
+# yum
+$ dnf list installed *network*
+Installed Packages
+NetworkManager-tui.x86_64
+$ sudo nmtui
+- Activate a connection
+- Edit Connection
+# static ip
+# ipv4 <Manual>
+# Address 192.168.1.23
+# Gateway 192.168.1.1
+$
+$ vim -R /etc/sysconfig/network-scripts/ifcfg-enp0s3
+
 $ sudo vi /etc/selinux/config
 # disable SELINUX, restart required
 SELINUX=disabled
 $
 
-$ sudo chkconfig iptables off
-$ sudo chkconfig ip6tables off
+# chkconfig, service
+$ sudo systemctl stop firewalld
+$ sudo systemctl disable firewalld
 
-$ sudo yum install samba
-$ sudo chkconfig smb on
-$ sudo chkconfig nmb on
-$ sudo service smb start
-$ sudo service nmb start
-$ sudo smbpasswd -a user123
+# firewall / iptables
+$ sudo firewall-cmd --permanent --add-service=samba
+$ sudo firewall-cmd --reload
+
+# selinux
+$ sudo getsebool -a | grep samba
+$ sudo setsebool -P samba_enable_home_dirs on
+
+$ dnf list *samba*
+$ dnf list installed *samba*
+$ sudo dnf install samba
+$ sudo smbpasswd -a ljh
+$ sudo systemctl enable smb
+$ sudo systemctl enable nmb
+$ sudo systemctl start smb
+$ sudo systemctl start nmb
+
+# GCC, C++, GDB, make, ..
+$ sudo dnf group install "Development Tools"
+$
+
+# CentOS 6 Gcc on devtoolset-8 = CentOS 8 Gcc on "Development Tools"
+# no newer devtoolset for CentOS 8 is the newest OS
+# as Centos 8 is the newest OS and CentOS 9 is not released right now
 
 # devtoolset (DTS) - newer version Development Tools
 # from software collections (SCL)
@@ -70,35 +94,3 @@ $ sudo vi /etc/fstab
 UUID=2020-06-xxx    /mnt/data    iso9660    defaults    0    0
 $
 $ mount /mnt/data/
-
-
-https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/managing_file_systems/index
-
-CentOS 8
-
-Network & Host name / [*] Ethernet
-Time & Date / [*] Network Time
-Software Selection / Server (without GUI)
-
-# chkconfig, service
-$ systemctl enable smb
-$ systemctl start smb
-
-# yum
-$ dnf list *samba*
-$ dnf list installed *samba*
-
-$ sudo dnf install samba
-$ sudo smbpasswd -a ljh
-$ sudo systemctl enable smb
-$ sudo systemctl enable nmb
-$ sudo systemctl start smb
-$ sudo systemctl start nmb
-
-# firewall / iptables
-$ sudo firewall-cmd --permanent --add-service=samba
-$ sudo firewall-cmd --reload
-
-# selinux
-$ sudo getsebool -a | grep samba
-$ sudo setsebool -P samba_enable_home_dirs on
