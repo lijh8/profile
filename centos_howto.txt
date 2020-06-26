@@ -67,7 +67,7 @@ $
 
 # CentOS 6 Gcc on devtoolset-8 = CentOS 8 Gcc on "Development Tools"
 # no newer devtoolset for CentOS 8 is the newest OS
-# as Centos 8 is the newest OS and CentOS 9 is not released right now
+# as Centos 8 is the newest OS and CentOS 9 is not released yet
 
 # devtoolset (DTS) - newer version Development Tools
 # from software collections (SCL)
