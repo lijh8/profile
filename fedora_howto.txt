@@ -2,8 +2,8 @@
 
 $ su -c visudo
 # add user123
-root        ALL=(ALL)       ALL
-user123     ALL=(ALL)       NOPASSWD: ALL
+# %wheel    ALL=(ALL)    NOPASSWD: ALL
+user123     ALL=(ALL)    NOPASSWD: ALL
 $
 # GCC, C++, GDB, make, ..
 $ sudo dnf group install "Development Tools"
