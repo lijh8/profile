@@ -12,13 +12,13 @@ $ wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.7.7.tar.xz
 
 $ tar -xf linux-5.7.7.tar.xz
 
-$ cd linux-5.7.7.tar.xz
-
-$ make mrproper
+$ cd linux-5.7.7
 
 $ cp /boot/config-`uname -r` .config
 
 $ make olddefconfig
+
+$ make mrproper
 
 $ make
 
