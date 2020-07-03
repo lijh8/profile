@@ -10,10 +10,12 @@ CentOS 8
 
 $ cat /etc/centos-release
 
+$ su -c "usermod -a -G wheel user123"
+
+# Uncomment wheel nopasswd
 $ su -c visudo
 ## Same thing without a password
-# %wheel    ALL=(ALL)    NOPASSWD: ALL
-user123     ALL=(ALL)    NOPASSWD: ALL
+%wheel    ALL=(ALL)    NOPASSWD: ALL
 $
 
 $ sudo vi /etc/inittab
