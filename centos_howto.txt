@@ -10,7 +10,7 @@ CentOS 8
 
 $ cat /etc/centos-release
 
-$ su -c "usermod -a -G wheel user123"
+$ su -c "usermod -a -G wheel ljh"
 
 # Uncomment wheel nopasswd
 $ su -c visudo
