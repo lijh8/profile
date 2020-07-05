@@ -1,5 +1,6 @@
 # Fedora
 
+# need to log out and in
 $ su -c  "usermod -a -G wheel ljh"
 
 # Uncomment wheel
