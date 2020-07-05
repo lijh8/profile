@@ -10,6 +10,7 @@ CentOS 8
 
 $ cat /etc/centos-release
 
+# need to log out and in
 $ su -c "usermod -a -G wheel ljh"
 
 # Uncomment wheel nopasswd

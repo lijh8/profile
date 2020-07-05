@@ -1,6 +1,6 @@
 # Fedora
 
-$ su -c  "usermod -aG wheel ljh"
+$ su -c  "usermod -a -G wheel ljh"
 
 # Uncomment wheel nopasswd
 $ su -c visudo
