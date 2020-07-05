@@ -13,10 +13,10 @@ $ cat /etc/centos-release
 # need to log out and in
 $ su -c "usermod -a -G wheel ljh"
 
-# Uncomment wheel nopasswd
+# Uncomment wheel
 $ su -c visudo
-## Same thing without a password
-%wheel    ALL=(ALL)    NOPASSWD: ALL
+## Allows people in group wheel to run all commands
+%wheel  ALL=(ALL)       ALL
 $
 
 $ sudo vi /etc/inittab

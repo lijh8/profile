@@ -2,10 +2,12 @@
 
 $ su -c  "usermod -a -G wheel ljh"
 
-# Uncomment wheel nopasswd
+# Uncomment wheel
 $ su -c visudo
-%wheel    ALL=(ALL)    NOPASSWD: ALL
+## Allows people in group wheel to run all commands
+%wheel  ALL=(ALL)       ALL
 $
+
 # GCC, C++, GDB, make, ..
 $ sudo dnf group install "Development Tools"
 $ sudo dnf group install "C Development Tools and Libraries"
