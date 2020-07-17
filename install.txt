@@ -15,7 +15,7 @@ $ su -c "usermod -a -G wheel ljh"
 # Uncomment wheel
 $ su -c visudo
 ## Allows people in group wheel to run all commands
-%wheel  ALL=(ALL)       ALL
+%wheel    ALL=(ALL)    ALL
 $
 
 $ cat /etc/centos-release
