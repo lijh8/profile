@@ -2,15 +2,14 @@ https://access.redhat.com/articles/1189123
 https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/index
 https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/managing_file_systems/index
 
-CentOS 8
+Fedora / CentOS
 
 - Network & Host name / [*] Ethernet
 - Time & Date / [*] Network Time
 - Software Selection / Server (without GUI)
 
-$ cat /etc/centos-release
-
-# need to log out and in
+$ sudo chsh -s /bin/bash ljh
+# need to log out and in again
 $ su -c "usermod -a -G wheel ljh"
 
 # Uncomment wheel
@@ -19,10 +18,22 @@ $ su -c visudo
 %wheel  ALL=(ALL)       ALL
 $
 
+$ cat /etc/centos-release
+$ runlevel
 $ sudo vi /etc/inittab
 #id:5:initdefault:
 id:3:initdefault:
 $ sudo init 3
+
+$ sudo dnf group install "Fedora Workstation"
+$ systemctl get-default
+multi-user.target
+$ systemctl set-default graphical.target
+$ startx
+
+$ ls -l /etc/systemd/system/default.target
+/etc/systemd/system/default.target -> /usr/lib/systemd/system/multi-user.target
+$
 
 # yum
 $ dnf list installed *network*
@@ -66,7 +77,7 @@ $ sudo systemctl start nmb
 
 # GCC, C++, GDB, make, ..
 $ sudo dnf group install "Development Tools"
-$
+$ sudo dnf group install "C Development Tools and Libraries"
 
 # CentOS 6 Gcc on devtoolset-8 = CentOS 8 Gcc on "Development Tools"
 # no newer devtoolset for CentOS 8
