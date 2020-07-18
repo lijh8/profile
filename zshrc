@@ -5,5 +5,5 @@ PS1='$ '
 set -k
 
 # vi mode
-# TAB for path completion
+# TAB for filename completion
 bindkey -v

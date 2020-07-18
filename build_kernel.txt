@@ -1,3 +1,7 @@
+// https://github.com/torvalds/linux/blob/master/Documentation/admin-guide/README.rst
+// https://debian-handbook.info/browse/stable/sect.kernel-compilation.html
+// https://fedoraproject.org/wiki/Building_a_custom_kernel
+
 Build kernel
 
 on Fedora 32 (built-in kernel 5.6.19)
@@ -23,5 +27,3 @@ $ make mrproper
 $ make
 
 $ sudo make modules_install install
-
-// https://github.com/torvalds/linux/blob/master/Documentation/admin-guide/README.rst
