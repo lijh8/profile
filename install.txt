@@ -110,8 +110,8 @@ $ sudo mount /dev/sr0 /mnt/cdrom/
 
 # mount on boot by name
 $ sudo vi /etc/fstab
-/dev/sr0            /mnt/data    iso9660    defaults    0    0
-/dev/sr0            /mnt/data    iso9660    defaults    0    0
+/dev/sdb1           /mnt/data    ext4       defaults    0    0
+/dev/sr0            /mnt/cdrom   iso9660    defaults    0    0
 $
 # or, mount on boot by UUID
 $ sudo vi /etc/fstab
