@@ -1,0 +1,3 @@
+# ~/.profile
+PS1="\$ "
+set -o vi
