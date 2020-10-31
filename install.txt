@@ -1,7 +1,5 @@
-https://access.redhat.com/articles/1189123
-https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/index
-https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/managing_file_systems/index
-
+# Fedora has the latest GCC
+#
 # chsh -s /bin/bash ljh
 # usermod -a -G wheel ljh
 # visudo
@@ -9,6 +7,8 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/ma
 #
 # dnf search networkmanager
 # dnf list installed *network*
+# dnf provides nmtui
+# dnf repoquery -l vim-enhanced
 # nmtui
   ipv4 <Manual>
   Address 192.168.1.23
@@ -29,26 +29,19 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/ma
 # dnf group install "C Development Tools and Libraries"
 # yum install centos-release-scl  # software collections devtoolset
 # yum install devtoolset-8
-# scl enable devtoolset-8 bash         # 1. for one shot
+# scl enable devtoolset-8 bash           # 1. for current session
 # vi ~/.bashrc
   source scl_source enable devtoolset-8  # 2. for all sessions
 #
-# sudo blkid
-  /dev/sr0: UUID="2020-06-xxx" LABEL="CentOS-8-xxx" TYPE="iso9660"
 # lsblk
-# fdisk /dev/sdb        # sdb
+# fdisk      /dev/sdb   # sdb
 # mkfs.ext4  /dev/sdb1  # sdb1
-# mkdir /mnt/data
-# mount /dev/sdb1 /mnt/data/
-# mount /dev/sr0 /mnt/cdrom/
+# mkdir {/mnt/cdrom,/mnt/data}
+# mount /dev/sr0  /mnt/cdrom
+# mount /dev/sdb1 /mnt/data  # sdb1
 # df -h
 # vi /etc/fstab
   /dev/sr0          /mnt/cdrom  iso9660  defaults  0  0
   /dev/sdb1         /mnt/data   ext4     defaults  0  0
-  UUID=2020-06-xxx  /mnt/data2  iso9660  defaults  0  0
 # mount /mnt/data/
 #
-# dnf provides vim
-# dnf provides /usr/bin/vim
-# dnf repoquery -f /usr/bin/make
-# dnf repoquery -l vim-enhanced
