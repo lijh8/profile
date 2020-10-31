@@ -17,7 +17,7 @@
 #
 # dnf install samba
 # smbpasswd -a ljh
-# systemctl enable {smb,nmb}
+# systemctl enable {smb,nmb}  # no space before or after comma ,
 # systemctl start {smb,nmb}
 # firewall-cmd --permanent --add-service=samba
 # firewall-cmd --reload
@@ -34,12 +34,10 @@
 # lsblk
 # fdisk /dev/sdb
 # mkfs.ext4 /dev/sdb1
-# mkdir {/mnt/cdrom,/mnt/data}
-# mount /dev/sr0 /mnt/cdrom
+# mkdir /mnt/data
 # mount /dev/sdb1 /mnt/data
 # df -h
 # vi /etc/fstab
-  /dev/sr0  /mnt/cdrom iso9660 defaults 0 0
   /dev/sdb1 /mnt/data  ext4    defaults 0 0
 # mount /mnt/data/
 #
