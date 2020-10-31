@@ -8,12 +8,12 @@
 # dnf search networkmanager
 # dnf list installed *network*
 # dnf provides nmtui
-# dnf repoquery -l vim-enhanced
+# dnf repoquery -l networkmanager
 # nmtui
   ipv4 <Manual>
   Address 192.168.1.23
   Gateway 192.168.1.1
-# vim -R /etc/sysconfig/network-scripts/ifcfg-enp0s3
+# vi /etc/sysconfig/network-scripts/ifcfg-enp0s3
 #
 # firewall-cmd --permanent --add-service=samba
 # firewall-cmd --reload
