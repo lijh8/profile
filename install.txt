@@ -2,119 +2,53 @@ https://access.redhat.com/articles/1189123
 https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/index
 https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/managing_file_systems/index
 
-Fedora / CentOS
-
-- Network & Host name / [*] Ethernet
-- Time & Date / [*] Network Time
-- Software Selection / Server (without GUI)
-
-$ sudo chsh -s /bin/bash ljh
-# need to log out and in again
-$ su -c "usermod -a -G wheel ljh"
-
-# Uncomment wheel
-$ su -c visudo
-## Allows people in group wheel to run all commands
-%wheel    ALL=(ALL)    ALL
-$
-
-$ cat /etc/centos-release
-$ runlevel
-$ sudo vi /etc/inittab
-#id:5:initdefault:
-id:3:initdefault:
-$ sudo init 3
-
-$ sudo dnf group install "Fedora Workstation"
-$ systemctl get-default
-multi-user.target
-$ systemctl set-default graphical.target
-$ startx
-
-$ ls -l /etc/systemd/system/default.target
-/etc/systemd/system/default.target -> /usr/lib/systemd/system/multi-user.target
-$
-
-# yum
-$ dnf list installed *network*
-Installed Packages
-NetworkManager-tui.x86_64
-$ sudo nmtui
-- Activate a connection
-- Edit Connection
-# static ip
-# ipv4 <Manual>
-# Address 192.168.1.23
-# Gateway 192.168.1.1
-$
-$ vim -R /etc/sysconfig/network-scripts/ifcfg-enp0s3
-
-$ sudo vi /etc/selinux/config
-# disable SELINUX, restart required
-SELINUX=disabled
-$
-
-# chkconfig, service
-$ sudo systemctl stop firewalld
-$ sudo systemctl disable firewalld
-
-# firewall / iptables
-$ sudo firewall-cmd --permanent --add-service=samba
-$ sudo firewall-cmd --reload
-
-# selinux
-$ sudo getsebool -a | grep samba
-$ sudo setsebool -P samba_enable_home_dirs on
-
-$ dnf list *samba*
-$ dnf list installed *samba*
-$ sudo dnf install samba
-$ sudo smbpasswd -a ljh
-$ sudo systemctl enable smb
-$ sudo systemctl enable nmb
-$ sudo systemctl start smb
-$ sudo systemctl start nmb
-
-# GCC, C++, GDB, make, ..
-$ sudo dnf group install "Development Tools"
-$ sudo dnf group install "C Development Tools and Libraries"
-
-# CentOS 6 Gcc on devtoolset-8 = CentOS 8 Gcc on "Development Tools"
-# no newer devtoolset for CentOS 8
-# as Centos 8 is the newest OS and CentOS 9 is not released yet
-
-# devtoolset (DTS) - newer version Development Tools
-# from software collections (SCL)
-$ sudo yum install centos-release-scl
-$ sudo yum install devtoolset-8
-$ vi ~/.bashrc
-source scl_source enable devtoolset-8
-$
-# or,
-$ scl enable devtoolset-8 bash
-$
-
-# disk
-$ sudo blkid
-/dev/sr0: UUID="2020-06-xxx" LABEL="CentOS-8-xxx" TYPE="iso9660"
-$ df -h
-$ mount
-$ lsblk
-$ sudo fdisk /dev/sdb   #sdb
-$ mkfs.ext4  /dev/sdb1  #sdb1
-$ sudo mkdir /mnt/data
-$ sudo mount /dev/sdb1 /mnt/data/
-$
-# cdrom
-$ sudo mount /dev/sr0 /mnt/cdrom/
-
-# mount on boot by name
-$ sudo vi /etc/fstab
-/dev/sdb1           /mnt/data    ext4       defaults    0    0
-/dev/sr0            /mnt/cdrom   iso9660    defaults    0    0
-$
-# or, mount on boot by UUID
-$ sudo vi /etc/fstab
-UUID=2020-06-xxx    /mnt/data    iso9660    defaults    0    0
-$
-$ mount /mnt/data/
+# chsh -s /bin/bash ljh
+# usermod -a -G wheel ljh
+# visudo
+  %wheel    ALL=(ALL)    ALL
+#
+# dnf search networkmanager
+# dnf list installed *network*
+# nmtui
+  ipv4 <Manual>
+  Address 192.168.1.23
+  Gateway 192.168.1.1
+# vim -R /etc/sysconfig/network-scripts/ifcfg-enp0s3
+#
+# firewall-cmd --permanent --add-service=samba
+# firewall-cmd --reload
+# getsebool -a | grep samba
+# setsebool -P samba_enable_home_dirs on
+#
+# dnf install samba
+# smbpasswd -a ljh
+# systemctl enable {smb,nmb}
+# systemctl start {smb,nmb}
+#
+# dnf group install "Development Tools"
+# dnf group install "C Development Tools and Libraries"
+# yum install centos-release-scl  # software collections devtoolset
+# yum install devtoolset-8
+# scl enable devtoolset-8 bash         # 1. for one shot
+# vi ~/.bashrc
+  source scl_source enable devtoolset-8  # 2. for all sessions
+#
+# sudo blkid
+  /dev/sr0: UUID="2020-06-xxx" LABEL="CentOS-8-xxx" TYPE="iso9660"
+# lsblk
+# fdisk /dev/sdb        # sdb
+# mkfs.ext4  /dev/sdb1  # sdb1
+# mkdir /mnt/data
+# mount /dev/sdb1 /mnt/data/
+# mount /dev/sr0 /mnt/cdrom/
+# df -h
+# vi /etc/fstab
+  /dev/sr0          /mnt/cdrom  iso9660  defaults  0  0
+  /dev/sdb1         /mnt/data   ext4     defaults  0  0
+  UUID=2020-06-xxx  /mnt/data2  iso9660  defaults  0  0
+# mount /mnt/data/
+#
+# dnf provides vim
+# dnf provides /usr/bin/vim
+# dnf repoquery -f /usr/bin/make
+# dnf repoquery -l vim-enhanced
