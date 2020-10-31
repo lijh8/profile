@@ -17,8 +17,8 @@
 #
 # dnf install samba
 # smbpasswd -a ljh
-# systemctl enable {smb,nmb}  # no space before or after comma ,
-# systemctl start {smb,nmb}
+# systemctl enable {smb,nmb}  # bash brace expansion
+# systemctl start {smb,nmb}  # no space before or after comma ,
 # firewall-cmd --permanent --add-service=samba
 # firewall-cmd --reload
 # getsebool -a | grep samba
