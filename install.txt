@@ -15,17 +15,15 @@
   Gateway 192.168.1.1
 # vi /etc/sysconfig/network-scripts/ifcfg-enp0s3
 #
+# dnf install samba
+# smbpasswd -a ljh
+# systemctl enable {smb,nmb}
+# systemctl start {smb,nmb}
 # firewall-cmd --permanent --add-service=samba
 # firewall-cmd --reload
 # getsebool -a | grep samba
 # setsebool -P samba_enable_home_dirs on
 #
-# dnf install samba
-# smbpasswd -a ljh
-# systemctl enable {smb,nmb}
-# systemctl start {smb,nmb}
-#
-# dnf group install "Development Tools"
 # dnf group install "C Development Tools and Libraries"
 # yum install centos-release-scl  # software collections
 # yum install devtoolset-8
