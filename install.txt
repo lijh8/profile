@@ -1,5 +1,3 @@
- Fedora has the latest GCC
-#
 # chsh -s /bin/bash ljh
 # usermod -a -G wheel ljh
 # visudo
