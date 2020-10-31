@@ -31,9 +31,9 @@
 # dnf group install "C Development Tools and Libraries"
 # yum install centos-release-scl  # software collections devtoolset
 # yum install devtoolset-8
-# scl enable devtoolset-8 bash           # 1. for current session
+# scl enable devtoolset-8 bash           # for current session
 # vi ~/.bashrc
-  source scl_source enable devtoolset-8  # 2. for all sessions
+  source scl_source enable devtoolset-8  # for all sessions
 #
 # lsblk
 # fdisk      /dev/sdb   # sdb
