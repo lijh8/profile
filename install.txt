@@ -1,4 +1,4 @@
-# Fedora has the latest GCC
+ Fedora has the latest GCC
 #
 # chsh -s /bin/bash ljh
 # usermod -a -G wheel ljh
@@ -29,18 +29,18 @@
 #
 # dnf group install "Development Tools"
 # dnf group install "C Development Tools and Libraries"
-# yum install centos-release-scl  # software collections devtoolset
+# yum install centos-release-scl  # software collections
 # yum install devtoolset-8
-# scl enable devtoolset-8 bash           # for current session
+# scl enable devtoolset-8 bash  # for current session
 # vi ~/.bashrc
   source scl_source enable devtoolset-8  # for all sessions
 #
 # lsblk
-# fdisk      /dev/sdb   # sdb
-# mkfs.ext4  /dev/sdb1  # sdb1
+# fdisk /dev/sdb
+# mkfs.ext4 /dev/sdb1
 # mkdir {/mnt/cdrom,/mnt/data}
 # mount /dev/sr0  /mnt/cdrom
-# mount /dev/sdb1 /mnt/data  # sdb1
+# mount /dev/sdb1 /mnt/data
 # df -h
 # vi /etc/fstab
   /dev/sr0   /mnt/cdrom  iso9660  defaults  0  0
