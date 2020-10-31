@@ -5,10 +5,12 @@
 # visudo
   %wheel    ALL=(ALL)    ALL
 #
-# dnf search networkmanager
 # dnf list installed *network*
+# dnf search networkmanager
 # dnf provides nmtui
-# dnf repoquery -l networkmanager
+# dnf repoquery -l NetworkManager-tui
+# dnf info NetworkManager-tui
+# dnf install NetworkManager-tui
 # nmtui
   ipv4 <Manual>
   Address 192.168.1.23
