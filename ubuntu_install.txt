@@ -2,9 +2,8 @@ Ubuntu 20.10 install
 
 Specify fast Mirror Address (change addr part before `/ubuntu/`):
 https://mirrors.tuna.tsinghua.edu.cn/ubuntu/
-# mirrors for Chinese:
-# https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/
-# https://developer.aliyun.com/mirror/ubuntu
+# or:
+# https://mirrors.aliyun.com/ubuntu/
 
 $ sudo apt-get update
 $ sudo apt-get upgrade
