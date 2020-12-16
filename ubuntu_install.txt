@@ -1,12 +1,20 @@
 Ubuntu 20.10
 
-Specify fast Mirror Address (change addr part before `/ubuntu/`):
-https://mirrors.tuna.tsinghua.edu.cn/ubuntu/
-# or:
-# https://mirrors.aliyun.com/ubuntu/
+Fast base system install from CD/DVD
+VirtualBox / [my-vm] / Settings / Network / Enable Network Adapter: Yes
+- Attached to: Bridged Adapter.
+- Advanced: Cable Connected: No.
+Turn on Cable Connected: Yes, after install finishes.
 
-$ sudo apt-get update
-$ sudo apt-get upgrade
+$ sudo vi /etc/apt/sources.list
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu groovy main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu groovy-updates main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu groovy-backports main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu groovy-security main restricted universe multiverse
+$
+
+$ sudo apt update
+$ sudo apt upgrade
 
 # gcc g++ c++
 $ sudo apt install "build-essential"
@@ -69,18 +77,3 @@ ethernets:
           search: [mydomain, otherdomain]
           addresses: [10.10.10.1, 1.1.1.1]
 $ sudo netplan apply
-
-----
-
-$ cat /etc/apt/sources.list | grep -v "^#"
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu groovy main restricted
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu groovy-updates main restricted
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu groovy universe
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu groovy-updates universe
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu groovy multiverse
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu groovy-updates multiverse
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu groovy-backports main restricted universe multiverse
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu groovy-security main restricted
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu groovy-security universe
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu groovy-security multiverse
-$
