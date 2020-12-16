@@ -12,15 +12,15 @@ deb https://mirrors.tuna.tsinghua.edu.cn/debian-security buster/updates main con
 deb https://mirrors.tuna.tsinghua.edu.cn/debian/ buster-updates main contrib
 $
 
+# add user `ljh` to sudo group
+$ su -c 'apt install sudo'
+$ su -c 'usermod -a -G sudo ljh'
+
 # check network interface name
 $ ls /sys/class/net
 $ ip addr
 2: enp0s3
 $
-
-# add user to sudo group
-$ apt install sudo
-$ usermod -a -G sudo ljh
 
 $ sudo vi /etc/network/interfaces
 auto enp0s3
