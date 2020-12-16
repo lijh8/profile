@@ -43,8 +43,14 @@ $ sudo apt install openssh-server samba
 $ sudo systemctl enable ssh smbd nmbd
 $ sudo systemctl restart ssh smbd nmbd
 
+$ sudo vi /etc/samba/smb.conf
+[homes]
+   read only = no
+$
+
 # gcc g++ c++
 $ sudo apt install build-essential
+$ sudo apt install gdb
 
 $ sudo lsblk
 $ sudo fdisk /dev/sdb
