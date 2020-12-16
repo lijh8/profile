@@ -18,30 +18,52 @@ $ ip addr
 2: enp0s3
 $
 
-$ vi /etc/network/interfaces
+# add user to sudo group
+$ apt install sudo
+$ usermod -a -G sudo ljh
+
+$ sudo vi /etc/network/interfaces
 auto enp0s3
 allow-hotplug enp0s3
 #dynamic ip address
 iface enp0s3 inet dhcp
-$ ifup enp0s3
+$ sudo ifup enp0s3
 
 # static ip address
-$ vi /etc/network/interfaces
+$ sudo vi /etc/network/interfaces
 iface enp0s3 inet static
   address 192.168.1.2/24
   gateway 192.157.1.1
 $
 
-# add user to sudo group
-$ apt install sudo
-$ usermod -a -G sudo ljh
-
 $ timedatectl list-timezones
 $ sudo timedatectl set-timezone "Asia/Shanghai"
 
-$ apt install openssh-server samba
-$ systemctl enable ssh smbd nmbd
-$ systemctl restart ssh smbd nmbd
+$ sudo apt install openssh-server samba
+$ sudo systemctl enable ssh smbd nmbd
+$ sudo systemctl restart ssh smbd nmbd
 
 # gcc g++ c++
-$ apt install build-essential
+$ sudo apt install build-essential
+
+$ sudo lsblk
+$ sudo fdisk /dev/sdb
+$ sudo mkfs.ext4 /dev/sdb1
+$ sudo mkdir /mnt/data
+$ sudo mount /dev/sdb1 /mnt/data
+$ df -h
+$ sudo vi /etc/fstab
+  /dev/sdb1 /mnt/data ext4 defaults 0 0
+$ sudo mount /mnt/data/
+$
+
+$ sudo update-alternatives --config editor
+
+# find largest directory / file size
+$ du -h -d1 /home/* | sort -hr | head -5
+
+$ sudo vi /etc/apt/sources.list
+deb https://mirrors.tuna.tsinghua.edu.cn/debian-security buster/updates main contrib
+deb http://mirrors.tuna.tsinghua.edu.cn/debian/ buster-updates main contrib
+$ sudo apt update
+$ sudo apt upgrade
