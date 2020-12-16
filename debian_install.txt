@@ -10,7 +10,8 @@ Turn on Cable Connected: Yes, after install finishes.
 $ vi /etc/apt/sources.list
 deb https://mirrors.tuna.tsinghua.edu.cn/debian-security buster/updates main contrib
 deb https://mirrors.tuna.tsinghua.edu.cn/debian/ buster-updates main contrib
-$
+$ su -c 'apt update'
+$ su -c 'apt upgrade'
 
 # add user `ljh` to sudo group
 $ su -c 'apt install sudo'
@@ -61,15 +62,7 @@ $ df -h
 $ sudo vi /etc/fstab
   /dev/sdb1 /mnt/data ext4 defaults 0 0
 $ sudo mount /mnt/data/
-$
-
-$ sudo update-alternatives --config editor
 
 # find largest directory / file size
 $ du -h -d1 /home/* | sort -hr | head -5
-
-$ sudo vi /etc/apt/sources.list
-deb https://mirrors.tuna.tsinghua.edu.cn/debian-security buster/updates main contrib
-deb http://mirrors.tuna.tsinghua.edu.cn/debian/ buster-updates main contrib
-$ sudo apt update
-$ sudo apt upgrade
+$ sudo update-alternatives --config editor
