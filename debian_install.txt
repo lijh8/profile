@@ -1,7 +1,7 @@
 Debian 10.7 Buster
 
 Fast base system install from CD/DVD
-VirtualBox / [my-vm] / Settings / Network / Enable Network Adapter * Yes :
+VirtualBox / [my-vm] / Settings / Network / Enable Network Adapter: Yes
 - Attached to: Bridged Adapter.
 - Advanced: Cable Connected: No.
 Turn on Cable Connected: Yes, after install finishes.
