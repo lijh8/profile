@@ -1,4 +1,4 @@
-Ubuntu 20.10 install
+Ubuntu 20.10
 
 Specify fast Mirror Address (change addr part before `/ubuntu/`):
 https://mirrors.tuna.tsinghua.edu.cn/ubuntu/

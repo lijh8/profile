@@ -1,3 +1,5 @@
+Fedora 33
+
 # chsh -s /bin/bash ljh
 # usermod -a -G wheel ljh
 # visudo

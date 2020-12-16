@@ -1,0 +1,47 @@
+Debian 10.7 Buster
+
+Fast base system install from CD/DVD
+VirtualBox / [my-vm] / Settings / Network / Enable Network Adapter * Yes :
+- Attached to: Bridged Adapter.
+- Advanced: Cable Connected: No.
+Turn on Cable Connected: Yes, after install finishes.
+
+# fast mirrors
+$ vi /etc/apt/sources.list
+deb https://mirrors.tuna.tsinghua.edu.cn/debian-security buster/updates main contrib
+deb https://mirrors.tuna.tsinghua.edu.cn/debian/ buster-updates main contrib
+$
+
+# check network interface name
+$ ls /sys/class/net
+$ ip addr
+2: enp0s3
+$
+
+$ vi /etc/network/interfaces
+auto enp0s3
+allow-hotplug enp0s3
+#dynamic ip address
+iface enp0s3 inet dhcp
+$ ifup enp0s3
+
+# static ip address
+$ vi /etc/network/interfaces
+iface enp0s3 inet static
+  address 192.168.1.2/24
+  gateway 192.157.1.1
+$
+
+# add user to sudo group
+$ apt install sudo
+$ usermod -a -G sudo ljh
+
+$ timedatectl list-timezones
+$ sudo timedatectl set-timezone "Asia/Shanghai"
+
+$ apt install openssh-server samba
+$ systemctl enable ssh smbd nmbd
+$ systemctl restart ssh smbd nmbd
+
+# gcc g++ c++
+$ apt install build-essential
