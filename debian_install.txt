@@ -1,6 +1,6 @@
 Debian 10.7 Buster
 
-Fast base system install from CD/DVD
+Turn off network connection to avoid download on slow connection during install.
 VirtualBox / [my-vm] / Settings / Network / Enable Network Adapter: Yes
 - Attached to: Bridged Adapter.
 - Advanced: Cable Connected: No.

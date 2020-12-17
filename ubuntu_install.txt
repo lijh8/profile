@@ -1,6 +1,6 @@
 Ubuntu 20.10
 
-Fast base system install from CD/DVD
+Turn off network connection to avoid download on slow connection during install.
 VirtualBox / [my-vm] / Settings / Network / Enable Network Adapter: Yes
 - Attached to: Bridged Adapter.
 - Advanced: Cable Connected: No.
