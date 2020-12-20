@@ -4,18 +4,8 @@ Turn off network connection to avoid download on slow connection during install.
 VirtualBox / [my-vm] / Settings / Network / Enable Network Adapter: Yes
 - Attached to: Bridged Adapter.
 - Advanced: Cable Connected: No.
+
 Turn on Cable Connected: Yes, after install finishes.
-
-# fast mirrors
-$ vi /etc/apt/sources.list
-deb https://mirrors.tuna.tsinghua.edu.cn/debian-security buster/updates main contrib
-deb https://mirrors.tuna.tsinghua.edu.cn/debian/ buster-updates main contrib
-$ su -c 'apt update'
-$ su -c 'apt upgrade'
-
-# add user `ljh` to sudo group
-$ su -c 'apt install sudo'
-$ su -c 'usermod -a -G sudo ljh'
 
 # check network interface name
 $ ls /sys/class/net
@@ -36,6 +26,17 @@ iface enp0s3 inet static
   address 192.168.1.2/24
   gateway 192.157.1.1
 $
+
+# fast mirrors
+$ vi /etc/apt/sources.list
+deb https://mirrors.tuna.tsinghua.edu.cn/debian-security buster/updates main contrib
+deb https://mirrors.tuna.tsinghua.edu.cn/debian/ buster-updates main contrib
+$ su -c 'apt update'
+$ su -c 'apt upgrade'
+
+# add user `ljh` to sudo group
+$ su -c 'apt install sudo'
+$ su -c 'usermod -a -G sudo ljh'
 
 $ timedatectl list-timezones
 $ sudo timedatectl set-timezone "Asia/Shanghai"

@@ -4,7 +4,34 @@ Turn off network connection to avoid download on slow connection during install.
 VirtualBox / [my-vm] / Settings / Network / Enable Network Adapter: Yes
 - Attached to: Bridged Adapter.
 - Advanced: Cable Connected: No.
+
 Turn on Cable Connected: Yes, after install finishes.
+
+# check network interface name
+$ ls /sys/class/net
+$ ip addr
+2: enp0s3
+$
+
+# dynamic network ip address
+$ sudo vi /etc/netplan/00-installer-config.yaml
+  version: 2
+  ethernets:
+    enp0s3:
+      dhcp4: true
+$ sudo netplan apply
+
+# static network ip address, replace line `dhcp4:` above
+$ sudo vi /etc/netplan/00-installer-config.yaml
+  ethernets:
+    enp0s3:
+      addresses:
+        - 10.10.10.2/24
+      gateway4: 10.10.10.1
+      nameservers:
+        search: [mydomain, otherdomain]
+        addresses: [10.10.10.1, 1.1.1.1]
+$
 
 $ sudo vi /etc/apt/sources.list
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu groovy main restricted universe multiverse
@@ -57,29 +84,3 @@ $ sudo mount /mnt/data/
 
 # find largest directory / file size
 $ du -h -d1 /home/* | sort -hr | head -5
-
-# check network interface name
-$ ls /sys/class/net
-$ ip addr
-2: enp0s3
-$
-
-# dynamic network ip address
-$ sudo vi /etc/netplan/00-installer-config.yaml
-  version: 2
-  ethernets:
-    enp0s3:
-      dhcp4: true
-$ sudo netplan apply
-
-# static network ip address, replace line `dhcp4:` above
-$ sudo vi /etc/netplan/00-installer-config.yaml
-  ethernets:
-    enp0s3:
-      addresses:
-        - 10.10.10.2/24
-      gateway4: 10.10.10.1
-      nameservers:
-        search: [mydomain, otherdomain]
-        addresses: [10.10.10.1, 1.1.1.1]
-$
