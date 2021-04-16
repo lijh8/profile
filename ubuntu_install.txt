@@ -84,3 +84,20 @@ $ sudo mount /mnt/data/
 
 # find largest directory / file size
 $ du -h -d1 /home/* | sort -hr | head -5
+
+$ apt search build-essential
+$ apt list build-essential
+$ cat /usr/share/build-essential/list | grep -i gcc
+
+# List files installed from package-name
+$ dpkg -L gcc
+
+# Search for a filename from installed packages
+$ dpkg -S /usr/bin/gcc
+
+# Search for files not yet installed
+# or https://packages.ubuntu.com
+$ sudo apt install apt-file
+$ sudo apt-file update
+$ apt-file search /usr/bin/myisamchk
+$ apt-file search myisamchk
