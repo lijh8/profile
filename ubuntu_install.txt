@@ -102,10 +102,12 @@ $ sudo apt-file update
 $ apt-file search /usr/bin/myisamchk
 $ apt-file search myisamchk
 
-# ubuntu 21.04 turn on Chinese input method
-1. Settings / Region & Language:
-    [manage installed language]
-    click this button and system will automatically installed needed packages
-2. Restart
-3. Settings / Region & Language:
-    Input Sources / + / Chinese / Chinese (Intelligent Pinyin) / Add
+# Ubuntu 21.04 turn on Chinese input method
+1. Initial install
+    System language: English,
+    Location / Timezone: Shanghai China
+2. Update language support after install finishes
+    Settings / Region & Language / manage installed language
+3. Restart
+4. Add an Input Source
+    Settings / Region & Language / Input Sources / + / Chinese / Chinese (Intelligent Pinyin) / Add
