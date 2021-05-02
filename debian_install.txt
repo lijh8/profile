@@ -66,3 +66,23 @@ $ sudo mount /mnt/data/
 # find largest directory / file size
 $ du -h -d1 /home/* | sort -hr | head -5
 $ sudo update-alternatives --config editor
+
+# List files installed from package-name
+$ dpkg -L gcc
+
+# Search for a filename from installed packages
+$ dpkg -S /usr/bin/gcc
+
+# Search for files not yet installed
+# or https://packages.ubuntu.com
+$ sudo apt install apt-file
+$ sudo apt-file update
+$ apt-file search /usr/bin/myisamchk
+$ apt-file search myisamchk
+
+# Debian 10: Turn on Chinese input method
+$ sudo apt install ibus-libpinyin
+# Add four zh_CN* locales. Don't change default locale (en_US.UTF-8)
+$ sudo dpkg-reconfigure locales
+# Restart
+$ Settings / Region & Language / Input Sources / + / Chinese / Chinese (Intelligent Pinyin) / Add
