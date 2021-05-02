@@ -34,7 +34,7 @@ deb https://mirrors.tuna.tsinghua.edu.cn/debian/ buster-updates main contrib
 $ su -c 'apt update'
 $ su -c 'apt upgrade'
 
-# add user `ljh` to sudo group. re-login required.
+# add user `ljh` to sudo group. restart required.
 $ su - -c 'usermod -a -G sudo ljh'
 
 $ timedatectl list-timezones
