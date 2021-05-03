@@ -86,3 +86,9 @@ $ sudo apt install ibus-libpinyin
 $ sudo dpkg-reconfigure locales
 # Restart
 $ Settings / Region & Language / Input Sources / + / Chinese / Chinese (Intelligent Pinyin) / Add
+
+# Debian Software Selection
+$ sudo tasksel
+[] Debian desktop environment
+[] ... Gnome
+[] ... Xfce
