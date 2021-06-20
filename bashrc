@@ -2,6 +2,7 @@
 
 # sudo chsh -s /bin/bash ljh
 # sudo usermod -a -G wheel ljh
+# sudo -E env "PATH=$PATH" swift main.swift
 
 PS1='\$ '
 EDITOR=$(which vi)  # Fedora 33 (update-alternative --config EDITOR is too complex)
