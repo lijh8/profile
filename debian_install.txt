@@ -88,6 +88,9 @@ $ dpkg-reconfigure locales
 # Restart
 $ Settings / Region & Language / Input Sources / + / Chinese / Chinese (Intelligent Pinyin) / Add
 
+# console font: use traditional VGA
+$ sudo dpkg-reconfigure console-setup
+
 # Debian Software Selection
 $ tasksel
 [] Debian desktop environment
