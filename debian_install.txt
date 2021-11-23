@@ -39,6 +39,7 @@ $ su - -c 'usermod -a -G sudo ljh'
 
 $ timedatectl list-timezones
 $ timedatectl set-timezone "Asia/Shanghai"
+$ dpkg-reconfigure tzdata
 
 $ apt install openssh-server samba
 $ systemctl enable ssh smbd nmbd
