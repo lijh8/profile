@@ -4,7 +4,7 @@
 " $ sudo vim -u /home/ljh/.vimrc /etc/systemd/system.conf
 
 set autoindent
-"set hlsearch
+set hlsearch
 set mouse=a  " Win:SHIFT+mouse, Mac:fn+mouse
 set nobackup
 set noswapfile
