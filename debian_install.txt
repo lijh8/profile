@@ -1,99 +1,239 @@
-Debian 10.7, 11
+<pre>
 
-Turn off network connection to avoid download on slow connection during install.
-VirtualBox / [my-vm] / Settings / Network / Enable Network Adapter: Yes
-- Attached to: Bridged Adapter.
-- Advanced: Cable Connected: No.
+Debian Linux
+## turn off network for fast installation
 
-Turn on Cable Connected: Yes, after install finishes.
+## download the first iso ("DVD-1"):
+## debian-11.5.0-amd64-DVD-1.iso
 
-# check network interface name
-$ ls /sys/class/net
-$ ip addr
-2: enp0s3
+## mirror in china
+## (?) (help)
+## https://mirrors.tuna.tsinghua.edu.cn/help/debian/
+
+$ vi /etc/apt/sources.list
+deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye main contrib non-free
+deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye-updates main contrib non-free
+deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye-backports main contrib non-free
+deb https://mirrors.tuna.tsinghua.edu.cn/debian-security bullseye-security main contrib non-free
 $
 
-$ vi /etc/network/interfaces
-auto enp0s3
-allow-hotplug enp0s3
-#dynamic ip address
-iface enp0s3 inet dhcp
-$ ifup enp0s3
+$ apt update
+$ apt upgrade
 
-# static ip address
+$ cat /etc/group
+$ su -c "/usr/sbin/usermod -a -G sudo `whoami`"
+$ newgrp sudo
+$ sg sudo
+$ groups
+sudo
+$
+
+## "automatic suspend - computer will suspend very soon because of inactivity"
+## disable suspend and hibernation (desktop environment)
+$ systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+$ gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
+
+$ apt install vim
+$ update-alternatives --config editor
+$ vi ~/.vimrc
+set hlsearch
+set nowrapscan
+:syntax off
+$
+
+$ vi ~/.inputrc
+set editing-mode vi
+$
+
+$ vi ~/.bashrc
+PS1='\$ '
+$
+
+$ apt install openssh-server
+$ apt install samba
+$ systemctl | grep ssh
+$ systemctl enable ssh smbd nmbd
+$ systemctl start ssh smbd nmbd
+
+$ smbpasswd -a `whoami`
+$ vi /etc/samba/smb.conf
+[homes]
+  read only = no
+  create mask = 0755
+  directory mask = 0755
+$
+
+$ apt install build-essential
+$ apt install gdb
+$ apt install cmake
+$ apt install gcc-doc gdb-doc manpages-dev
+
+## list files installed by package
+$ dpkg -L gcc
+/usr/bin/gcc
+$
+
+## list package which installs the file
+$ dpkg -S /usr/bin/gcc
+gcc: /usr/bin/c99-gcc
+$
+
+## tree with find
+$ find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
+
+## find large size directories or files
+$ du -h -d1 /home/* | sort -hr | head -5
+
+---
+
+$ ls /sys/class/net/
+ens33
+$
+
+$ ip addr | grep ens33
+inet 192.168.1.5/24 ens33
+$
+
+## dynamic ip
 $ vi /etc/network/interfaces
-iface enp0s3 inet static
+auto ens33
+allow-hotplug ens33
+iface ens33 inet dhcp
+$
+
+## static ip
+$ vi /etc/network/interfaces
+iface ens33 inet static
   address 192.168.1.2/24
   gateway 192.157.1.1
 $
 
-# fast mirrors
-$ vi /etc/apt/sources.list
-deb https://mirrors.tuna.tsinghua.edu.cn/debian-security buster/updates main contrib
-deb https://mirrors.tuna.tsinghua.edu.cn/debian/ buster-updates main contrib
-$ su -c 'apt update'
-$ su -c 'apt upgrade'
+$ ifquery ens33
+$ ifdown ens33
+$ ifup ens33
+$ systemctl restart networking
 
-# add user `ljh` to group. re-login required.
-$ su - -c 'usermod -a -G sudo ljh'
+## dns
+$ vi /etc/resolv.conf
+nameserver 192.168.1.1
+nameserver 8.8.8.8
+$
 
 $ timedatectl list-timezones
 $ timedatectl set-timezone "Asia/Shanghai"
-$ dpkg-reconfigure tzdata
+$ /usr/sbin/dpkg-reconfigure tzdata
 
-$ apt install openssh-server samba
-$ systemctl enable ssh smbd nmbd
-$ systemctl restart ssh smbd nmbd
-
-$ vi /etc/samba/smb.conf
-[homes]
-   read only = no
-$
-
-# gcc g++ c++
-$ apt install build-essential
-$ apt install gdb
-$ apt install gcc-doc gdb-doc  #manpages
+---
 
 $ lsblk
+sr0
+$
+
 $ fdisk /dev/sdb
 $ mkfs.ext4 /dev/sdb1
-$ mkdir /mnt/data
 $ mount /dev/sdb1 /mnt/data
-$ df -h
+
 $ vi /etc/fstab
-  /dev/sdb1 /mnt/data ext4 defaults 0 0
-$ mount /mnt/data/
+/dev/sr0 /media/cdrom0
+$
 
-# find largest directory / file size
-$ du -h -d1 /home/* | sort -hr | head -5
-$ update-alternatives --config editor
+$ df -h
+/dev/sr0 3.7G /media/cdrom0
+$
 
-# List files installed from package-name
-$ dpkg -L gcc
+## resize disk partition
+## Disks / Delete swap partition / Delete extended partition
+## / resize: reserve 1.0 GB (same) free space for extended and swap
+## / create extended partition / create swap partition
 
-# Search for a filename from installed packages
-$ dpkg -S /usr/bin/gcc
+## "Gave up waiting for suspend/resume device"
+## "A start job is running for dev-disk-by"
+## use UUID from blkid to correct wrong UUID in files
+$ blkid
+$ vi /etc/initramfs-tools/conf.d/resume
+$ vi /etc/fstab
 
-# Search for files not yet installed
-# or https://packages.ubuntu.com
-$ apt install apt-file
-$ apt-file update
-$ apt-file search /usr/bin/myisamchk
-$ apt-file search myisamchk
+## /usr/sbin/update-initramfs: 142: mkinitramfs: not found
+$ PATH=$PATH:/usr/sbin sudo /usr/sbin/update-initramfs -u
+update-initramfs: Generating /boot/initrd.img-5.10.0-20-amd64
+$
 
-# Debian 10: Turn on Chinese input method
+---
+
+## Console font: VGA
+$ /usr/sbin/dpkg-reconfigure console-setup
+
+$ systemctl get-default
+graphical.target
+$
+
+$ ls /lib/systemd/system/*.target | grep multi-user
+/lib/systemd/system/multi-user.target
+$
+
+$ systemctl set-default multi-user.target # graphical.target
+$ init 3 # 5
+
+---
+
+## VSCode clangd (do not forget CodeLLDB)
+## https://code.visualstudio.com/docs/setup/linux
+
+$ dpkg -i code_1.74.3-1673284829_amd64.deb
+$ apt install apt-transport-https
+$ apt update # Use apt instead of apt-get
+$ apt install code
+
+## https://clangd.llvm.org/installation
+$ apt install clangd-13
+$ update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-13 100
+
+---
+
+## install multiple gcc compiler versions
+$ apt install gcc-10 gcc-9
+
+$ update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90
+$ update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100
+$ update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
+$ update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 100
+
+$ update-alternatives --config gcc
+$ update-alternatives --config g++
+$ gcc --version
+$ g++ --version
+
+---
+
+## chinese input method editor (ime)
 $ apt install ibus-libpinyin
-# Add four zh_CN* locales. Don't change default locale (en_US.UTF-8)
+
+## add four zh_CN* locales
+## do not change default locale (en_US.UTF-8)
 $ dpkg-reconfigure locales
-# Restart
-$ Settings / Region & Language / Input Sources / + / Chinese / Chinese (Intelligent Pinyin) / Add
 
-# console font: use traditional VGA
-$ sudo dpkg-reconfigure console-setup
+## logout
 
-# Debian Software Selection
-$ tasksel
-[] Debian desktop environment
-[] ... Gnome
-[] ... Xfce
+## Settings / Region & Language / Input Sources / + / Chinese /
+  Chinese (Intelligent Pinyin) / Add
+
+---
+
+## Left Super
+$ gsettings get org.gnome.mutter overlay-key
+'Super_L'
+$ gsettings set org.gnome.mutter overlay-key ''
+
+## settings / keyboard shortcuts
+View split on left : Super + Left arrow
+View split on right: Super + Left arrow
+Restore window     : Super + Down arrow
+Maximize window    : Super + Up arrow
+
+---
+
+
+
+
+
+</pre>

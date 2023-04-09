@@ -1,121 +1,165 @@
-Ubuntu 20.10
+<pre>
 
-Turn off network connection to avoid download on slow connection during install.
-VirtualBox / [my-vm] / Settings / Network / Enable Network Adapter: Yes
-- Attached to: Bridged Adapter.
-- Advanced: Cable Connected: No.
+Ubuntu Linux
+## turn off network for fast installation
 
-Turn on Cable Connected: Yes, after install finishes.
+## mirror in china
+## ubuntu (?) -> help
+## https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/
 
-# check network interface name
-$ ls /sys/class/net
-$ ip addr
-2: enp0s3
+$ cp /etc/apt/sources.list /etc/apt/sources.list.bak
+$ sudo sed -i "s@http://.*archive.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
+$ sudo sed -i "s@http://.*security.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
+$ apt update
+$ apt upgrade
+
+## add user to sudo group
+$ usermod -a -G sudo `whoami`
+$ groups
+sudo
 $
 
-# dynamic network ip address
-$ sudo vi /etc/netplan/00-installer-config.yaml
-  version: 2
-  ethernets:
-    enp0s3:
-      dhcp4: true
-$ sudo netplan apply
+## set default editor
+$ update-alternatives --config editor
 
-# static network ip address, replace line `dhcp4:` above
-$ sudo vi /etc/netplan/00-installer-config.yaml
-  ethernets:
-    enp0s3:
-      addresses:
-        - 10.10.10.2/24
-      gateway4: 10.10.10.1
-      nameservers:
-        search: [mydomain, otherdomain]
-        addresses: [10.10.10.1, 1.1.1.1]
+$ vi ~/.vimrc
+set hlsearch
+set nowrapscan
+:syntax off
 $
 
-$ sudo vi /etc/apt/sources.list
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu groovy main restricted universe multiverse
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu groovy-updates main restricted universe multiverse
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu groovy-backports main restricted universe multiverse
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu groovy-security main restricted universe multiverse
+$ cat ~/.inputrc
+set editing-mode vi
 $
 
-$ sudo apt update
-$ sudo apt upgrade
+$ vi ~/.profile # ~/.bash_profile # ~/.bashrc
+PS1='\$ '
+export HISTCONTROL="ignoredups:erasedups"
+export PROMPT_COMMAND='history -a'
+$
 
-# gcc g++ c++
-$ sudo apt install "build-essential"
-$ sudo apt install gdb
+$ apt install openssh-server
+$ apt install samba
+$ sudo smbpasswd -a `whoami`
 
-# vi
-$ sudo update-alternatives --config editor
-$ sudo apt install "openssh-server"
-
-$ sudo apt install samba
-$ sudo smbpasswd -a ljh
 $ vi /etc/samba/smb.conf
 [homes]
-   comment = Home Directories
-   browseable = no
-   read only = no
+  browseable = no
+  read only = no
+  create mask = 0755
+  directory mask = 0755
 $
 
-# firewall
-$ sudo ufw app list
-$ sudo ufw allow Samba
+$ systemctl | grep -i ssh
+$ systemctl enable ssh smbd nmbd
+$ systemctl start ssh smbd nmbd
+$ systemctl disable ufw
 
-$ systemctl list-units | grep -i samba
-$ systemctl status smbd
-$ systemctl enable smbd nmbd
-$ systemctl start smbd nmbd
+## firewall
+$ ufw app list
+$ ufw allow Samba
 
-# mount Windows shared folder
-//Windows: Control Panels / Programs and Features / Turn Windows features on or off / SMB 1.0/CIFS File Sharing Support [*] / restart
-----
-$ apt install cifs-utils
-$ mount -t cifs //192.168.1.10/share /home/ljh/share -o username=“ljh”,password=“12345”,wrkgrp=“WORKGROUP”
-$ vi /etc/fstab
-//192.168.1.10/share  /home/ljh/share  cifs  noperm,_netdev,username=ljh,password=12345,wrkgrp=WORKGROUP  0  0
+## list files in package
+$ dpkg -L vim
+/usr/bin/vim.basic
+$
 
-$ timedatectl list-timezones
-$ sudo timedatectl set-timezone "Asia/Shanghai"
+## show the package name of a file
+$ dpkg -S /usr/bin/vim.basic
+vim: /usr/bin/vim.basic
+$
 
-$ sudo lsblk
-$ sudo fdisk /dev/sdb
-$ sudo mkfs.ext4 /dev/sdb1
-$ sudo mkdir /mnt/data
-$ sudo mount /dev/sdb1 /mnt/data
-$ df -h
-$ sudo vi /etc/fstab
-  /dev/sdb1 /mnt/data ext4 defaults 0 0
-$ sudo mount /mnt/data/
-
-# find largest directory / file size
+## find large size directories or files
 $ du -h -d1 /home/* | sort -hr | head -5
 
-$ apt search build-essential
-$ apt list build-essential
-$ cat /usr/share/build-essential/list | grep -i gcc
+## find for tree
+$ find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
 
-# List files installed from package-name
-$ dpkg -L gcc
+## gcc gdb gcc-doc gdb-doc c++ cmake manpages-dev
+$ apt install build-essential
 
-# Search for a filename from installed packages
-$ dpkg -S /usr/bin/gcc
+## VSCode clangd (do not forget CodeLLDB)
+$ sudo apt install clangd
 
-# Search for files not yet installed
-# or https://packages.ubuntu.com
-$ sudo apt install apt-file
-$ sudo apt-file update
-$ apt-file search /usr/bin/myisamchk
-$ apt-file search myisamchk
+---
 
-# Ubuntu 21.04: Turn on Chinese input method
-1. System install
-    Language & Keyboard: English (US)
-    Location & Timezone: Shanghai China
-2. Update language support (ie. ibus-libpinyin ..)
-    Settings / Region & Language / Manage Installed Languages
-3. Restart after update finishes
-4. Add an Input Source
-    Settings / Region & Language / Input Sources / + / Chinese / Chinese (Intelligent Pinyin) / Add
+## resize disk partition
+$ apt install gparted
+
+$ lsblk
+$ df -h
+$ fdisk /dev/sdb
+$ mkfs.ext4 /dev/sdb1
+$ mkdir /mnt/data
+$ mount /dev/sdb1 /mnt/data
+$ vi /etc/fstab
+  /dev/sdb1 /mnt/data ext4 defaults 0 0
+$ mount /mnt/data/
+
+## dynamic ip address
+$ vi /etc/netplan/00-installer-config.yaml
+network:
+  ethernets:
+    eth0:
+      dhcp4: true
+$ netplan apply
+
+## replace `dhcp4` with static ip
+$ vi /etc/netplan/00-installer-config.yaml
+network:
+  ethernets:
+    eth0:
+      addresses:
+        - 192.168.1.123/24
+      gateway4: 192.168.1.1
+      nameservers:
+        search: [mydomain, otherdomain]
+        addresses: [192.168.1.1, 8.8.8.8]
+$
+
+$ timedatectl list-timezones
+$ timedatectl set-timezone "Asia/Shanghai"
+
+$ ls -l /etc/systemd/system/default.target
+/etc/systemd/system/default.target -> /lib/systemd/system/multi-user.target
+$ systemctl set-default multi-user.target # graphical.target
+$ init 3 # 5
+
+---
+
+## chinese input method (ime) ibus-libpinyin
+  Settings / Region & Language / Manage Installed Languages / Language
+  / Install Remove Languages... / Chinese (Simplified): * / Apply
+## relogin required
+## add an input source
+  Settings / Keyboard / Input Sources / + / Chinese
+  / Chinese (intelligent pinyin) / Add
+
+---
+
+## hide "show applications" on dock
+$ gsettings set org.gnome.shell.extensions.dash-to-dock show-show-apps-button false
+
+## Left Super
+$ gsettings get org.gnome.mutter overlay-key
+'Super_L'
+$ gsettings set org.gnome.mutter overlay-key ''
+
+## settings / keyboard shortcuts
+View split on left : Super + Left arrow
+View split on right: Super + Left arrow
+Restore window     : Super + Down arrow
+Maximize window    : Super + Up arrow
+
+---
+
+# Error constructing proxy for org.gnome.Terminal
+$ localectl set-locale LANG="en_US.UTF-8"
+$ shutdown -r now
+
+---
+
+
+
+
+</pre>
