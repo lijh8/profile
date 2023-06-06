@@ -1,17 +1,18 @@
-
 <pre>
 
 ## Fedora Linux
-## Turn off network for fast system install in china
 
+## Disconnect network cable to speed up install in china
+## - Enable Network Adapter: Yes
+## - Cable Connected: No
 
 ## append user to wheel (sudo) group
-$ groups
-wheel
 $ su -c "/usr/sbin/usermod -a -G wheel `whoami`"
 $ newgrp wheel
 $ sg wheel
-
+$ groups
+wheel
+$
 
 ## mirror in china
 
@@ -25,7 +26,7 @@ $ cp /etc/yum.repos.d/fedora-updates.repo /etc/yum.repos.d/fedora-updates.repo.b
 $ cp /etc/yum.repos.d/fedora-modular.repo /etc/yum.repos.d/fedora-modular.repo.bak
 $ cp /etc/yum.repos.d/fedora-updates-modular.repo /etc/yum.repos.d/fedora-updates-modular.repo.bak
 
-$ sudo sed -e 's|^metalink=|#metalink=|g' \
+$ sed -e 's|^metalink=|#metalink=|g' \
          -e 's|^#baseurl=http://download.example/pub/fedora/linux|baseurl=https://mirrors.tuna.tsinghua.edu.cn/fedora|g' \
          -i.bak \
          /etc/yum.repos.d/fedora.repo \
@@ -33,10 +34,6 @@ $ sudo sed -e 's|^metalink=|#metalink=|g' \
          /etc/yum.repos.d/fedora-updates.repo \
          /etc/yum.repos.d/fedora-updates-modular.repo
 $
-
-
----
-
 
 $ vi /etc/yum.repos.d/fedora.repo
 baseurl=https://mirrors.tuna.tsinghua.edu.cn/fedora/releases/$releasever/Everything/$basearch/os/
@@ -56,14 +53,12 @@ baseurl=https://mirrors.tuna.tsinghua.edu.cn/fedora/updates/$releasever/Modular/
 $
 
 $ dnf makecache
-$ dnf check-update
 $ dnf update
 $ dnf upgrade
 
 ## turn off auto suspend and hibernation
-$ sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
-$ sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
-$
+$ systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+$ gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
 
 
 $ dnf install vim-enhanced
@@ -89,6 +84,7 @@ $
 $ vi ~/.bashrc
 PS1='\$ '
 EDITOR=/usr/bin/vim
+alias ls=ls --color=never
 $
 
 $ dnf install openssh-server
@@ -113,6 +109,26 @@ $ fdisk -l
 $ lsblk
 $ df -h
 
+## resize lvm volume to use unallocated space
+
+$ df -h
+/dev/mapper/fedora-root   15G  3.0G   12G  21% /
+$
+
+$ lsblk
+NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sda               8:0    0   35G  0 disk
+└─sda3            8:3    0   34G  0 part
+  └─fedora-root 253:0    0   15G  0 lvm  /
+$
+
+$ pvresize /dev/sda3
+$ lvextend -r -l +100%FREE /dev/mapper/fedora-root
+
+$ df -h
+/dev/mapper/fedora-root   34G  3.2G   31G  10% /
+$
+
 # network
 
 $ ip addr
@@ -125,16 +141,13 @@ type=ethernet
 interface-name=enp0s3
 
 [ipv4]
-method=manual # auto
-address=192.168.1.100/24
-gateway=192.168.1.1
-dns=8.8.8.8;192.168.1.1
+method=auto # manual
+#address=192.168.1.100/24
+#gateway=192.168.1.1
+#dns=8.8.8.8;192.168.1.1
 $
-
 $ systemctl restart NetworkManager
-$
 
-# network, or,
 $ dnf install NetworkManager-tui
 $ nmtui
 ## static ip
@@ -143,7 +156,6 @@ $ nmtui
 ## Gateway 192.168.1.1
 $
 
-#
 $ vi /etc/sysconfig/network-scripts/ifcfg-enp0s3
 TYPE=Ethernet
 BOOTPROTO=none # dhcp
@@ -208,7 +220,7 @@ $ dnf install lldb
 $ ls /lib/systemd/system/*.target | grep multi-user
 /lib/systemd/system/multi-user.target
 $
-$ sudo systemctl set-default multi-user.target
+$ systemctl set-default multi-user.target
 Removed "/etc/systemd/system/default.target".
 Created symlink /etc/systemd/system/default.target → /usr/lib/systemd/system/multi-user.target.
 $
@@ -246,6 +258,7 @@ $ dnf install gnome-browser-connector
 
 
 ---
+
 
 
 
