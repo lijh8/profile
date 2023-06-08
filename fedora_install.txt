@@ -196,22 +196,38 @@ $ timedatectl set-timezone "Asia/Shanghai"
 
 ---
 
-## VSCode, clangd (do not forget CodeLLDB)
+## VSCode, clangd, CodeLLDB
 ## https://code.visualstudio.com/docs/setup/linux#_rhel-fedora-and-centos-based-distributions
 
 $ rpm --import https://packages.microsoft.com/keys/microsoft.asc
 $ sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
 
 $ dnf makecache
-$ dnf check-update
 $ dnf upgrade
-
 $ dnf install code
-$ dnf install clang
-$ dnf install clang-tools-extra
 
+# clangd
+$ dnf install clang clang-tools-extra
+
+# CodeLLDB, vscode install from vsix
+$ wget https://github.com/vadimcn/codelldb/releases/download/v1.9.2/codelldb-x86_64-linux.vsix
+
+# it's optional, prefer gcc gdb
 $ dnf install llvm
 $ dnf install lldb
+
+$ dnf install libasan
+
+$ vi settings.json:
+
+  "clangd.fallbackFlags": [
+    "-std=c++2a",
+    "-I/usr/lib/gcc/x86_64-redhat-linux/13/include/", // "sanitizer/lsan_interface.h"
+    "-I../foo",
+  ],
+
+$
+
 
 ---
 
