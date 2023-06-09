@@ -1,0 +1,1110 @@
+```
+
+<pre>
+
+python install
+
+# newer version (3.11) and pre-installed version (3.10) co-exist
+# just use the newer name python3.11 instead of python3
+# do not change the existing python3 symbol link
+
+$ apt install python3.11
+
+$ apt install python3-pip
+
+# set mirror package index url temporarily
+$ python3 -m pip install -i \
+    https://pypi.tuna.tsinghua.edu.cn/simple --upgrade pip
+$ python3 -m pip config set \
+    global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
+# or, permanently
+$ vi ~/.pip/pip.conf
+[global]
+index-url = https://pypi.tuna.tsinghua.edu.cn/simple
+[install]
+trusted-host = https://pypi.tuna.tsinghua.edu.cn
+$
+
+$ python3 -m pip config list
+global.index-url='https://pypi.tuna.tsinghua.edu.cn/simple'
+install.trusted-host='https://pypi.tuna.tsinghua.edu.cn'
+$
+
+# pip search command does not work.
+# search packages on official website.
+# https://pypi.org
+
+$ python3 -m pip install -i \
+    https://pypi.tuna.tsinghua.edu.cn/simple --upgrade "xxx"
+
+$ python3 -m pip uninstall "xxx"
+$ python3 -m pip list
+
+---
+
+VSCode extension:
+ms-python.python,
+ms-python.vscode-pylance,
+
+debug:
+Open main.py /
+F5, or (Run and Debug), (create a launch.json) /
+Python File (Debug the currently active Python file)
+
+---
+
+GUI: tcl tk tkinter
+tkinter: https://docs.python.org/3/faq/gui.html
+PyGtk: https://wiki.python.org/moin/PyGtk
+
+---
+
+# import module of the parent dir
+
+$ pwd
+/Users/ljh/Documents/hello_py
+$
+$ find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
+.
+|____hello
+| |____hello.py
+|____main
+| |____main.py
+$
+
+
+1. sys.path
+
+$ vi main.py
+import sys
+sys.path.append("../hello")
+import hello
+$
+
+$ cd /Users/ljh/Documents/hello_py/main
+
+$ python3.11 main.py
+main
+hello
+$
+
+
+2. PYTHONPATH
+
+$ vi main.py
+import hello
+$
+
+$ cd /Users/ljh/Documents/hello_py/main
+
+$ PYTHONPATH=../hello python3.11 main.py
+
+
+3. python3.11 "-m"
+
+$ vi main.py
+from ..hello import hello
+$
+
+# go outside the common parent dir of hello dir and main dir
+
+$ cd /Users/ljh/Documents
+
+$ python3.11 -m hello_py.main.main
+main
+hello
+$
+
+---
+
+# tkinter tcl tk
+
+$ python3
+>>> import tkinter
+ModuleNotFoundError: No module named '_tkinter'
+>>>
+$
+
+$ which python3
+/usr/local/bin/python3
+
+$ /usr/local/bin/idle3
+** IDLE can't import Tkinter.
+Your Python may not be configured for Tk. **
+$
+
+$ python3 -m tkinter -c"tkinter._test()"
+import _tkinter # If this fails your Python may not be configured for Tk
+ModuleNotFoundError: No module named '_tkinter'
+$
+
+# ubuntu linux
+$ sudo apt install python3-tk
+$
+
+# macOS with homebrew
+$ brew install python-tk tcl-tk
+
+$ brew search "python*tk"
+==> Formulae
+python-tk@3.10      python-tk@3.9       python@3.7          python@3.9
+python-tk@3.11      python-yq           python@3.8
+$
+
+# use threading to avoid UI freeze
+
+import tkinter
+from tkinter import ttk
+import random
+import time
+import threading
+
+def on_button_clicked():
+    label['text'] = str(random.random())
+    # time.sleep(2) # freeze
+    thread = threading.Thread(target=lambda: time.sleep(2)) # ok
+    thread.start()
+
+tk = tkinter.Tk()
+tk.title('hello')
+tk.geometry('350x200')
+
+entry = ttk.Entry(tk) # default width 20 characters
+entry.grid(row=0, column=0)
+
+button = ttk.Button(tk, text='button', command=on_button_clicked)
+button.grid(row=1, column=0)
+
+# same width as Entry
+label = ttk.Label(tk, text="label", width=20)
+label.grid(row=1, column=1)
+
+tk.mainloop()
+
+$
+
+---
+
+# window class inherit tkinter.Tk
+
+$ vi window.py
+
+import tkinter
+from tkinter import ttk
+import threading
+import time
+
+class Window(tkinter.Tk):
+    def __init__(self):
+        # tkinter.Tk.__init__(self)
+        super().__init__()
+
+        self.entry = ttk.Entry(self)
+        self.entry.pack()
+
+        self.button = ttk.Button(self, text="button",
+            command=self.on_button_click)
+        self.button.pack()
+
+        self.label = ttk.Label(self, text="label")
+        self.label.pack()
+
+    def on_button_click(self):
+        self.label["text"] = self.entry.get()
+        print("1")
+        thread = threading.Thread(target=self.thread_func)
+        thread.start()
+        print("2")
+
+    def thread_func(self):
+        time.sleep(1)
+        print("3")
+        time.sleep(1)
+        ...
+
+window = Window()
+window.mainloop()
+
+$
+
+---
+
+# set default text
+# clear text when mouse click in
+# set text back when focus out without input
+
+import tkinter
+from tkinter import ttk
+import threading
+import time
+
+class Window(tkinter.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("hello")
+        self.resizable(False, False)
+
+        self.frame0 = ttk.Frame(self)
+        self.frame0.pack(padx=10, pady=10)
+
+        self.frame1 = ttk.Frame(self.frame0)
+        self.frame1.pack(anchor="w")
+        self.default_text = "Input here"
+
+        entry_register = self.register(self.entry_validation)
+        # Entry default width 20 characters
+        self.entry = ttk.Entry(self.frame1, validate='all',
+            validatecommand=(entry_register, '%V'))
+        self.entry.insert(0, self.default_text)
+        self.entry.pack()
+
+        self.frame2 = ttk.Frame(self.frame0)
+        self.frame2.pack()
+
+        self.button = ttk.Button(self.frame2, text="button",
+            command=self.on_button_click)
+        self.button.pack(side=tkinter.LEFT)
+
+        # set label width same as Entry
+        self.label = ttk.Label(self.frame2, text="label", width=20)
+        self.label.pack(side=tkinter.LEFT)
+
+    def on_button_click(self):
+        self.label["text"] = self.entry.get()
+        thread = threading.Thread(target=self.button_thread)
+        thread.start()
+
+    def button_thread(self):
+        # long running task in background thread
+        # time.sleep(2)
+        ...
+
+    def entry_validation(self, reason):
+        print(reason, self.entry.get())
+        if reason == "focusin" and self.entry.get() == \
+                self.default_text:
+            self.entry.delete(0, tkinter.END)
+        elif reason == "focusout" and self.entry.get().strip() == "":
+            self.entry.delete(0, tkinter.END)
+            self.entry.insert(0, self.default_text)
+        return True
+
+window = Window()
+window.mainloop()
+
+---
+
+The Python Tutorial:
+
+1:
+
+(Python) it has high-level data types built in,
+such as flexible arrays and dictionaries.
+
+---
+
+3.1.1:
+
+> If a variable is not "defined" (assigned a value),
+> trying to use it will give you an error
+
+it means:
+- the first assignment defines the variable
+- can't use variable before define it
+- can assign value of different type to variable
+
+---
+
+3.1.2:
+
+strings cannot be changed - they are immutable.
+assigning to an indexed position in the string results in an error.
+    word = "python"
+    # word[0] = "J"
+
+indexing is used to obtain individual characters,
+slicing allows you to obtain substring.
+
+---
+
+4.8.1:
+
+the in keyword.
+This tests whether or not a sequence contains a certain value.
+
+    if ok in ('y', 'ye', 'yes'):
+        return True
+
+    if L is None:
+        L = []
+
+---
+
+4.8.1:
+
+The default argument value is evaluated only once.
+
+---
+
+4.8.5: unpack argument list
+
+def f(a, b, c):
+    print(a)
+    print(b)
+    print(c)
+
+L = [1, 2, 3]
+f(*L) # unpack with * operator
+
+---
+
+5.3:
+
+Tuples are immutable.
+It is not possible to assign to the individual items of a tuple.
+    a = ("aaa", 123)
+    # a[0] = "bbb"
+
+tuple packing:
+    t = 12345, 54321, 'hello!'
+
+sequence unpacking:
+    x, y, z = t
+
+# tuple
+a tuple with one item is constructed by following a value with a comma
+(it is not sufficient to enclose a single value in parentheses).
+Ugly, but effective.
+
+empty = ()
+>>> singleton = 'hello',    # <-- note trailing comma
+>>> len(empty)
+0
+>>> len(singleton)
+1
+>>> singleton
+('hello',)
+
+# set
+to create an empty set you have to use set(), not {};
+the latter creates an empty dictionary.
+
+---
+
+5.5:
+
+To check whether a single key is in the dictionary, use the in keyword.
+
+>>> tel = {'jack': 4098, 'sape': 4139}
+>>> 'jack' in tel
+True
+>>> 'jack' not in tel
+False
+
+---
+
+5.7:
+The comparison operators in and not in are membership tests that
+determine whether a value is in (or not in) a container.
+
+The operators is and is not compare whether two objects are really the
+same object.
+
+the outcome of a comparison (or of any other Boolean expression) may be
+negated with not.
+
+---
+
+5.8:
+
+from logging2 import *
+logging2_init()
+
+# built-in types
+# str, list(mut), tuple (sequences, slicing, comparison ==, <)
+# dict(mut)
+# set(mut)
+
+# str()
+s = str()
+s = ""
+s = "hello"
+s = s[:]
+INFO(f"{type(s)}, {len(s)}")
+
+# list()
+L = list()
+L = []
+L = [1, 2, 3,]
+L = L[:]
+L.append(5)
+L.remove(5) # value
+del L[0] # index
+INFO(f"{type(L)}, {len(L)}")
+
+# tuple()
+t = tuple()
+t = ()
+t = 1, # one element. ugly, but effective.
+t = 1, 2, 3,
+t = t[:]
+INFO(f"{type(t)}, {len(t)}")
+
+# dict()
+d = dict()
+d = {}
+d = {"aaa": 1, "bbb": 2, "ccc": 3}
+d["ddd"] = 5
+del d["ddd"] # key
+INFO(f"{type(d)}, {len(d)}")
+
+# set()
+s = set()
+s = {1, 2, 3,}
+s.add(5)
+s.remove(5)
+INFO(f"{type(s)}, {len(s)}")
+
+---
+
+7.2.1:
+
+its your problem if the file is twice as large as your machines memory.
+
+For reading lines from a file, you can loop over the file object.
+This is memory efficient, fast, and leads to simple code:
+
+    with open('workfile', encoding="utf-8") as f:
+        for line in f:
+            print(line, end='')
+
+---
+
+#  write a line to a text file in Python
+with open('file.txt', 'a') as file:
+    line = 'This is a line of text.\n'
+    file.write(line)
+
+
+---
+
+9.2.1:
+
+num = 100
+def fun1():
+    num = 200
+    def fun2():
+        global num #
+        # nonlocal num #
+        num = 300
+        print("fun2:", num)
+
+    fun2()
+    print("fun1:", num)
+
+fun1()
+print("top:", num)
+
+"""
+$ python3 src/main.py
+fun2: 300
+fun1: 200
+top: 100
+$
+$ python3 src/main.py
+fun2: 300
+fun1: 300
+top: 100
+$
+$ python3 src/main.py
+fun2: 300
+fun1: 200
+top: 300
+$
+"""
+
+
+---
+
+
+class Foo:
+    name = "Foo"
+
+    def f1(self, num):
+        # global name
+        # name = "global Foo"
+        Foo.name = "Foo.f1"     ## class attribute
+        self.name = "self.f1"
+        name = "name"
+        print("f1", name, Foo.name, name, self.name, num, type(self), sep=', ')
+
+        def f1_nest():
+            global name         ## global top level
+            # nonlocal name     ## outer function
+            Foo.name = "aaa"    ## class attribute
+            name = "nest local name"
+            print("f1_nest", name, Foo.name, self.name, num, type(self), sep=', ')
+
+        f1_nest()
+        print("f1", name, Foo.name, name, self.name, num, type(self), sep=', ')
+
+
+    def f2(num):
+        Foo.name = "Foo.f2"
+        print("f2", Foo.name, num, sep=', ')
+
+    @classmethod
+    def f3(cls, num):
+        Foo.name = "Foo.f3"
+        print("f3", Foo.name, cls.name, num, type(cls), sep=', ')
+
+    @staticmethod
+    def f4(num):
+        Foo.name = "Foo.f4"
+        print("f4", Foo.name, num, sep=', ')
+
+Foo().f1(100)
+Foo.f2(200)
+Foo.f3(300)
+Foo.f4(400)
+
+
+---
+
+
+# init, deinit, constructor, destructor,
+class X:
+    i = 123
+    def f(self):
+        return self.i
+    def __init__(self):
+        print("init", type(self))
+    def __del__(self):
+        print("del", type(self))
+
+x = X()
+print(X.f(x))
+print(x.f())
+
+---
+
+https://docs.python.org/3/glossary.html#term-sequence
+
+sequence
+
+built-in sequence types are list, str, tuple, and bytes.
+dict is considered a mapping rather than a sequence because the lookups
+use arbitrary immutable keys rather than integers.
+
+---
+
+https://docs.python.org/3/library/stdtypes.html?highlight=sequence
+
+The principal built-in types are numerics, sequences, mappings, classes,
+instances and exceptions.
+
+Numeric  - int, float, complex,
+Sequence - list, tuple, range, str, bytes, bytearray, memoryview,
+Mapping  - dict,
+Set      - set, frozenset,
+
+---
+
+immutable objects include numbers, strings and tuples.
+    (int, float, str, tuple, range)
+mutable objects can change their value but keep their id().
+    (list, dict, set, class)
+
+---
+
+pass statement
+Ellipsis: ...
+
+---
+
+# check type of variable, expression, object
+print(type(b''))
+print(type(''))
+
+---
+
+# import modules in subdir or parent dir out of the main entry file
+$
+$ pwd
+/Users/ljh/Documents/helloPy
+$ ls
+out     src
+$
+$ find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
+.
+|____out
+| |____hello2.py
+|____src
+| |____hello.py
+| |____sub
+| | |____hello3.py
+| |____main.py
+| |____logging2.py
+$
+
+$ cat out/hello2.py
+import logging
+
+def hello2():
+    logging.info("")
+$
+$
+$ cat src/hello.py
+import logging
+
+def hello():
+    logging.info("")
+$
+$
+$ cat src/sub/hello3.py
+import logging
+
+def hello3():
+    logging.info("")
+$
+$
+$ cat src/main.py
+import sys
+import logging
+import logging2 as logging2
+import hello
+sys.path.append("..") # or, $ PYTHONPATH=".." python3 main.py
+import out.hello2 as hello2 # parent dir ../out
+import sub.hello3 as hello3 # sub dir
+
+logging2.init()
+
+logging.info("")
+hello.hello()
+hello2.hello2()
+hello3.hello3()
+$
+
+$ cat src/logging2.py
+# logging2.py
+import os
+import sys
+import logging
+from logging.handlers import RotatingFileHandler
+
+DEBUG    = logging.debug
+INFO     = logging.info
+WARNING  = logging.warning
+ERROR    = logging.error
+CRITICAL = logging.critical
+
+def logging2_init():
+    filename = './hello.log'
+    size = 10 * 1024 * 1024  # 10M
+    count = 10
+    level = logging.DEBUG
+    fmt = "%(asctime)s %(levelname)s " \
+        " %(pathname)s:%(lineno)d:%(funcName)s: %(message)s"
+    path = os.path.dirname(os.path.abspath(__file__))
+    file = os.path.join(path, filename)
+    file_handler = RotatingFileHandler(file,
+                                        maxBytes=size,
+                                        backupCount=count)
+    console_handler = logging.StreamHandler(sys.stdout)
+    handlers = [file_handler, console_handler]
+    logging.basicConfig(handlers=handlers, level=level, format=fmt)
+
+"""
+    import logging
+    from logging2 import *
+    logging2_init()
+
+    logging.debug("")
+    logging.info("")
+    logging.warning("")
+    logging.error("")
+    logging.critical("")
+
+    DEBUG("")
+    INFO("")
+    WARNING("")
+    ERROR("")
+    CRITICAL("")
+"""
+
+$
+
+---
+
+from bisect import bisect_left, bisect_right
+
+class X:
+    def __init__(self, name, num):
+        self.name = name
+        self.num = num
+    def __eq__(self, other):
+        return (self.name, self.num) == (other.name, other.num)
+    def __lt__(self, other):
+        return (self.name, self.num) < (other.name, other.num)
+    def __hash__(self):  # for dict
+        return hash((self.name, self.num))
+    def __repr__(self):
+        return ', '.join((self.name, str(self.num)))
+
+L = [
+    X("aaa", 1),
+    X("bbb", 2), # dup
+    X("ccc", 3),
+    X("bbb", 2), # dup
+]
+item = X("bbb", 2) # "0bbb", "zbbb"
+print(L)
+
+# index
+index = 0
+length = len(L)
+while index != length:
+    try: index = L.index(item, index, length)
+    except ValueError: continue
+    print("index:", index, ", value:", L[index])
+    index += 1
+
+# sort
+L.sort()
+print(L)
+
+# bisection, binary search
+# https://docs.python.org/3/library/bisect.html
+lower = bisect_left(L, item)
+upper = bisect_right(L, item)
+for i in range(lower, upper):
+    print("bisect index:", i, ", value:", L[i])
+
+---
+
+$ pwd
+/Users/ljh/Documents/helloPy
+$ ls
+hello.py  test_hello.py
+$
+$ cat hello.py
+def add_one(a):
+    return a + 1
+
+def minus_one(a):
+    return a - 1
+$
+$ cat test_hello.py
+import unittest
+import hello
+
+class TestHello(unittest.TestCase):
+    def test_add_one(self):
+        self.assertEqual(hello.add_one(10), 11)
+    def test_minus_one(self):
+        self.assertEqual(hello.minus_one(10), 9)
+
+if __name__ == "__main__":
+    unittest.main()
+$
+$ python3 -m unittest -v test_hello.py
+test_add_one (test_hello.TestHello) ... ok
+test_minus_one (test_hello.TestHello) ... ok
+
+---------------------
+Ran 2 tests in 0.000s
+
+OK
+$
+
+---
+
+# add class object instance in list
+
+class T:
+    def __init__(self, name, num):
+        self.name = name
+        self.num = num
+    def __repr__(self):
+        return ", ".join((self.name, str(self.num)))
+L = []
+
+# t = T(str(0),0)   # no
+for i in range(5):
+    t = T(str(0),0) # ok, initialize every time
+    t.name = str(i)
+    t.num = i
+    L.append(t)
+
+print(L)
+
+
+# 4.8.1 Default Argument Values
+
+def f(a, L=None):
+    if L is None:
+        L = [] # make a new object
+    L.append(a)
+    return L
+
+---
+
+# python call c with ctypes ffi
+# foreign function interface
+
+import logging
+from logging2 import *
+from ctypes import *
+logging2_init()
+
+hello_lib = CDLL("./clib/hello.so")
+
+# char *strncpy2(char *dest, const char *src, size_t n);
+strncpy2 = hello_lib.strncpy2
+strncpy2.argtypes = c_char_p, c_char_p, c_size_t,
+strncpy2.restype = c_char_p
+
+src = "hello world".encode("utf-8")
+n = len(src)
+dest = create_string_buffer(b'', size=n + 1)
+res = strncpy2(dest, src, n)
+logging.info(f"dest: {dest.value}, type: {type(dest.value)}")
+logging.info(f"res: {res}, type: {type(res)}")
+logging.info(f"res: {res.decode()}, type: {type(res.decode())}")
+
+# int *int_cpy(int *dest, const int *src);
+int_cpy = hello_lib.int_cpy
+int_cpy.argtypes = POINTER(c_int), POINTER(c_int),
+int_cpy.restype = POINTER(c_int)
+
+src = c_int(123)
+dest = c_int(0)
+res = int_cpy(pointer(dest), pointer(src))
+res = int_cpy((dest), (src))
+logging.info(f"res: {res[0]}, type: {type(res[0])}")
+logging.info(f"dest: {dest.value}, type: {type(dest.value)}")
+# logging.info(f"res: {res.contents}")
+
+# int int_cpy2(int src);
+int_cpy2 = hello_lib.int_cpy2
+int_cpy2.argtypes = c_int,
+int_cpy2.restype = c_int
+
+src = c_int(456) # or, src = 456
+res = int_cpy2(src)
+logging.info(f"res: {res}, type: {type(res)}")
+
+---
+
+# python traps and pitfalls
+
+# 01. The default values are evaluated at the point of function
+# definition in the defining scope.
+# python tutorial 4.8.1
+
+print("-01-")
+
+i=5
+def f(arg=i):
+    print(arg)
+i=6
+f() # 5
+
+
+# 02. The default value is evaluated only once.
+# python tutorial 4.8.1
+
+print("-02-")
+
+def f(a, L=[]):
+    L.append(a)
+    return L
+print(f(1)) # [1]
+print(f(2)) # [1, 2]
+print(f(3)) # [1, 2, 3]
+
+def f(a, L=None):
+    if L is None:
+        L = [] # initialize every time
+    L.append(a)
+    return L
+print(f(1)) # [1]
+print(f(2)) # [2]
+print(f(3)) # [3]
+
+
+# 03. initialize class object element inside loop
+
+print("-03-")
+
+class X:
+    def __init__(self, num=0):
+        self.num = num
+L = []
+N = 3
+# x = X() # err: initialize it inside loop
+for i in range(N):
+    x = X() # ok: initialize it every time
+    x.num = i
+    L.append(x)
+for i in range(N):
+    # ok: 0, 1, 2
+    # err: 2, 2, 2
+    print(L[i].num, end=', ')
+
+---
+
+use inputline for vi mode in python interpreter on macOS
+
+$ cat .inputrc
+set editing-mode vi
+$
+
+$ cat .editrc
+bind -v
+$
+
+$ cat .zshrc
+PS1="\$ "
+set -k
+bindkey -v
+$
+
+$ python3
+
+>>> import functools
+>>> help(functools)
+>>> help(functools.reduce)
+
+>>> q # q to quit help page, like manpages, vi
+>>> ^D # Ctrl-D to quit interpreter
+$
+
+---
+
+
+pyside6 python qt gui
+https://www.qt.io/qt-for-python
+https://www.qt.io/blog/tag/qt-for-python
+
+https://doc.qt.io/qtforpython/quickstart.html
+
+$ python3 -m pip pyside6
+
+# or, with mirror
+$ python3 -m pip install -i \
+    https://pypi.tuna.tsinghua.edu.cn/simple --upgrade pyside6
+$
+
+# Ubuntu linux
+$ whereis pyside6-designer
+pyside6-designer: /home/ljh/.local/bin/pyside6-designer
+$
+
+# macOS
+# The scripts are installed in '/Users/ljh/Library/Python/3.9/bin'
+$
+$ ls /Users/ljh/Library/Python/3.9/bin
+pyside6-designer
+pyside6-uic
+$
+
+---
+
+# QML call python function with pyside6
+
+$ cat main1.py
+# connect QML signal to python function
+# https://www.cnblogs.com/ibgo/p/11589613.html
+
+from PySide6.QtCore import QObject
+from PySide6.QtGui import QGuiApplication
+from PySide6.QtQml import QQmlApplicationEngine
+import sys
+
+class MyWindow(QObject):
+    def __init__(self, obj):
+        super().__init__()
+        obj.hello_signal.connect(self.hello_func)
+
+    def hello_func(self, my_string):
+        print(my_string)
+
+if __name__ == '__main__':
+    app = QGuiApplication()
+    engine = QQmlApplicationEngine()
+    engine.load('main1.qml')
+    obj = engine.rootObjects()[0]
+    window = MyWindow(obj)
+    sys.exit(app.exec())
+$
+
+$ cat main1.qml
+import QtQuick
+import QtQuick.Controls
+ApplicationWindow {
+    visible: true
+    signal hello_signal(string my_string)
+    Button {
+        text: "hello"
+        onClicked: {
+            hello_signal(text)
+        }
+    }
+}
+$
+
+$ cat main2.py
+# connect QML signal to python function
+# https://www.cnblogs.com/ibgo/p/11589613.html
+
+from PySide6.QtCore import QObject, Slot
+from PySide6.QtGui import QGuiApplication
+from PySide6.QtQml import QQmlApplicationEngine
+import sys
+
+class Foo(QObject):
+    @Slot(str)
+    def hello_func(self, string):
+        print(string)
+
+
+if __name__ =="__main__":
+    app = QGuiApplication()
+    engine = QQmlApplicationEngine()
+    engine.load("main2.qml")
+    foo = Foo()
+    engine.rootContext().setContextProperty("foo", foo)
+    sys.exit(app.exec())
+$
+
+$ cat main2.qml
+import QtQuick
+import QtQuick.Controls
+ApplicationWindow {
+    visible: true
+
+    Button {
+        text: "hello"
+        onClicked: {
+            foo.hello_func("hello")
+        }
+    }
+}
+$
+
+---
+
+
+
+
+
+
+
+
+
+
+</pre>
+
+```
