@@ -609,6 +609,7 @@ python: data type / data structure
 
 container
 ├── sequence
+│   ├── str
 │   ├── list
 │   └── tuple
 ├── set
