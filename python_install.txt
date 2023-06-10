@@ -589,6 +589,36 @@ print(x.f())
 
 ---
 
+python: `object`
+
+```
+
+object
+└── type
+    └── user-defined classes
+
+```
+
+In this chart, object is at the top of the hierarchy and is the base class for all Python objects. type is a subclass of object and provides a way to create and work with other classes. Finally, user-defined classes are derived from either object or another class, and are organized under type.
+
+---
+
+python: data type / data structure
+
+```
+
+container
+├── sequence
+│   ├── list
+│   └── tuple
+├── set
+└── mapping
+    └── dict
+
+```
+
+---
+
 https://docs.python.org/3/glossary.html#term-sequence
 
 sequence
@@ -1097,6 +1127,89 @@ $
 ---
 
 
+value = 12345.6789
+INFO(f'|{value}|')          # line #10
+INFO(f'|{value:f}|')        #
+INFO(f'|{value:.6f}|')      #
+INFO(f'|{value:12.6f}|')    #
+INFO(f'')
+INFO(f'|{value:13.7f}|')    #
+INFO(f'')
+INFO(f'|{value:13.6f}|')    #
+INFO(f'|{value:13f}|')      #
+INFO(f'')
+INFO(f'|{value:13.2f}|')    #
+INFO(f'|{value:<13.2f}|')   #
+INFO(f'|{value:-13.2f}|')   #
+INFO(f'|{value:+13.2f}|')   # line #23
+
+"""
+2023-06-10 16:42:42,329 INFO main.py:10: |12345.6789|
+2023-06-10 16:42:42,329 INFO main.py:11: |12345.678900|
+2023-06-10 16:42:42,329 INFO main.py:12: |12345.678900|
+2023-06-10 16:42:42,329 INFO main.py:13: |12345.678900|
+2023-06-10 16:42:42,330 INFO main.py:14:
+2023-06-10 16:42:42,330 INFO main.py:15: |12345.6789000|
+2023-06-10 16:42:42,330 INFO main.py:16:
+2023-06-10 16:42:42,330 INFO main.py:17: | 12345.678900|
+2023-06-10 16:42:42,330 INFO main.py:18: | 12345.678900|
+2023-06-10 16:42:42,331 INFO main.py:19:
+2023-06-10 16:42:42,331 INFO main.py:20: |     12345.68|
+2023-06-10 16:42:42,331 INFO main.py:21: |12345.68     |
+2023-06-10 16:42:42,331 INFO main.py:22: |     12345.68|
+2023-06-10 16:42:42,331 INFO main.py:23: |    +12345.68|
+"""
+
+
+---
+
+
+Here are the rules for format specifiers in f-strings in Python:
+
+{var}: String representation of variable.
+{var=:}: String representation of variable with a default value if variable is None.
+{var:d}: Integer formatting.
+{var:f}: Floating point formatting.
+{var:e}: Scientific notation formatting.
+{var:%}: Percentage formatting.
+{var:<width>}: Left-justified with minimum width.
+{var:>width}: Right-justified with minimum width.
+{var:^width}: Centered with minimum width.
+{var:.precisionf}: Floating point with decimal precision.
+The width specifies the total number of characters to be printed, including both digits before and after the decimal point. If the output value requires fewer characters than the specified width, the output will be padded with spaces by default.
+
+Here are some examples:
+
+python
+name = "Bob"
+age = 25
+height = 1.75
+salary = 10000.5
+
+# String representation of variable
+print(f"Hello, my name is {name}.")  # Output: Hello, my name is Bob.
+
+# String representation of variable with default value
+print(f"My age is {age=:d}.")  # Output: My age is 25.
+
+# Integer formatting
+print(f"My age is {age:d} years old.")  # Output: My age is 25 years old.
+
+# Floating point formatting with width and precision
+print(f"My height is {height:<10.2f} meters tall.")  # Output: My height is 1.75      meters tall.
+print(f"My salary is {salary:>10.2f}.")  # Output: My salary is   10000.50.
+
+# Floating point formatting with width, precision, and justification
+print(f"My height is {height:^10.2f} meters tall.")  # Output: My height is   1.75   meters tall.
+In the first example, {name} simply represents a string variable. In the second example, {age=:d} provides a default value of None if age is not defined, and formats it as an integer (:d). In the third example, {age:d} formats age as an integer.
+
+In the fourth example, {height:<10.2f} formats the floating point number height with a width of 10 characters, including 2 decimal places after the decimal point. The resulting string has a length of 10 characters, including any necessary padding.
+
+In the fifth example, {salary:>10.2f} formats salary with a width of 10 characters, including 2 decimal places after the decimal point, and right-justifies it within that space. The resulting string has a length of 10 characters, including any necessary padding.
+
+In the sixth example, {height:^10.2f} formats height with a width of 10 characters, including 2 decimal places after the decimal point, and centers it within that space. The resulting string has a length of 10 characters, including any necessary padding.
+
+---
 
 
 
