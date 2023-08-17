@@ -108,9 +108,10 @@ iface ens33 inet static
   gateway 192.157.1.1
 $
 
+$ ethtool ens33
 $ ifquery ens33
-$ ifdown ens33
 $ ifup ens33
+$ ifdown ens33
 $ systemctl restart networking
 
 ## dns
@@ -124,6 +125,9 @@ $ timedatectl set-timezone "Asia/Shanghai"
 $ /usr/sbin/dpkg-reconfigure tzdata
 
 ---
+
+## resize disk partition
+$ apt install gparted
 
 $ lsblk
 sr0
