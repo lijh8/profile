@@ -1,7 +1,8 @@
 <pre>
 
 Debian Linux
-## turn off network for fast installation
+
+## Disconnect Cable to turn off network for fast installation
 
 ## download the first iso ("DVD-1"):
 ## debian-11.5.0-amd64-DVD-1.iso
@@ -11,10 +12,10 @@ Debian Linux
 ## https://mirrors.tuna.tsinghua.edu.cn/help/debian/
 
 $ vi /etc/apt/sources.list
-deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye main contrib non-free
-deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye-updates main contrib non-free
-deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye-backports main contrib non-free
-deb https://mirrors.tuna.tsinghua.edu.cn/debian-security bullseye-security main contrib non-free
+deb https://mirrors.tuna.tsinghua.edu.cn/debian 		      bookworm 	          main contrib non-free non-free-firmware
+deb https://mirrors.tuna.tsinghua.edu.cn/debian 		      bookworm-updates 	  main contrib non-free non-free-firmware
+deb https://mirrors.tuna.tsinghua.edu.cn/debian 		      bookworm-backports 	main contrib non-free non-free-firmware
+deb https://mirrors.tuna.tsinghua.edu.cn/debian-security	bookworm-security  	main contrib non-free non-free-firmware
 $
 
 $ apt update
@@ -45,7 +46,8 @@ $ vi ~/.inputrc
 set editing-mode vi
 $
 
-$ vi ~/.bashrc
+$ vi ~/.profile 
+alias ls=ls --color=never
 PS1='\$ '
 $
 
