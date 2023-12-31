@@ -50,6 +50,8 @@ $
 ## click (?) for help on mirror in china
 
 $ su -c 'apt install openssh-server'
+$ systemctl | grep ssh
+$ systemctl enable ssh
 
 $ vi /etc/apt/sources.list
 deb https://mirrors.tuna.tsinghua.edu.cn/debian 		      bookworm 	          main contrib non-free non-free-firmware
@@ -121,9 +123,8 @@ gcc: /usr/bin/c99-gcc
 $
 
 $ apt install samba
-$ systemctl | grep ssh
-$ systemctl enable ssh smbd nmbd
-$ systemctl start ssh smbd nmbd
+$ systemctl enable smbd nmbd
+$ systemctl start smbd nmbd
 
 $ smbpasswd -a `whoami`
 $ vi /etc/samba/smb.conf
@@ -198,7 +199,6 @@ $
 $ systemctl set-default multi-user.target # graphical.target
 $ init 3 # 5
 
-
 ## install multiple gcc compiler versions
 $ apt install gcc-10 gcc-9
 
@@ -219,7 +219,7 @@ $ apt install ibus-libpinyin
 ## do not change default locale (en_US.UTF-8)
 $ dpkg-reconfigure locales
 
-## logout
+## logout or restart to take effect
 
 ## Settings / Region & Language / Input Sources / + / Chinese /
   Chinese (Intelligent Pinyin) / Add
@@ -239,60 +239,53 @@ Maximize window    : Super + Up arrow
 ---
 
 
-## VSCode, cpptools, clangd, CodeLLDB
-$ dpkg -i code_1.74.3-1673284829_amd64.deb
-# or,
-$ apt install apt-transport-https
-$ apt update  # Use apt instead of apt-get
-$ apt install code
+## AddressSanitizer (aka ASan) is a memory error detector for C/C++. It finds:
 
-## https://clangd.llvm.org/installation
-$ apt install clangd
-$ apt install clangd-13
-$ update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-13 100
+  Global buffer overflow
+  Heap buffer overflow
+  Stack buffer overflow
+  Initialization order bugs
+  Memory leaks
+  Use after free (dangling pointer dereference)
+  Use after return
+  Use after scope
 
----
 
-.vscode/launch.json :
+$ vi main.c
 
-{
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "type": "cppdbg" , // "lldb",
-      "request": "launch",
-      "name": "Debug",
-      "program": "${fileDirname}/${fileBasenameNoExtension}",
-      "args": [],
-      "cwd": "${workspaceFolder}",
-      "MIMode": "gdb",
-      "miDebuggerPath": "/usr/bin/gdb",
-      "preLaunchTask": "make",
-    }
-  ]
+#include <signal.h>
+#include <stdio.h>
+#ifndef NDEBUG
+#include <sanitizer/lsan_interface.h>
+#endif
+
+// signal(SIGCONT, handlerCont); // kill -CONT <pid>
+void handlerCont(int signum) {
+  printf("SIGCONT %d\n", signum);
+#ifndef NDEBUG
+  __lsan_do_recoverable_leak_check();
+#endif
 }
 
----
+#include <assert.h>
+#include "foo.h"
 
-.vscode/tasks.json :
+int main() {
+  signal(SIGCONT, handlerCont); // kill -CONT <pid>
+  printf("main\n");
+  foo();
 
-{
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "make",
-      "type": "shell", // "cppbuild"
-      "options": {
-        "cwd": "${workspaceFolder}/src",
-      },
-      "command": "/usr/bin/make",
-    }
-  ]
+  int a[1024];
+  int n = 10240;
+  // a[n] = 1; // asan
+  // assert(0); // -DNDEBUG
 }
 
----
+$
+
 
 $ vi Makefile
+
 # Makefile for subdirs
 
 # build dynamic library with -fPIC -shared
@@ -302,6 +295,15 @@ LDFLAGS  = # -L../foo -Wl,-rpath,'$$ORIGIN/../foo' -shared
 LDLIBS   = # -lfoo
 #CC      = $(CXX) # link with CXX for .cpp
 
+# make # NDEBUG=1
+ifdef NDEBUG
+CFLAGS   += -O3 # .cpp
+CPPFLAGS += -DNDEBUG
+else
+CFLAGS   += -g # .cpp
+LDFLAGS  += -fsanitize=address
+endif
+
 # target name is basename of one of the source files
 main : $(patsubst %.c,%.o,$(wildcard *.c)) # .cpp
 -include *.d
@@ -310,9 +312,9 @@ clean : ; -rm -fr *.o *.d
 
 $
 
----
 
 $ vi Makefile
+
 # Makefile for top dir
 
 # $(call makever,1.2.3)
@@ -356,7 +358,56 @@ clean :
 
 $
 
----
+
+## VSCode, cpptools, clangd, CodeLLDB
+$ dpkg -i code_1.74.3-1673284829_amd64.deb
+# or,
+$ apt install apt-transport-https
+$ apt update  # Use apt instead of apt-get
+$ apt install code
+
+## https://clangd.llvm.org/installation
+$ apt install clangd
+$ apt install clangd-13
+$ update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-13 100
+
+
+.vscode/launch.json :
+
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "cppdbg" , // "lldb",
+      "request": "launch",
+      "name": "Debug",
+      "program": "${fileDirname}/${fileBasenameNoExtension}",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "MIMode": "gdb",
+      "miDebuggerPath": "/usr/bin/gdb",
+      "preLaunchTask": "make",
+    }
+  ]
+}
+
+
+.vscode/tasks.json :
+
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "make",
+      "type": "shell", // "cppbuild"
+      "options": {
+        "cwd": "${workspaceFolder}/src",
+      },
+      "command": "/usr/bin/make",
+    }
+  ]
+}
+
 
 .vscode/settings.json :
 
