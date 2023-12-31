@@ -2,14 +2,54 @@
 
 Debian Linux
 
+## download the first iso ("DVD-1"): debian-11.5.0-amd64-DVD-1.iso
+
 ## Disconnect Cable to turn off network for fast installation
 
-## download the first iso ("DVD-1"):
-## debian-11.5.0-amd64-DVD-1.iso
+$ ls /sys/class/net/
+ens33
+$
 
-## mirror in china
-## (?) (help)
+## dynamic ip
+$ vi /etc/network/interfaces
+auto ens33
+allow-hotplug ens33
+iface ens33 inet dhcp
+$
+
+## static ip
+$ vi /etc/network/interfaces
+auto ens33
+allow-hotplug ens33
+iface ens33 inet static
+  address 192.168.1.2/24
+  gateway 192.157.1.1
+$
+
+## dns
+$ vi /etc/resolv.conf
+nameserver 192.168.1.1
+nameserver 8.8.8.8
+$
+
+$ whereis ifup
+$ ifup ens33
+$ ifdown ens33
+$ ethtool ens33
+
+$ ip addr | grep ens33
+inet 192.168.1.5/24 ens33
+$
+
+$ ping debian.org
+64 bytes from 151.101.194.132 (151.101.194.132)
+64 bytes from 151.101.194.132 (151.101.194.132)
+$
+
 ## https://mirrors.tuna.tsinghua.edu.cn/help/debian/
+## click (?) for help on mirror in china
+
+$ su -c 'apt install openssh-server'
 
 $ vi /etc/apt/sources.list
 deb https://mirrors.tuna.tsinghua.edu.cn/debian 		      bookworm 	          main contrib non-free non-free-firmware
@@ -21,6 +61,8 @@ $
 $ apt update
 $ apt upgrade
 
+$ su -c 'apt install sudo'
+
 $ cat /etc/group
 $ su -c "/usr/sbin/usermod -a -G sudo `whoami`"
 $ newgrp sudo
@@ -30,7 +72,7 @@ sudo
 $
 
 ## "automatic suspend - computer will suspend very soon because of inactivity"
-## disable suspend and hibernation (desktop environment)
+## disable suspend or hibernation (desktop environment)
 $ systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
 $ gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
 
@@ -46,12 +88,38 @@ $ vi ~/.inputrc
 set editing-mode vi
 $
 
-$ vi ~/.profile 
+# set environment variables like PATH in ~/.profile
+$ vi ~/.bashrc
 alias ls=ls --color=never
 PS1='\$ '
 $
 
-$ apt install openssh-server
+$ apt install apt-file
+$ apt-file update
+
+## list files from package
+$ apt-file list gcc
+gcc: /usr/bin/c99-gcc
+gcc: /usr/bin/gcc
+$
+
+## search for file from package
+$ apt-file -l search gcc
+gcc
+gcc-11
+$
+
+## list files from installed package
+$ dpkg -L gcc
+/usr/bin/c99-gcc
+/usr/bin/gcc
+$
+
+## search for file from installed package
+$ dpkg -S /usr/bin/gcc
+gcc: /usr/bin/c99-gcc
+$
+
 $ apt install samba
 $ systemctl | grep ssh
 $ systemctl enable ssh smbd nmbd
@@ -70,63 +138,15 @@ $ apt install gdb
 $ apt install cmake
 $ apt install gcc-doc gdb-doc manpages-dev
 
-## list files installed by package
-$ dpkg -L gcc
-/usr/bin/gcc
-$
-
-## list package which installs the file
-$ dpkg -S /usr/bin/gcc
-gcc: /usr/bin/c99-gcc
-$
-
-## tree with find
+## tree using find
 $ find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
 
-## find large size directories or files
+## find large size directories or files (use -h in both commands)
 $ du -h -d1 /home/* | sort -hr | head -5
-
----
-
-$ ls /sys/class/net/
-ens33
-$
-
-$ ip addr | grep ens33
-inet 192.168.1.5/24 ens33
-$
-
-## dynamic ip
-$ vi /etc/network/interfaces
-auto ens33
-allow-hotplug ens33
-iface ens33 inet dhcp
-$
-
-## static ip
-$ vi /etc/network/interfaces
-iface ens33 inet static
-  address 192.168.1.2/24
-  gateway 192.157.1.1
-$
-
-$ ethtool ens33
-$ ifquery ens33
-$ ifup ens33
-$ ifdown ens33
-$ systemctl restart networking
-
-## dns
-$ vi /etc/resolv.conf
-nameserver 192.168.1.1
-nameserver 8.8.8.8
-$
 
 $ timedatectl list-timezones
 $ timedatectl set-timezone "Asia/Shanghai"
 $ /usr/sbin/dpkg-reconfigure tzdata
-
----
 
 ## resize disk partition
 $ apt install gparted
@@ -164,8 +184,6 @@ $ PATH=$PATH:/usr/sbin sudo /usr/sbin/update-initramfs -u
 update-initramfs: Generating /boot/initrd.img-5.10.0-20-amd64
 $
 
----
-
 ## Console font: VGA
 $ /usr/sbin/dpkg-reconfigure console-setup
 
@@ -180,77 +198,6 @@ $
 $ systemctl set-default multi-user.target # graphical.target
 $ init 3 # 5
 
----
-
-## VSCode clangd (do not forget CodeLLDB)
-## https://code.visualstudio.com/docs/setup/linux
-
-$ dpkg -i code_1.74.3-1673284829_amd64.deb
-$ apt install apt-transport-https
-$ apt update # Use apt instead of apt-get
-$ apt install code
-
-## https://clangd.llvm.org/installation
-$ apt install clangd
-$ apt install clangd-13
-$ update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-13 100
-
----
-
-// .vscode/launch.json :
-
-{
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "type": "lldb",
-      "request": "launch",
-      "name": "Debug",
-      "program": "${fileDirname}/${fileBasenameNoExtension}",
-      "args": [],
-      "cwd": "${workspaceFolder}",
-      "preLaunchTask": "make",
-    }
-  ]
-}
-
----
-
-// .vscode/tasks.json :
-
-{
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "make", //new
-      "type": "shell",
-      "options": {
-        "cwd": "${workspaceFolder}/src",
-      },
-      "command": "/usr/bin/make", //new
-    }
-  ]
-}
-
----
-
-# Makefile :
-
-# build dynamic library with -fPIC -shared
-CFLAGS   = -g # -O3 -fPIC # CXXFLAGS for .cpp
-CPPFLAGS = -MMD -MP # -I../foo
-LDFLAGS  = # -L../foo -Wl,-rpath,'$$ORIGIN/../foo' -shared
-LDLIBS   = # -lfoo
-#CC      = $(CXX) # link with CXX for .cpp
-
-# target name is basename of one of the source files
-main : $(patsubst %.c,%.o,$(wildcard *.c)) # .cpp
--include *.d
-clean : ; -rm -fr *.o *.d
-.PHONY : clean
-
-
----
 
 ## install multiple gcc compiler versions
 $ apt install gcc-10 gcc-9
@@ -265,8 +212,6 @@ $ update-alternatives --config g++
 $ gcc --version
 $ g++ --version
 
----
-
 ## chinese input method editor (ime)
 $ apt install ibus-libpinyin
 
@@ -279,8 +224,6 @@ $ dpkg-reconfigure locales
 ## Settings / Region & Language / Input Sources / + / Chinese /
   Chinese (Intelligent Pinyin) / Add
 
----
-
 ## Left Super
 $ gsettings get org.gnome.mutter overlay-key
 'Super_L'
@@ -292,10 +235,245 @@ View split on right: Super + Left arrow
 Restore window     : Super + Down arrow
 Maximize window    : Super + Up arrow
 
+
 ---
 
 
+## VSCode, cpptools, clangd, CodeLLDB
+$ dpkg -i code_1.74.3-1673284829_amd64.deb
+# or,
+$ apt install apt-transport-https
+$ apt update  # Use apt instead of apt-get
+$ apt install code
 
+## https://clangd.llvm.org/installation
+$ apt install clangd
+$ apt install clangd-13
+$ update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-13 100
+
+---
+
+.vscode/launch.json :
+
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "cppdbg" , // "lldb",
+      "request": "launch",
+      "name": "Debug",
+      "program": "${fileDirname}/${fileBasenameNoExtension}",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "MIMode": "gdb",
+      "miDebuggerPath": "/usr/bin/gdb",
+      "preLaunchTask": "make",
+    }
+  ]
+}
+
+---
+
+.vscode/tasks.json :
+
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "make",
+      "type": "shell", // "cppbuild"
+      "options": {
+        "cwd": "${workspaceFolder}/src",
+      },
+      "command": "/usr/bin/make",
+    }
+  ]
+}
+
+---
+
+$ vi Makefile
+# Makefile for subdirs
+
+# build dynamic library with -fPIC -shared
+CFLAGS   = -g # -O3 -fPIC # CXXFLAGS for .cpp
+CPPFLAGS = -MMD -MP # -I../foo
+LDFLAGS  = # -L../foo -Wl,-rpath,'$$ORIGIN/../foo' -shared
+LDLIBS   = # -lfoo
+#CC      = $(CXX) # link with CXX for .cpp
+
+# target name is basename of one of the source files
+main : $(patsubst %.c,%.o,$(wildcard *.c)) # .cpp
+-include *.d
+clean : ; -rm -fr *.o *.d
+.PHONY : clean
+
+$
+
+---
+
+$ vi Makefile
+# Makefile for top dir
+
+# $(call makever,1.2.3)
+# major.minor.patch
+# libtool manual: -version-number
+define makever
+	@ $(MAKE) -C $@ soname=lib$@.so.$(word 1,$(subst ., ,$(1)))
+
+	@ cp $@/$@ $@/lib$@.so.$(1)
+
+	@ ( cd $@; \
+		ln -f -s lib$@.so.$(1) lib$@.so.$(word 1,$(subst ., ,$(1))) ; )
+
+	@ ( cd $@; \
+		ln -f -s lib$@.so.$(1) lib$@.so ; )
+endef
+
+SUBDIRS = main foo
+
+all : $(SUBDIRS)
+install : $(SUBDIRS)
+
+main : foo
+main : ; @ $(MAKE) -C $@
+foo : ; $(call makever,1.2.3)
+
+# make DESTDIR=~/foo install
+# Alexandre Duret-Lutz's Autotools Tutorial (without animations):
+# "is ready to be uncompressed in / on many hosts"
+install :
+	install -d $(DESTDIR)/usr/local/bin
+	install -d $(DESTDIR)/usr/local/lib
+	install -m 0755 main/main $(DESTDIR)/usr/local/bin
+	cp -P foo/*.so* $(DESTDIR)/usr/local/lib
+
+clean :
+	@ for dir in $(SUBDIRS); do \
+		$(MAKE) -C $$dir $@; \
+	done
+.PHONY : $(SUBDIRS) all install clean
+
+$
+
+---
+
+.vscode/settings.json :
+
+{
+  "breadcrumbs.enabled": false,
+  "breadcrumbs.icons": false,
+  "C_Cpp.clang_format_fallbackStyle": "none",
+  "C_Cpp.default.cppStandard": "c++17",
+  "C_Cpp.default.cStandard": "c17",
+  "C_Cpp.default.includePath": [
+    "${workspaceFolder}/src/foo",
+  ],
+  "C_Cpp.dimInactiveRegions": false,
+  "C_Cpp.errorSquiggles": "Disabled",
+  // "C_Cpp.formatting": "clangFormat",
+  "C_Cpp.formatting": "none",
+  "clangd.arguments": [
+    "--fallback-style=None",
+    "--header-insertion=never",
+  ],
+  "clangd.fallbackFlags": [
+    "-std=c++2a",
+    "-I../foo",
+    "-I/home/ljh/Downloads/boost_1_82_0",
+  ],
+  "clangd.semanticHighlighting": false,
+  "debug.onTaskErrors": "showErrors",
+  "debug.showBreakpointsInOverviewRuler": true,
+  "diffEditor.maxComputationTime": 0,
+  "editor.accessibilitySupport": "off",
+  "editor.codeLens": false,
+  "editor.copyWithSyntaxHighlighting": false,
+  "editor.dragAndDrop": false,
+  "editor.folding": false,
+  "editor.fontSize": 15,
+  "editor.hover.enabled": false,
+  "editor.inlayHints.enabled": "off",
+  "editor.lightbulb.enabled": false,
+  // "editor.lineNumbers": "off", //
+  "editor.links": false,
+  "editor.minimap.enabled": false,
+  "editor.quickSuggestions": {
+    "other": "off",
+  },
+  "editor.renderLineHighlight": "all",
+  "editor.roundedSelection": false,
+  "editor.rulers": [
+    72,
+  ],
+  "editor.semanticHighlighting.enabled": false,
+  "editor.suggest.showIcons": false,
+  // "editor.wordWrap": "wordWrapColumn", //
+  "editor.wordWrapColumn": 72,
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "explorer.openEditors.sortOrder": "alphabetical",
+  "extensions.ignoreRecommendations": true,
+  "files.associations": {
+    "iostream": "cpp"
+  },
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "git.autofetch": true,
+  "git.enableSmartCommit": true,
+  "git.ignoreRebaseWarning": true,
+  "git.openRepositoryInParentFolders": "never",
+  "go.toolsEnvVars": {
+    "LD_LIBRARY_PATH": "/path/to/lib",
+  },
+  "http.proxySupport": "off",
+  "[Log]": {
+    "editor.fontSize": 12, // output same as terminal
+  },
+  "outline.icons": false,
+  "outline.showArrays": false,
+  "outline.showBooleans": false,
+  "outline.showConstants": false,
+  "outline.showEnums": false,
+  "outline.showEvents": false,
+  "outline.showFields": false,
+  "outline.showFiles": false,
+  "outline.showKeys": false,
+  "outline.showNull": false,
+  "outline.showNumbers": false,
+  "outline.showProperties": false,
+  "outline.showStrings": false,
+  "outline.showVariables": false,
+  "[python]": {
+    "editor.formatOnType": false
+  },
+  "python.analysis.inlayHints.functionReturnTypes": false,
+  "python.analysis.inlayHints.pytestParameters": false,
+  "python.analysis.inlayHints.variableTypes": false,
+  "python.formatting.provider": "none",
+  "rust-analyzer.completion.autoimport.enable": false,
+  "rust-analyzer.completion.autoself.enable": false,
+  "rust-analyzer.completion.callable.snippets": "none",
+  "rust-analyzer.completion.postfix.enable": false,
+  "rust-analyzer.hover.actions.enable": false,
+  "rust-analyzer.inlayHints.typeHints.enable": false,
+  "rust-analyzer.lens.enable": false,
+  "terminal.integrated.copyOnSelection": true,
+  "terminal.integrated.persistentSessionReviveProcess": "never",
+  "terminal.integrated.shellIntegration.decorationsEnabled": "never",
+  "vim.hlsearch": true,
+  "vim.overrideCopy": false,
+  "vim.wrapscan": false,
+  "window.title": "${activeEditorLong}",
+  "workbench.editor.showIcons": false,
+  "workbench.editor.empty.hint": "hidden",
+  "workbench.iconTheme": null,
+  "workbench.settings.editor": "json", //ui
+  "workbench.settings.useSplitJSON": true,
+  "workbench.startupEditor": "newUntitledFile",
+}
+
+---
 
 
 </pre>
