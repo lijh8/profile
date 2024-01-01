@@ -90,7 +90,7 @@ $ vi ~/.inputrc
 set editing-mode vi
 $
 
-# set environment variables like PATH in ~/.profile
+## set environment variables like PATH in ~/.profile
 $ vi ~/.bashrc
 alias ls=ls --color=never
 PS1='\$ '
@@ -99,25 +99,25 @@ $
 $ apt install apt-file
 $ apt-file update
 
-## list files from package
+## list content of package
 $ apt-file list gcc
 gcc: /usr/bin/c99-gcc
 gcc: /usr/bin/gcc
 $
 
-## search for file from package
-$ apt-file -l search gcc
+## which package has the file
+$ apt-file --package-only search gcc
 gcc
 gcc-11
 $
 
-## list files from installed package
+## list content of installed package
 $ dpkg -L gcc
 /usr/bin/c99-gcc
 /usr/bin/gcc
 $
 
-## search for file from installed package
+## which installed package has the file
 $ dpkg -S /usr/bin/gcc
 gcc: /usr/bin/c99-gcc
 $
@@ -137,6 +137,7 @@ $
 $ apt install build-essential
 $ apt install gdb
 $ apt install cmake
+$ apt install automake autoconf libtool
 $ apt install gcc-doc gdb-doc manpages-dev
 
 ## tree using find
@@ -290,10 +291,14 @@ $ vi Makefile
 
 # build dynamic library with -fPIC -shared
 CFLAGS   = -g # -O3 -fPIC # CXXFLAGS for .cpp
-CPPFLAGS = -MMD -MP # -I../foo
+CPPFLAGS = -MMD -MP # -I../foo -DNDEBUG
 LDFLAGS  = # -L../foo -Wl,-rpath,'$$ORIGIN/../foo' -shared
 LDLIBS   = # -lfoo
 #CC      = $(CXX) # link with CXX for .cpp
+
+LDFLAGS  += -Wl,-rpath,'$$ORIGIN/../bar'
+LDFLAGS  += -Wl,-rpath,'$$ORIGIN/../lib'
+LDFLAGS  += -Wl,-soname,$(soname)
 
 # make # NDEBUG=1
 ifdef NDEBUG
