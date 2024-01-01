@@ -1,3 +1,4 @@
+
 <pre>
 
 Debian Linux
@@ -383,14 +384,14 @@ $ update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-13 100
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "cppdbg" , // "lldb",
+      "type": "lldb", // "cppdbg",
       "request": "launch",
       "name": "Debug",
       "program": "${fileDirname}/${fileBasenameNoExtension}",
       "args": [],
       "cwd": "${workspaceFolder}",
-      "MIMode": "gdb",
-      "miDebuggerPath": "/usr/bin/gdb",
+      // "MIMode": "gdb",
+      // "miDebuggerPath": "/usr/bin/gdb",
       "preLaunchTask": "make",
     }
   ]
