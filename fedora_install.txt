@@ -69,6 +69,7 @@ PS1='\$ '
 EDITOR=/usr/bin/vim
 alias ls='ls --color=never'
 alias tree='tree -n'
+ulimit -c unlimited # systemd-udev coredumpctl
 $
 
 $ dnf install openssh-server
@@ -185,6 +186,9 @@ $ dnf install code
 
 ## clangd
 $ dnf install clang clang-tools-extra
+$ update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-13 99
+$ update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-13 98
+$ update-alternatives --config gcc
 
 ## install from vsix on vscode
 $ wget https://github.com/vadimcn/codelldb/releases/download/v1.9.2/codelldb-x86_64-linux.vsix
@@ -192,6 +196,9 @@ $ wget https://github.com/vadimcn/codelldb/releases/download/v1.9.2/codelldb-x86
 $ dnf install llvm
 $ dnf install lldb
 $ dnf install libasan # address sanitizer
+$ dnf install systemd-udev # debian: systemd-coredump
+$ coredumpctl debug # bt
+$ coredumpctl --output=~/foo.core
 
 $ vi settings.json:
 
