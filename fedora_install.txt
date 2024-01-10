@@ -16,20 +16,15 @@ $
 ## https://mirrors.tuna.tsinghua.edu.cn/help/fedora/
 ## Fedora 30 or later mirror in china
 ## click (?) for help on mirror in china
-
 ## use baseurl, do not use metalink
 $ cp /etc/yum.repos.d/fedora.repo /etc/yum.repos.d/fedora.repo.bak
 $ cp /etc/yum.repos.d/fedora-updates.repo /etc/yum.repos.d/fedora-updates.repo.bak
-$ cp /etc/yum.repos.d/fedora-modular.repo /etc/yum.repos.d/fedora-modular.repo.bak
-$ cp /etc/yum.repos.d/fedora-updates-modular.repo /etc/yum.repos.d/fedora-updates-modular.repo.bak
 
 $ sed -e 's|^metalink=|#metalink=|g' \
       -e 's|^#baseurl=http://download.example/pub/fedora/linux|baseurl=https://mirrors.tuna.tsinghua.edu.cn/fedora|g' \
       -i.bak \
       /etc/yum.repos.d/fedora.repo \
-      /etc/yum.repos.d/fedora-modular.repo \
-      /etc/yum.repos.d/fedora-updates.repo \
-      /etc/yum.repos.d/fedora-updates-modular.repo
+      /etc/yum.repos.d/fedora-updates.repo 
 $
 
 $ vi /etc/yum.repos.d/fedora.repo
@@ -38,14 +33,6 @@ baseurl=https://mirrors.tuna.tsinghua.edu.cn/fedora/releases/$releasever/Everyth
 $
 $ vi /etc/yum.repos.d/fedora-updates.repo
 baseurl=https://mirrors.tuna.tsinghua.edu.cn/fedora/updates/$releasever/Everything/$basearch/
-##metalink=...
-$
-$ vi /etc/yum.repos.d/fedora-modular.repo
-baseurl=https://mirrors.tuna.tsinghua.edu.cn/fedora/releases/$releasever/Modular/$basearch/os/
-##metalink=...
-$
-$ vi /etc/yum.repos.d/fedora-updates-modular.repo
-baseurl=https://mirrors.tuna.tsinghua.edu.cn/fedora/updates/$releasever/Modular/$basearch/
 ##metalink=...
 $
 
@@ -93,7 +80,12 @@ $ systemctl enable sshd smb nmb
 $ systemctl start sshd smb nmb
 $ systemctl disable firewalld
 
-## disable SELINUX, restart required
+$ firewall-cmd --permanent --add-service=samba
+$ firewall-cmd --reload
+$ getsebool -a | grep samba
+$ setsebool -P samba_enable_home_dirs on
+
+## restart to take effect
 $ vi /etc/selinux/config
 SELINUX=disabled
 $
@@ -115,15 +107,8 @@ sda               8:0    0   35G  0 disk
 └─sda3            8:3    0   34G  0 part 
   └─fedora-root 253:0    0   15G  0 lvm  /
 $ 
-
 $ pvresize /dev/sda3
 $ lvextend -r -l +100%FREE /dev/mapper/fedora-root 
-
-$ df -h
-/dev/mapper/fedora-root   34G  3.2G   31G  10% /
-$
-
-# NetworkManager
 
 $ vi /etc/NetworkManager/system-connections/enp0s3.nmconnection
 [connection]
@@ -140,14 +125,11 @@ method=auto
 #gateway=192.168.1.1
 #dns=8.8.8.8;192.168.1.1
 $
-
 $ ip addr
 $ ip route
-$ ip link set enp0s3 up
-$ ip link set enp0s3 down
 $ ethtool enp0s3
 $ systemctl restart NetworkManager
-$ shutdown -r now
+$ shutdown -r now # restart to flush old settings
 
 $ dnf install NetworkManager-tui
 $ nmtui
@@ -167,7 +149,6 @@ PREFIX=24
 GATEWAY=192.168.1.1
 DNS1=192.168.1.1
 $
-
 $ systemctl restart network
 
 $ vi /etc/resolv.conf
@@ -177,27 +158,23 @@ $
 $ vi /etc/hostname 
 $ hostname --file /etc/hostname 
 
-
-## find largest directory or file
+## find largest directories or files
 $ du -h -d1 /home/* | sort -hr | head -5
 
 ## tree using find
 $ find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
+
+$ timedatectl
+$ timedatectl list-timezones
+$ timedatectl set-timezone "Asia/Shanghai"
 
 ## GCC, GDB, C, C++
 $ dnf group install "Development Tools"
 $ dnf group install "C Development Tools and Libraries"
 $ dnf install cmake
 
-$ timedatectl
-$ timedatectl list-timezones
-$ timedatectl set-timezone "Asia/Shanghai"
-
----
-
 ## VSCode, clangd, CodeLLDB
 ## https://code.visualstudio.com/docs/setup/linux#_rhel-fedora-and-centos-based-distributions
-
 $ rpm --import https://packages.microsoft.com/keys/microsoft.asc
 $ sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
 
@@ -208,29 +185,26 @@ $ dnf install code
 # clangd
 $ dnf install clang clang-tools-extra
 
-# CodeLLDB, vscode install from vsix 
+# install from vsix on vscode
 $ wget https://github.com/vadimcn/codelldb/releases/download/v1.9.2/codelldb-x86_64-linux.vsix
 
 $ dnf install llvm
 $ dnf install lldb
 
+# address sanitizer
 $ dnf install libasan
 
 $ vi settings.json:
 
   "clangd.fallbackFlags": [
     "-std=c++2a",
-    "-I/usr/lib/gcc/x86_64-redhat-linux/13/include/", // "sanitizer/lsan_interface.h"
+    // "-I/usr/include/sanitizer/lsan_interface.h" ,
     "-I../foo",
   ],
 
 $
 
-
----
-
 # run level
-
 $ ls /lib/systemd/system/*.target | grep multi-user
 /lib/systemd/system/multi-user.target
 $ 
@@ -243,8 +217,6 @@ multi-user.target
 $ 
 $ init 5 # or, 3
 
----
-
 ## Super (Command) on Left
 $ gsettings get org.gnome.mutter overlay-key
 'Super_L'
@@ -256,68 +228,20 @@ Restore window     : Super+Down,
 View split on left : Super+Left,
 View split on right: Super+Right,
 
----
-
-## Dash to Dock (by michele_g)
-## extensions.gnome.org ->
-## "click here to install browser extension" on the top of the page ->
-## refresh -> search "Dash to Dock" on the page -> Turn: ON ->
-## Dock ... (Show Applications) -> right click -> Dash to Dock Settings
-## -> Position and size -> Intelligent autohide -> Turn: Off
-
-## or, manual install or build source from
-## https://micheleg.github.io/dash-to-dock/
-
-$ dnf install gnome-browser-connector
-
-
----
-
-
-# chsh -s /bin/bash ljh
-# usermod -a -G wheel ljh
-# visudo
-  %wheel ALL=(ALL) ALL
-#
-# dnf list installed *network*
-# dnf search networkmanager
-# dnf provides nmtui
-# dnf repoquery -l NetworkManager-tui
-# dnf info NetworkManager-tui
-# dnf install NetworkManager-tui
-# nmtui
-  ipv4 <Manual>
-  Address 192.168.1.23
-  Gateway 192.168.1.1
-# vi /etc/sysconfig/network-scripts/ifcfg-enp0s3
-#
-# dnf install samba
-# smbpasswd -a ljh
-# systemctl enable {smb,nmb}  # bash brace expansion
-# systemctl start {smb,nmb}  # no space before or after comma ,
-# firewall-cmd --permanent --add-service=samba
-# firewall-cmd --reload
-# getsebool -a | grep samba
-# setsebool -P samba_enable_home_dirs on
-#
-# dnf group install "C Development Tools and Libraries"
-# yum install centos-release-scl  # software collections
-# yum install devtoolset-8
-# scl enable devtoolset-8 bash  # for current session
-# vi ~/.bashrc
+$ yum install centos-release-scl  # software collections
+$ yum install devtoolset-8
+$ scl enable devtoolset-8 bash  # for current session
+$ vi ~/.bashrc
   source scl_source enable devtoolset-8  # for all sessions
-#
-# lsblk
-# fdisk /dev/sdb
-# mkfs.ext4 /dev/sdb1
-# mkdir /mnt/data
-# mount /dev/sdb1 /mnt/data
-# df -h
-# vi /etc/fstab
-  /dev/sdb1 /mnt/data ext4 defaults 0 0
-# mount /mnt/data/
-#
-# find largest directory / file size
-$ du -h -d1 /home/* | sort -hr | head -5
 $
 
+$ lsblk
+$ fdisk /dev/sdb
+$ mkfs.ext4 /dev/sdb1
+$ mkdir /mnt/data
+$ mount /dev/sdb1 /mnt/data
+$ df -h
+$ vi /etc/fstab
+  /dev/sdb1 /mnt/data ext4 defaults 0 0
+$ mount /mnt/data/
+$
