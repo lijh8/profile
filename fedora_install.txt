@@ -16,7 +16,6 @@ $
 ## https://mirrors.tuna.tsinghua.edu.cn/help/fedora/
 ## Fedora 30 or later mirror in china
 ## click (?) for help on mirror in china
-## use baseurl, do not use metalink
 $ cp /etc/yum.repos.d/fedora.repo /etc/yum.repos.d/fedora.repo.bak
 $ cp /etc/yum.repos.d/fedora-updates.repo /etc/yum.repos.d/fedora-updates.repo.bak
 
@@ -27,6 +26,7 @@ $ sed -e 's|^metalink=|#metalink=|g' \
       /etc/yum.repos.d/fedora-updates.repo 
 $
 
+## use baseurl, do not use metalink
 $ vi /etc/yum.repos.d/fedora.repo
 baseurl=https://mirrors.tuna.tsinghua.edu.cn/fedora/releases/$releasever/Everything/$basearch/os/
 ##metalink=...
@@ -40,10 +40,6 @@ $ dnf makecache
 $ dnf update
 $ dnf upgrade
 
-## turn off auto suspend and hibernation
-$ systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
-$ gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
-
 $ dnf list --installed
 $ dnf list vim-enhanced
 $ dnf search vim-enhanced
@@ -53,6 +49,10 @@ $ dnf repoquery --list vim-enhanced
 $ dnf repoquery --file /usr/bin/vim
 $ dnf repoquery --installed --list vim-enhanced
 $ dnf repoquery --installed --file /usr/bin/vim
+
+## turn off auto suspend and hibernation
+$ systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+$ gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
 
 $ vi ~/.vimrc
 set hlsearch
@@ -90,17 +90,10 @@ $ vi /etc/selinux/config
 SELINUX=disabled
 $
 
-## resize disk partition
-$ dnf install gparted
-$ fdisk -l
-$ lsblk
-$ df -h
-
 ## resize lvm volume to use unallocated space 
 $ df -h
 /dev/mapper/fedora-root   15G  3.0G   12G  21% /
 $
-
 $ lsblk
 NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
 sda               8:0    0   35G  0 disk 
@@ -110,10 +103,25 @@ $
 $ pvresize /dev/sda3
 $ lvextend -r -l +100%FREE /dev/mapper/fedora-root 
 
+## resize disk partition
+$ dnf install gparted
+
+$ fdisk /dev/sdb
+$ mkfs.ext4 /dev/sdb1
+$ mkdir /mnt/data
+$ mount /dev/sdb1 /mnt/data
+$ vi /etc/fstab
+  /dev/sdb1 /mnt/data ext4 defaults 0 0
+$ mount /mnt/data/
+
+$ ip addr
+$ ip route
+$ ethtool enp0s3
+
+## autoconnect=true
 $ vi /etc/NetworkManager/system-connections/enp0s3.nmconnection
 [connection]
 id=enp0s3
-uuid=xxx
 type=ethernet
 autoconnect=true
 interface-name=enp0s3
@@ -125,23 +133,14 @@ method=auto
 #gateway=192.168.1.1
 #dns=8.8.8.8;192.168.1.1
 $
-$ ip addr
-$ ip route
-$ ethtool enp0s3
 $ systemctl restart NetworkManager
-$ shutdown -r now # restart to flush old settings
 
 $ dnf install NetworkManager-tui
 $ nmtui
-## static ip
-## ipv4 - Manual
-## Address 192.168.1.23
-## Gateway 192.168.1.1
-$
 
 $ vi /etc/sysconfig/network-scripts/ifcfg-enp0s3
 TYPE=Ethernet
-BOOTPROTO=none # or: dhcp
+BOOTPROTO=none # or: =dhcp
 ONBOOT=yes
 DEVICE=enp0s3
 IPADDR=192.168.1.123
@@ -154,6 +153,7 @@ $ systemctl restart network
 $ vi /etc/resolv.conf
 nameserver 192.168.1.1
 $
+$ ping fedoraproject.org
 
 $ vi /etc/hostname 
 $ hostname --file /etc/hostname 
@@ -216,6 +216,13 @@ multi-user.target
 $ 
 $ init 5 # or, 3
 
+$ yum install centos-release-scl  # software collections
+$ yum install devtoolset-8
+$ scl enable devtoolset-8 bash  # for current session
+$ vi ~/.bashrc
+  source scl_source enable devtoolset-8  # for all sessions
+$
+
 ## Super (Command) on Left
 $ gsettings get org.gnome.mutter overlay-key
 'Super_L'
@@ -227,20 +234,4 @@ Restore window     : Super+Down,
 View split on left : Super+Left,
 View split on right: Super+Right,
 
-$ yum install centos-release-scl  # software collections
-$ yum install devtoolset-8
-$ scl enable devtoolset-8 bash  # for current session
-$ vi ~/.bashrc
-  source scl_source enable devtoolset-8  # for all sessions
-$
-
-$ lsblk
-$ fdisk /dev/sdb
-$ mkfs.ext4 /dev/sdb1
-$ mkdir /mnt/data
-$ mount /dev/sdb1 /mnt/data
-$ df -h
-$ vi /etc/fstab
-  /dev/sdb1 /mnt/data ext4 defaults 0 0
-$ mount /mnt/data/
-$
+##
