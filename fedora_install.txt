@@ -141,7 +141,7 @@ $
 
 $ vi /etc/sysconfig/network-scripts/ifcfg-enp0s3
 TYPE=Ethernet
-BOOTPROTO=none # dhcp
+BOOTPROTO=none # or: dhcp
 ONBOOT=yes
 DEVICE=enp0s3
 IPADDR=192.168.1.123
@@ -172,6 +172,7 @@ $ timedatectl set-timezone "Asia/Shanghai"
 $ dnf group install "Development Tools"
 $ dnf group install "C Development Tools and Libraries"
 $ dnf install cmake
+$ dnf install automake autoconf libtool
 
 ## VSCode, clangd, CodeLLDB
 ## https://code.visualstudio.com/docs/setup/linux#_rhel-fedora-and-centos-based-distributions
@@ -182,29 +183,27 @@ $ dnf makecache
 $ dnf upgrade
 $ dnf install code
 
-# clangd
+## clangd
 $ dnf install clang clang-tools-extra
 
-# install from vsix on vscode
+## install from vsix on vscode
 $ wget https://github.com/vadimcn/codelldb/releases/download/v1.9.2/codelldb-x86_64-linux.vsix
 
 $ dnf install llvm
 $ dnf install lldb
-
-# address sanitizer
-$ dnf install libasan
+$ dnf install libasan # address sanitizer
 
 $ vi settings.json:
 
   "clangd.fallbackFlags": [
     "-std=c++2a",
-    // "-I/usr/include/sanitizer/lsan_interface.h" ,
+    "-I/usr/lib/gcc/x86_64-redhat-linux/13/include/sanitizer/lsan_interface.h", // fedora
     "-I../foo",
   ],
 
 $
 
-# run level
+## run level
 $ ls /lib/systemd/system/*.target | grep multi-user
 /lib/systemd/system/multi-user.target
 $ 
