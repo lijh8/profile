@@ -197,8 +197,8 @@ $ dnf install llvm
 $ dnf install lldb
 $ dnf install libasan # address sanitizer
 $ dnf install systemd-udev # debian: systemd-coredump
-$ coredumpctl debug # bt
-$ coredumpctl --output=~/foo.core
+$ coredumpctl debug # gdb: bt, backtrace
+$ coredumpctl --output=~/foo.core dump
 
 $ vi settings.json:
 
