@@ -1,6 +1,5 @@
-<pre>
 
-## Fedora Linux
+## Fedora Linux install
 
 ## Disconnect network cable to speed up install in china
 ## - Enable Network Adapter: Yes
@@ -14,25 +13,23 @@ $ groups
 wheel
 $
 
-## mirror in china
-
 ## https://mirrors.tuna.tsinghua.edu.cn/help/fedora/
 ## Fedora 30 or later mirror in china
-## Fedora (?) (help)
-## Use `baseurl`, and do not use `metalink`
+## click (?) for help on mirror in china
 
+## use baseurl, do not use metalink
 $ cp /etc/yum.repos.d/fedora.repo /etc/yum.repos.d/fedora.repo.bak
 $ cp /etc/yum.repos.d/fedora-updates.repo /etc/yum.repos.d/fedora-updates.repo.bak
 $ cp /etc/yum.repos.d/fedora-modular.repo /etc/yum.repos.d/fedora-modular.repo.bak
 $ cp /etc/yum.repos.d/fedora-updates-modular.repo /etc/yum.repos.d/fedora-updates-modular.repo.bak
 
 $ sed -e 's|^metalink=|#metalink=|g' \
-         -e 's|^#baseurl=http://download.example/pub/fedora/linux|baseurl=https://mirrors.tuna.tsinghua.edu.cn/fedora|g' \
-         -i.bak \
-         /etc/yum.repos.d/fedora.repo \
-         /etc/yum.repos.d/fedora-modular.repo \
-         /etc/yum.repos.d/fedora-updates.repo \
-         /etc/yum.repos.d/fedora-updates-modular.repo
+      -e 's|^#baseurl=http://download.example/pub/fedora/linux|baseurl=https://mirrors.tuna.tsinghua.edu.cn/fedora|g' \
+      -i.bak \
+      /etc/yum.repos.d/fedora.repo \
+      /etc/yum.repos.d/fedora-modular.repo \
+      /etc/yum.repos.d/fedora-updates.repo \
+      /etc/yum.repos.d/fedora-updates-modular.repo
 $
 
 $ vi /etc/yum.repos.d/fedora.repo
@@ -60,21 +57,20 @@ $ dnf upgrade
 $ systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
 $ gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
 
-
+$ dnf list --installed
+$ dnf list vim-enhanced
+$ dnf search vim-enhanced
 $ dnf install vim-enhanced
 
+$ dnf repoquery --list vim-enhanced
+$ dnf repoquery --file /usr/bin/vim
 $ dnf repoquery --installed --list vim-enhanced
-/usr/bin/vim
-$
-
 $ dnf repoquery --installed --file /usr/bin/vim
-vim-enhanced-2:9.0.1160-1.fc37.x86_64
-$
 
 $ vi ~/.vimrc
 set hlsearch
 set nowrapscan
-:syntax off
+syntax off
 $
 
 $ vi ~/.inputrc
@@ -84,11 +80,11 @@ $
 $ vi ~/.bashrc
 PS1='\$ '
 EDITOR=/usr/bin/vim
-alias ls=ls --color=never
+alias ls='ls --color=never'
+alias tree='tree -n'
 $
 
 $ dnf install openssh-server
-
 $ dnf install samba
 $ sudo smbpasswd -a `whoami`
 
@@ -104,49 +100,54 @@ $
 
 ## resize disk partition
 $ dnf install gparted
-
 $ fdisk -l
 $ lsblk
 $ df -h
 
-## resize lvm volume to use unallocated space
-
+## resize lvm volume to use unallocated space 
 $ df -h
 /dev/mapper/fedora-root   15G  3.0G   12G  21% /
 $
 
 $ lsblk
 NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
-sda               8:0    0   35G  0 disk
-└─sda3            8:3    0   34G  0 part
+sda               8:0    0   35G  0 disk 
+└─sda3            8:3    0   34G  0 part 
   └─fedora-root 253:0    0   15G  0 lvm  /
-$
+$ 
 
 $ pvresize /dev/sda3
-$ lvextend -r -l +100%FREE /dev/mapper/fedora-root
+$ lvextend -r -l +100%FREE /dev/mapper/fedora-root 
 
 $ df -h
 /dev/mapper/fedora-root   34G  3.2G   31G  10% /
 $
 
-# network
-
-$ ip addr
+# NetworkManager
 
 $ vi /etc/NetworkManager/system-connections/enp0s3.nmconnection
 [connection]
 id=enp0s3
 uuid=xxx
 type=ethernet
+autoconnect=true
 interface-name=enp0s3
 
 [ipv4]
-method=auto # manual
+method=auto
+#method=manual
 #address=192.168.1.100/24
 #gateway=192.168.1.1
 #dns=8.8.8.8;192.168.1.1
 $
+
+$ ip addr
+$ ip route
+$ ip link set enp0s3 up
+$ ip link set enp0s3 down
+$ ethtool enp0s3
 $ systemctl restart NetworkManager
+$ shutdown -r now
 
 $ dnf install NetworkManager-tui
 $ nmtui
@@ -167,22 +168,20 @@ GATEWAY=192.168.1.1
 DNS1=192.168.1.1
 $
 
+$ systemctl restart network
+
 $ vi /etc/resolv.conf
 nameserver 192.168.1.1
 $
 
-$ ip addr
-$ ip route
-$ ip down enp0s3
-$ ip up enp0s3
-$ ethtool enp0s3
-$ systemctl restart networking
+$ vi /etc/hostname 
+$ hostname --file /etc/hostname 
 
 
 ## find largest directory or file
 $ du -h -d1 /home/* | sort -hr | head -5
 
-## tree with find
+## tree using find
 $ find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
 
 ## GCC, GDB, C, C++
@@ -209,10 +208,9 @@ $ dnf install code
 # clangd
 $ dnf install clang clang-tools-extra
 
-# CodeLLDB, vscode install from vsix
+# CodeLLDB, vscode install from vsix 
 $ wget https://github.com/vadimcn/codelldb/releases/download/v1.9.2/codelldb-x86_64-linux.vsix
 
-# it's optional, prefer gcc gdb
 $ dnf install llvm
 $ dnf install lldb
 
@@ -235,14 +233,14 @@ $
 
 $ ls /lib/systemd/system/*.target | grep multi-user
 /lib/systemd/system/multi-user.target
-$
+$ 
 $ systemctl set-default multi-user.target
 Removed "/etc/systemd/system/default.target".
 Created symlink /etc/systemd/system/default.target → /usr/lib/systemd/system/multi-user.target.
-$
+$ 
 $ systemctl get-default
 multi-user.target
-$
+$ 
 $ init 5 # or, 3
 
 ---
@@ -274,8 +272,6 @@ $ dnf install gnome-browser-connector
 
 
 ---
-
-
 
 
 # chsh -s /bin/bash ljh
@@ -323,5 +319,5 @@ $ dnf install gnome-browser-connector
 #
 # find largest directory / file size
 $ du -h -d1 /home/* | sort -hr | head -5
+$
 
-</pre>
