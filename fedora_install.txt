@@ -13,8 +13,11 @@ $ groups
 wheel
 $
 
+## turn off auto suspend and hibernation
+$ systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+$ gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
+
 ## https://mirrors.tuna.tsinghua.edu.cn/help/fedora/
-## Fedora 30 or later mirror in china
 ## click (?) for help on mirror in china
 $ cp /etc/yum.repos.d/fedora.repo /etc/yum.repos.d/fedora.repo.bak
 $ cp /etc/yum.repos.d/fedora-updates.repo /etc/yum.repos.d/fedora-updates.repo.bak
@@ -50,10 +53,6 @@ $ dnf repoquery --file /usr/bin/vim
 $ dnf repoquery --installed --list vim-enhanced
 $ dnf repoquery --installed --file /usr/bin/vim
 
-## turn off auto suspend and hibernation
-$ systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
-$ gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
-
 $ vi ~/.vimrc
 set hlsearch
 set nowrapscan
@@ -69,7 +68,7 @@ PS1='\$ '
 EDITOR=/usr/bin/vim
 alias ls='ls --color=never'
 alias tree='tree -n'
-ulimit -c unlimited # systemd-udev coredumpctl
+ulimit -c unlimited  # coredump
 $
 
 $ dnf install openssh-server
@@ -79,30 +78,36 @@ $ sudo smbpasswd -a `whoami`
 $ systemctl list-unit-files | grep sshd
 $ systemctl enable sshd smb nmb
 $ systemctl start sshd smb nmb
-$ systemctl disable firewalld
+
+$ smbpasswd -a `whoami`
+$ vi /etc/samba/smb.conf
+[homes]
+  read only = no
+  create mask = 0755
+  directory mask = 0755
+$
 
 $ firewall-cmd --permanent --add-service=samba
 $ firewall-cmd --reload
 $ getsebool -a | grep samba
 $ setsebool -P samba_enable_home_dirs on
 
-## restart to take effect
-$ vi /etc/selinux/config
+$ systemctl disable firewalld
+$ vi /etc/selinux/config  # restart to take effect
 SELINUX=disabled
 $
 
-## resize lvm volume to use unallocated space 
+## resize lvm volume to use unallocated free space 
 $ df -h
 /dev/mapper/fedora-root   15G  3.0G   12G  21% /
 $
 $ lsblk
-NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
-sda               8:0    0   35G  0 disk 
-└─sda3            8:3    0   34G  0 part 
-  └─fedora-root 253:0    0   15G  0 lvm  /
+sda                8:0  0  35G  0  disk 
+└─sda3             8:3  0  34G  0  part 
+  └─fedora-root  253:0  0  15G  0  lvm   /
 $ 
 $ pvresize /dev/sda3
-$ lvextend -r -l +100%FREE /dev/mapper/fedora-root 
+$ lvextend  -r  -l  +100%FREE  /dev/mapper/fedora-root 
 
 ## resize disk partition
 $ dnf install gparted
@@ -141,7 +146,7 @@ $ nmtui
 
 $ vi /etc/sysconfig/network-scripts/ifcfg-enp0s3
 TYPE=Ethernet
-BOOTPROTO=none # or: =dhcp
+BOOTPROTO=none  # or: =dhcp
 ONBOOT=yes
 DEVICE=enp0s3
 IPADDR=192.168.1.123
@@ -184,20 +189,20 @@ $ dnf makecache
 $ dnf upgrade
 $ dnf install code
 
-## clangd
+## clang-tools-extra (clangd)
 $ dnf install clang clang-tools-extra
 $ update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-13 99
-$ update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-13 98
-$ update-alternatives --config gcc
+$ update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-12 98
+$ update-alternatives --config clangd
 
 ## install from vsix on vscode
 $ wget https://github.com/vadimcn/codelldb/releases/download/v1.9.2/codelldb-x86_64-linux.vsix
 
 $ dnf install llvm
 $ dnf install lldb
-$ dnf install libasan # address sanitizer
-$ dnf install systemd-udev # debian: systemd-coredump
-$ coredumpctl debug # gdb: bt, backtrace
+$ dnf install libasan  # address sanitizer
+$ dnf install systemd-udev  # debian: systemd-coredump
+$ coredumpctl debug  # gdb: bt, backtrace
 $ coredumpctl --output=~/foo.core dump
 
 $ vi settings.json:
@@ -221,7 +226,7 @@ $
 $ systemctl get-default
 multi-user.target
 $ 
-$ init 5 # or, 3
+$ init 5  # or, 3
 
 $ yum install centos-release-scl  # software collections
 $ yum install devtoolset-8
