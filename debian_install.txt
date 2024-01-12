@@ -7,9 +7,6 @@ $ ls /sys/class/net/
 ens33
 $
 $ ip addr
-$ /usr/sbin/ifup ens33
-$ ifdown ens33
-$ ethtool ens33
 
 ## dynamic ip
 $ vi /etc/network/interfaces
@@ -26,6 +23,20 @@ iface ens33 inet static
   address 192.168.1.2/24
   gateway 192.157.1.1
 $
+$ ifup ens33
+$ ifdown ens33
+$ ethtool ens33
+
+## gnome desktop
+$ vi /etc/NetworkManager/system-connections/enp0s3.nmconnection
+[ipv4]
+method=auto
+#method=manual
+#address=192.168.1.100/24
+#gateway=192.168.1.1
+#dns=8.8.8.8;192.168.1.1
+$
+$ systemctl restart NetworkManager
 
 ## dns
 $ vi /etc/resolv.conf
@@ -117,7 +128,7 @@ $ vi /etc/samba/smb.conf
 $
 
 $ apt install build-essential
-$ apt install gdb
+$ apt install gdb  ## lldb
 $ apt install cmake
 $ apt install automake autoconf libtool
 $ apt install gcc-doc gdb-doc manpages-dev
