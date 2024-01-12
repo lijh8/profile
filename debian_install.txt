@@ -28,7 +28,7 @@ $ ifdown ens33
 $ ethtool ens33
 
 ## gnome desktop
-$ vi /etc/NetworkManager/system-connections/enp0s3.nmconnection
+$ vi /etc/NetworkManager/system-connections/ens33.nmconnection
 [ipv4]
 method=auto
 #method=manual
@@ -59,19 +59,18 @@ $
 $ apt update
 $ apt upgrade
 
-$ cat /etc/group
+$ vi /etc/group
 $ su -c "/usr/sbin/usermod -a -G sudo `whoami`"
 $ sg sudo
-$ newgrp sudo
 $ groups
 sudo
 $
 
-$ vi ~/.inputrc
+$ vi ~/.inputrc  # readline
 set editing-mode vi
 $
 
-## set environment variables like PATH in ~/.profile
+## environment variables in ~/.profile, eg. PATH
 $ vi ~/.bashrc
 PS1='\$ '
 ulimit -c unlimited  # coredump
@@ -127,18 +126,21 @@ $ vi /etc/samba/smb.conf
   directory mask = 0755
 $
 
+## LeakSanitizer does not work under ptrace (strace, gdb)
+## Address Sanitizer (asan) will report memory usage problems 
+## by running a program built with asan. do not run it in a debugger.
 $ apt install build-essential
-$ apt install gdb  ## lldb
+$ apt install gdb 
 $ apt install cmake
 $ apt install automake autoconf libtool
 $ apt install gcc-doc gdb-doc manpages-dev
-$ apt install clang llvm lldb  # LeakSanitizer does not work under ptrace (strace, gdb, etc)
+$ apt install clang llvm lldb  
 
 ## VSCode, cpptools, clangd, CodeLLDB
-$ dpkg -i code_1.74.3-1673284829_amd64.deb
-$ apt install apt-transport-https
-$ apt update  # use apt instead of apt-get
-$ apt install code
+$ apt install ./<file>.deb
+$ dpkg -i <file>.deb
+$ apt install -f # Install dependencies
+$ /usr/bin/code
 
 ## https://clangd.llvm.org/installation
 $ apt install clangd
@@ -153,6 +155,7 @@ $ update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100
 $ update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
 $ update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 100
 
+## mode: auto, manual. priority matters in auto mode.
 $ update-alternatives --config gcc
 $ update-alternatives --config g++
 $ gcc --version
