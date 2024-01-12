@@ -1,13 +1,12 @@
 Debian Linux install
 
 ## download the first iso ("DVD-1"): debian-11.5.0-amd64-DVD-1.iso
-## disconnect Cable to turn off network for fast installation
+## disconnect network cable for fast installation
 
 $ ls /sys/class/net/
 ens33
 $
-
-$ ip addr | grep inet
+$ ip addr
 $ /usr/sbin/ifup ens33
 $ ifdown ens33
 $ ethtool ens33
@@ -40,10 +39,10 @@ $ ping debian.org
 ## click (?) for help on mirror in china
 
 $ vi /etc/apt/sources.list
-deb https://mirrors.tuna.tsinghua.edu.cn/debian 		      bookworm 	          main contrib non-free non-free-firmware
-deb https://mirrors.tuna.tsinghua.edu.cn/debian 		      bookworm-updates 	  main contrib non-free non-free-firmware
-deb https://mirrors.tuna.tsinghua.edu.cn/debian 		      bookworm-backports 	main contrib non-free non-free-firmware
-deb https://mirrors.tuna.tsinghua.edu.cn/debian-security	bookworm-security  	main contrib non-free non-free-firmware
+deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm            main contrib non-free non-free-firmware
+deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm-updates    main contrib non-free non-free-firmware
+deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm-backports  main contrib non-free non-free-firmware
+deb https://mirrors.tuna.tsinghua.edu.cn/debian-security  bookworm-security   main contrib non-free non-free-firmware
 $
 
 $ apt update
@@ -51,8 +50,8 @@ $ apt upgrade
 
 $ cat /etc/group
 $ su -c "/usr/sbin/usermod -a -G sudo `whoami`"
-$ newgrp sudo
 $ sg sudo
+$ newgrp sudo
 $ groups
 sudo
 $
@@ -63,9 +62,10 @@ $
 
 ## set environment variables like PATH in ~/.profile
 $ vi ~/.bashrc
+PS1='\$ '
+ulimit -c unlimited  # coredump
 alias ls="ls --color=never"
 alias tree="tree -n"
-PS1='\$ '
 $
 
 $ apt install vim
@@ -99,7 +99,7 @@ gcc: /usr/bin/gcc
 $
 
 ## which package has the file
-$ apt-file --package-only search gcc
+$ apt-file --package-only search /usr/bin/gcc
 gcc
 gcc-11
 $
@@ -156,7 +156,7 @@ $ timedatectl list-timezones
 $ timedatectl set-timezone "Asia/Shanghai"
 $ /usr/sbin/dpkg-reconfigure tzdata
 
-## console font: VGA
+## Console Font: VGA
 $ /usr/sbin/dpkg-reconfigure console-setup
 
 $ systemctl get-default
@@ -167,13 +167,10 @@ $ ls /lib/systemd/system/*.target | grep multi-user
 /lib/systemd/system/multi-user.target
 $
 
-$ systemctl set-default multi-user.target # graphical.target
-$ init 3 # 5
+$ systemctl set-default multi-user.target  # graphical.target
+$ init 3  # 5
 
 $ lsblk
-sr0
-$
-
 $ fdisk /dev/sdb
 $ mkfs.ext4 /dev/sdb1
 $ mount /dev/sdb1 /mnt/data
