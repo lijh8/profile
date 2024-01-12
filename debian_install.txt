@@ -121,6 +121,7 @@ $ apt install gdb
 $ apt install cmake
 $ apt install automake autoconf libtool
 $ apt install gcc-doc gdb-doc manpages-dev
+$ apt install clang llvm lldb  # LeakSanitizer does not work under ptrace (strace, gdb, etc)
 
 ## VSCode, cpptools, clangd, CodeLLDB
 $ dpkg -i code_1.74.3-1673284829_amd64.deb
