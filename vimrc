@@ -4,10 +4,14 @@
 " $ sudo vim -u /home/ljh/.vimrc /etc/systemd/system.conf
 
 set autoindent
+set expandtab
 set hlsearch
-set mouse=a  " Win:SHIFT+mouse, Mac:fn+mouse
-set nobackup
-set noswapfile
+set incsearch
+set mouse=a " Win:SHIFT+mouse, Mac:fn+mouse
 set nowrapscan
-set nowritebackup
+set number
+set shiftwidth=4
+set tabstop=4
+set updatetime=100
+filetype on
 syntax off
