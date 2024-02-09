@@ -1,100 +1,31 @@
-<pre>
-
 Ubuntu Linux
-## turn off network for fast installation
 
-## mirror in china
-## ubuntu (?) -> help
-## https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/
 
-$ cp /etc/apt/sources.list /etc/apt/sources.list.bak
-$ sudo sed -i "s@http://.*archive.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
-$ sudo sed -i "s@http://.*security.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
-$ apt update
-$ apt upgrade
+## disconnect network cable for fast installation
 
-## add user to sudo group
-$ usermod -a -G sudo `whoami`
-$ groups
-sudo
+$ ls /sys/class/net/
+ens33
+$
+$ ip addr
+
+## dynamic ip
+$ vi /etc/network/interfaces
+auto ens33
+allow-hotplug ens33
+iface ens33 inet dhcp
 $
 
-## set default editor
-$ update-alternatives --config editor
-
-$ vi ~/.vimrc
-set hlsearch
-set nowrapscan
-:syntax off
+## static ip
+$ vi /etc/network/interfaces
+auto ens33
+allow-hotplug ens33
+iface ens33 inet static
+  address 192.168.1.2/24
+  gateway 192.157.1.1
 $
-
-$ cat ~/.inputrc
-set editing-mode vi
-$
-
-$ vi ~/.profile # ~/.bash_profile # ~/.bashrc
-PS1='\$ '
-export HISTCONTROL="ignoredups:erasedups"
-export PROMPT_COMMAND='history -a'
-$
-
-$ apt install openssh-server
-$ apt install samba
-$ sudo smbpasswd -a `whoami`
-
-$ vi /etc/samba/smb.conf
-[homes]
-  browseable = no
-  read only = no
-  create mask = 0755
-  directory mask = 0755
-$
-
-$ systemctl | grep -i ssh
-$ systemctl enable ssh smbd nmbd
-$ systemctl start ssh smbd nmbd
-$ systemctl disable ufw
-
-## firewall
-$ ufw app list
-$ ufw allow Samba
-
-## list files in package
-$ dpkg -L vim
-/usr/bin/vim.basic
-$
-
-## show the package name of a file
-$ dpkg -S /usr/bin/vim.basic
-vim: /usr/bin/vim.basic
-$
-
-## find large size directories or files
-$ du -h -d1 /home/* | sort -hr | head -5
-
-## find for tree
-$ find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
-
-## gcc gdb gcc-doc gdb-doc c++ cmake manpages-dev
-$ apt install build-essential
-
-## VSCode clangd (do not forget CodeLLDB)
-$ sudo apt install clangd
-
----
-
-## resize disk partition
-$ apt install gparted
-
-$ lsblk
-$ df -h
-$ fdisk /dev/sdb
-$ mkfs.ext4 /dev/sdb1
-$ mkdir /mnt/data
-$ mount /dev/sdb1 /mnt/data
-$ vi /etc/fstab
-  /dev/sdb1 /mnt/data ext4 defaults 0 0
-$ mount /mnt/data/
+$ ifup ens33
+$ ifdown ens33
+$ ethtool ens33
 
 ## dynamic ip address
 $ vi /etc/netplan/00-installer-config.yaml
@@ -117,27 +48,186 @@ network:
         addresses: [192.168.1.1, 8.8.8.8]
 $
 
+## dns
+$ vi /etc/resolv.conf
+nameserver 192.168.1.1
+nameserver 8.8.8.8
+$
+
+$ ping ubuntu.com
+
+## https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/
+## click (?) for help on mirror in china
+
+$ cp /etc/apt/sources.list /etc/apt/sources.list.bak
+$ sudo sed -i "s@http://.*archive.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
+$ sudo sed -i "s@http://.*security.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
+$
+$ vi /etc/apt/sources.list
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ mantic           main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ mantic-updates   main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ mantic-backports main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ mantic-security  main restricted universe multiverse
+$ 
+$ apt update
+$ apt upgrade
+
+$ vi /etc/group
+$ usermod -a -G sudo `whoami`
+$ sg sudo
+$ groups
+sudo
+$
+
+$ vi ~/.inputrc
+set editing-mode vi
+$
+
+## environment variables in ~/.profile, eg. PATH
+$ vi ~/.bashrc
+PS1='\$ '
+ulimit -c unlimited  # coredump
+alias ls="ls --color=never"
+alias tree="tree -n"
+export HISTCONTROL="ignoredups:erasedups"
+export PROMPT_COMMAND='history -a'
+$
+
+$ apt install vim
+$ update-alternatives --config editor
+$ vi -u /home/ljh/.vimrc ~/.vimrc
+set hlsearch
+set nowrapscan
+syntax off
+$
+
+$ apt list --installed ifupdown openssh-server isc-dhcp-client sudo
+
+## list content of installed package
+$ dpkg -L gcc
+/usr/bin/c99-gcc
+/usr/bin/gcc
+$
+
+## which installed package has the file
+$ dpkg -S /usr/bin/gcc
+gcc: /usr/bin/c99-gcc
+$
+
+$ apt install apt-file
+$ apt-file update
+
+## list content of package
+$ apt-file list gcc
+gcc: /usr/bin/c99-gcc
+gcc: /usr/bin/gcc
+$
+
+## which package has the file
+$ apt-file --package-only search /usr/bin/gcc
+gcc
+gcc-11
+$
+
+$ apt install openssh-server samba
+$ systemctl enable ssh smbd nmbd
+$ systemctl start ssh smbd nmbd
+$ systemctl disable ufw
+
+$ sudo smbpasswd -a `whoami`
+$ vi /etc/samba/smb.conf
+[homes]
+  browseable = no
+  read only = no
+  create mask = 0755
+  directory mask = 0755
+$
+
+## firewall
+$ ufw app list
+$ ufw allow Samba
+
+$ apt install build-essential
+$ apt install gdb 
+$ apt install cmake
+$ apt install automake autoconf libtool pkg-config
+$ apt install gcc-doc gdb-doc manpages-dev
+$ apt install clang llvm lldb  
+
+## VSCode, cpptools, clangd, CodeLLDB
+$ apt install ./<file>.deb
+$ dpkg -i <file>.deb
+$ apt install -f # Install dependencies
+$ /usr/bin/code
+
+## https://clangd.llvm.org/installation
+$ apt install clangd
+$ apt install clangd-13
+$ update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-13 100
+
+## install multiple gcc compiler versions
+$ apt install gcc-10 gcc-9
+
+$ update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90
+$ update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100
+$ update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
+$ update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 100
+
+## mode: auto, manual. priority matters in auto mode.
+$ update-alternatives --config gcc
+$ update-alternatives --config g++
+$ gcc --version
+$ g++ --version
+
+## tree using find
+$ find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
+
+## find large size directories or files (use -h in both commands)
+$ du -h -d1 /home/* | sort -hr | head -5
+
 $ timedatectl list-timezones
 $ timedatectl set-timezone "Asia/Shanghai"
+$ /usr/sbin/dpkg-reconfigure tzdata
+
+## Console Font: VGA
+$ /usr/sbin/dpkg-reconfigure console-setup
 
 $ ls -l /etc/systemd/system/default.target
 /etc/systemd/system/default.target -> /lib/systemd/system/multi-user.target
+$ systemctl get-default
 $ systemctl set-default multi-user.target # graphical.target
 $ init 3 # 5
 
----
+$ lsblk
+$ df -h
+$ fdisk /dev/sdb
+$ mkfs.ext4 /dev/sdb1
+$ mkdir /mnt/data
+$ mount /dev/sdb1 /mnt/data
+$ vi /etc/fstab
+  /dev/sdb1 /mnt/data ext4 defaults 0 0
+$ mount /mnt/data/
 
-## chinese input method (ime) ibus-libpinyin
+## resize disk partition
+$ apt install gparted
+
+## chinese input method editor (ime) ibus-libpinyin
   Settings / Region & Language / Manage Installed Languages / Language
   / Install Remove Languages... / Chinese (Simplified): * / Apply
-## relogin required
+## restart required
 ## add an input source
   Settings / Keyboard / Input Sources / + / Chinese
   / Chinese (intelligent pinyin) / Add
 
----
+$ apt install ibus-libpinyin
+$ dpkg-reconfigure locales
 
-## hide "show applications" on dock
+## disable suspend or hibernation
+## automatic suspend - computer will suspend very soon because of inactivity
+$ systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+$ gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
+
+## hide "show apps" on dock
 $ gsettings set org.gnome.shell.extensions.dash-to-dock show-show-apps-button false
 
 ## Left Super
@@ -151,22 +241,14 @@ View split on right: Super + Left arrow
 Restore window     : Super + Down arrow
 Maximize window    : Super + Up arrow
 
----
-
-# Error constructing proxy for org.gnome.Terminal
+## Error constructing proxy for org.gnome.Terminal
 $ localectl set-locale LANG="en_US.UTF-8"
 
-# or,
+## or,
 $ vi /etc/default/locale
 LANG=en_US.UTF-8
 $
 
-# then restart
+## then restart
 $ shutdown -r now
-
----
-
-
-
-
-</pre>
+$
