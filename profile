@@ -1,10 +1,12 @@
 # ~/.profile
-# don't use the name ~/.bash_profile even it's bash for lldb
+
 PS1='\$ '
-set -o vi  # lldb needs this besides ~/.editrc and ~/.inputrc
-EDITOR=$(which vi)  # update-alternative --config EDITOR
-alias ls=ls --color=never
+set -o vi
 ulimit -c unlimited
+
+EDITOR=$(which vi)  # update-alternative --config EDITOR
+alias ls="ls --color=never"
+alias tree="tree -n"
 
 export HISTCONTROL="ignoredups:erasedups:ignorespace"
 export PROMPT_COMMAND='history -a'
