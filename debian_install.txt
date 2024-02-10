@@ -14,7 +14,6 @@ auto ens33
 allow-hotplug ens33
 iface ens33 inet dhcp
 $
-
 ## static ip
 $ vi /etc/network/interfaces
 auto ens33
@@ -43,7 +42,6 @@ $ vi /etc/resolv.conf
 nameserver 192.168.1.1
 nameserver 8.8.8.8
 $
-
 $ ping debian.org
 
 ## https://mirrors.tuna.tsinghua.edu.cn/help/debian/
@@ -55,7 +53,6 @@ deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm-updates    ma
 deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm-backports  main contrib non-free non-free-firmware
 deb https://mirrors.tuna.tsinghua.edu.cn/debian-security  bookworm-security   main contrib non-free non-free-firmware
 $
-
 $ apt update
 $ apt upgrade
 
@@ -78,10 +75,11 @@ alias ls="ls --color=never"
 alias tree="tree -n"
 $
 
-$ apt install vim
+$ apt install vim # vim-tiny is not enough
 $ update-alternatives --config editor
 $ vi -u /home/ljh/.vimrc ~/.vimrc
 set hlsearch
+set incsearch
 set nowrapscan
 syntax off
 $
@@ -93,7 +91,6 @@ $ dpkg -L gcc
 /usr/bin/c99-gcc
 /usr/bin/gcc
 $
-
 ## which installed package has the file
 $ dpkg -S /usr/bin/gcc
 gcc: /usr/bin/c99-gcc
@@ -101,13 +98,11 @@ $
 
 $ apt install apt-file
 $ apt-file update
-
 ## list content of package
 $ apt-file list gcc
 gcc: /usr/bin/c99-gcc
 gcc: /usr/bin/gcc
 $
-
 ## which package has the file
 $ apt-file --package-only search /usr/bin/gcc
 gcc
@@ -117,7 +112,6 @@ $
 $ apt install openssh-server samba
 $ systemctl enable ssh smbd nmbd
 $ systemctl start ssh smbd nmbd
-
 $ smbpasswd -a `whoami`
 $ vi /etc/samba/smb.conf
 [homes]
@@ -132,13 +126,12 @@ $
 $ apt install build-essential
 $ apt install gdb 
 $ apt install cmake
-$ apt install automake autoconf libtool
+$ apt install automake autoconf libtool pkg-config gettext
 $ apt install gcc-doc gdb-doc manpages-dev
 $ apt install clang llvm lldb  
 
 ## VSCode, cpptools, clangd, CodeLLDB
-$ apt install ./<file>.deb
-$ dpkg -i <file>.deb
+$ dpkg -i code_1.86.1-1707298119_amd64.deb
 $ apt install -f # Install dependencies
 $ /usr/bin/code
 
@@ -177,11 +170,9 @@ $ /usr/sbin/dpkg-reconfigure console-setup
 $ systemctl get-default
 graphical.target
 $
-
 $ ls /lib/systemd/system/*.target | grep multi-user
 /lib/systemd/system/multi-user.target
 $
-
 $ systemctl set-default multi-user.target  # graphical.target
 $ init 3  # 5
 
@@ -201,18 +192,20 @@ $
 ## resize disk partition
 $ apt install gparted
 ## Disks / Delete swap partition / Delete extended partition
-## / resize: reserve 1.0 GB (same) free space for extended and swap
-## / create extended partition / create swap partition
-
+##  / resize: reserve 1.0 GB (same) free space for extended and swap
+##  / create extended partition / create swap partition
+##
 ## chinese input method editor (ime)
 $ apt install ibus-libpinyin
 
-## add four zh_CN* locales
-## do not change default locale (en_US.UTF-8)
+## page down and add zh_CN.UTF-i locale
+## keep the default locale (en_US.UTF-8)
 $ dpkg-reconfigure locales
-## logout or restart to take effect
-## Settings / Region & Language / Input Sources / + / Chinese /
-  Chinese (Intelligent Pinyin) / Add
+##
+## re-login or restart to take effect
+##
+## Settings / Keyboard / Input Sources / + / Chinese /
+##  Chinese (Intelligent Pinyin) / Add
 
 ## disable suspend or hibernation
 ## automatic suspend - computer will suspend very soon because of inactivity
@@ -240,4 +233,5 @@ $ vi /etc/fstab
 ## /usr/sbin/update-initramfs: 142: mkinitramfs: not found
 $ PATH=$PATH:/usr/sbin sudo /usr/sbin/update-initramfs -u
 update-initramfs: Generating /boot/initrd.img-5.10.0-20-amd64
+$
 $
