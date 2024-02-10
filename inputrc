@@ -1,5 +1,5 @@
 # ~/.inputrc
 
-# vi mode for programs use readline: Shell, GDB, ..
+# vi mode for programs use readline: Shell, GDB
 # ESC + \ for filename completion
 set editing-mode vi
