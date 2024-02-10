@@ -1,5 +1,5 @@
 # ~/.editrc
 
-# vi mode for programs use editline: Shell, lldb, ..
+# vi mode for programs use editline: Shell, lldb
 # TAB for filename completion
 bind -v
