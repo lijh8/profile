@@ -1,3 +1,4 @@
+
 Ubuntu Linux
 
 
@@ -27,13 +28,23 @@ $ ifup ens33
 $ ifdown ens33
 $ ethtool ens33
 
+$ vi /etc/NetworkManager/system-connections/ens33.nmconnection
+[ipv4]
+method=auto
+#method=manual
+#address=192.168.1.100/24
+#gateway=192.168.1.1
+#dns=8.8.8.8;192.168.1.1
+$
+$ systemctl restart NetworkManager
+
 ## dynamic ip address
 $ vi /etc/netplan/00-installer-config.yaml
 network:
   ethernets:
     eth0:
       dhcp4: true
-$ netplan apply
+$ 
 
 ## replace `dhcp4` with static ip
 $ vi /etc/netplan/00-installer-config.yaml
@@ -47,6 +58,7 @@ network:
         search: [mydomain, otherdomain]
         addresses: [192.168.1.1, 8.8.8.8]
 $
+$ netplan apply
 
 ## dns
 $ vi /etc/resolv.conf
