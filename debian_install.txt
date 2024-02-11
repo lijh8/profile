@@ -1,3 +1,4 @@
+
 Debian Linux install
 
 ## download the first iso ("DVD-1"): debian-11.5.0-amd64-DVD-1.iso
@@ -98,6 +99,7 @@ $
 
 $ apt install apt-file
 $ apt-file update
+$
 ## list content of package
 $ apt-file list gcc
 gcc: /usr/bin/c99-gcc
@@ -121,14 +123,14 @@ $ vi /etc/samba/smb.conf
 $
 
 ## LeakSanitizer does not work under ptrace (strace, gdb)
-## Address Sanitizer (asan) will report memory usage problems 
+## Address Sanitizer (asan) will report memory usage problems
 ## by running a program built with asan. do not run it in a debugger.
 $ apt install build-essential
-$ apt install gdb 
+$ apt install gdb
 $ apt install cmake
 $ apt install automake autoconf libtool pkg-config gettext
 $ apt install gcc-doc gdb-doc manpages-dev
-$ apt install clang llvm lldb  
+$ apt install clang llvm lldb
 
 ## VSCode, cpptools, clangd, CodeLLDB
 $ dpkg -i code_1.86.1-1707298119_amd64.deb
@@ -211,6 +213,15 @@ $ dpkg-reconfigure locales
 ## automatic suspend - computer will suspend very soon because of inactivity
 $ systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
 $ gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
+
+## https://extensions.gnome.org/
+## install browser extension ,
+##
+## Dash to Dock , by michel_g ,
+## Logo Activities, by orbitcorrection ,
+##
+## apt install gnome-shell-extension-prefs ,
+## /usr/bin/gnome-shell-extension-prefs ,
 
 ## Left Super
 $ gsettings get org.gnome.mutter overlay-key
