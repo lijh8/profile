@@ -2,20 +2,52 @@
 ## Fedora Linux install
 
 ## Disconnect network cable to speed up install in china
-## - Enable Network Adapter: Yes
-## - Cable Connected: No
+
+$ ls /sys/class/net
+$ ip addr
+$ ethtool enp0s3
+
+## autoconnect=true
+## method=auto
+$ vi /etc/NetworkManager/system-connections/enp0s3.nmconnection
+[connection]
+id=enp0s3
+type=ethernet
+autoconnect=true
+interface-name=enp0s3
+
+[ipv4]
+method=manual
+address=192.168.1.100/24,192.168.1.1
+dns=8.8.8.8;192.168.1.1;
+$
+$ systemctl restart NetworkManager
+
+## BOOTPROTO=dhcp
+$ vi /etc/sysconfig/network-scripts/ifcfg-enp0s3
+TYPE=Ethernet
+BOOTPROTO=none
+ONBOOT=yes
+DEVICE=enp0s3
+IPADDR=192.168.1.123
+PREFIX=24
+GATEWAY=192.168.1.1
+DNS1=192.168.1.1
+$
+$ systemctl restart network
+
+$ ip route
+$ vi /etc/resolv.conf
+nameserver 192.168.1.1
+$
+$ ping fedoraproject.org
 
 ## append user to wheel (sudo) group
 $ su -c "/usr/sbin/usermod -a -G wheel `whoami`"
-$ newgrp wheel
 $ sg wheel
 $ groups
 wheel
 $
-
-## turn off auto suspend and hibernation
-$ systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
-$ gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
 
 ## https://mirrors.tuna.tsinghua.edu.cn/help/fedora/
 ## click (?) for help on mirror in china
@@ -26,7 +58,7 @@ $ sed -e 's|^metalink=|#metalink=|g' \
       -e 's|^#baseurl=http://download.example/pub/fedora/linux|baseurl=https://mirrors.tuna.tsinghua.edu.cn/fedora|g' \
       -i.bak \
       /etc/yum.repos.d/fedora.repo \
-      /etc/yum.repos.d/fedora-updates.repo 
+      /etc/yum.repos.d/fedora-updates.repo
 $
 
 ## use baseurl, do not use metalink
@@ -38,7 +70,6 @@ $ vi /etc/yum.repos.d/fedora-updates.repo
 baseurl=https://mirrors.tuna.tsinghua.edu.cn/fedora/updates/$releasever/Everything/$basearch/
 ##metalink=...
 $
-
 $ dnf makecache
 $ dnf update
 $ dnf upgrade
@@ -46,7 +77,7 @@ $ dnf upgrade
 $ dnf list --installed
 $ dnf list vim-enhanced
 $ dnf search vim-enhanced
-$ dnf install vim-enhanced
+$ dnf install vim-enhanced # vim-minimal pre-installed
 
 $ dnf repoquery --list vim-enhanced
 $ dnf repoquery --file /usr/bin/vim
@@ -55,6 +86,7 @@ $ dnf repoquery --installed --file /usr/bin/vim
 
 $ vi ~/.vimrc
 set hlsearch
+set incsearch
 set nowrapscan
 syntax off
 $
@@ -72,13 +104,15 @@ ulimit -c unlimited  # coredump
 $
 
 $ dnf install openssh-server
-$ dnf install samba
-$ sudo smbpasswd -a `whoami`
-
 $ systemctl list-unit-files | grep sshd
-$ systemctl enable sshd smb nmb
-$ systemctl start sshd smb nmb
+$ systemctl enable sshd
+$ systemctl start sshd
 
+$ dnf install samba
+$ systemctl enable smb nmb
+$ systemctl start smb nmb
+$ sudo smbpasswd -a `whoami`
+$
 $ smbpasswd -a `whoami`
 $ vi /etc/samba/smb.conf
 [homes]
@@ -86,28 +120,28 @@ $ vi /etc/samba/smb.conf
   create mask = 0755
   directory mask = 0755
 $
-
 $ firewall-cmd --permanent --add-service=samba
 $ firewall-cmd --reload
 $ getsebool -a | grep samba
 $ setsebool -P samba_enable_home_dirs on
 
 $ systemctl disable firewalld
+$
 $ vi /etc/selinux/config  # restart to take effect
 SELINUX=disabled
 $
 
-## resize lvm volume to use unallocated free space 
+## resize lvm volume to use unallocated free space
 $ df -h
 /dev/mapper/fedora-root   15G  3.0G   12G  21% /
 $
 $ lsblk
-sda                8:0  0  35G  0  disk 
-└─sda3             8:3  0  34G  0  part 
+sda                8:0  0  35G  0  disk
+└─sda3             8:3  0  34G  0  part
   └─fedora-root  253:0  0  15G  0  lvm   /
-$ 
+$
 $ pvresize /dev/sda3
-$ lvextend  -r  -l  +100%FREE  /dev/mapper/fedora-root 
+$ lvextend  -r  -l  +100%FREE  /dev/mapper/fedora-root
 
 ## resize disk partition
 $ dnf install gparted
@@ -120,49 +154,8 @@ $ vi /etc/fstab
   /dev/sdb1 /mnt/data ext4 defaults 0 0
 $ mount /mnt/data/
 
-$ ip addr
-$ ip route
-$ ethtool enp0s3
-
-## autoconnect=true
-$ vi /etc/NetworkManager/system-connections/enp0s3.nmconnection
-[connection]
-id=enp0s3
-type=ethernet
-autoconnect=true
-interface-name=enp0s3
-
-[ipv4]
-method=auto
-#method=manual
-#address=192.168.1.100/24
-#gateway=192.168.1.1
-#dns=8.8.8.8;192.168.1.1
-$
-$ systemctl restart NetworkManager
-
-$ dnf install NetworkManager-tui
-$ nmtui
-
-$ vi /etc/sysconfig/network-scripts/ifcfg-enp0s3
-TYPE=Ethernet
-BOOTPROTO=none  # or: =dhcp
-ONBOOT=yes
-DEVICE=enp0s3
-IPADDR=192.168.1.123
-PREFIX=24
-GATEWAY=192.168.1.1
-DNS1=192.168.1.1
-$
-$ systemctl restart network
-
-$ vi /etc/resolv.conf
-nameserver 192.168.1.1
-$
-$ ping fedoraproject.org
-
-$ vi /etc/hostname 
-$ hostname --file /etc/hostname 
+$ vi /etc/hostname
+$ hostname --file /etc/hostname
 
 ## find largest directories or files
 $ du -h -d1 /home/* | sort -hr | head -5
@@ -218,14 +211,14 @@ $
 ## run level
 $ ls /lib/systemd/system/*.target | grep multi-user
 /lib/systemd/system/multi-user.target
-$ 
+$
 $ systemctl set-default multi-user.target
 Removed "/etc/systemd/system/default.target".
 Created symlink /etc/systemd/system/default.target → /usr/lib/systemd/system/multi-user.target.
-$ 
+$
 $ systemctl get-default
 multi-user.target
-$ 
+$
 $ init 5  # or, 3
 
 $ yum install centos-release-scl  # software collections
@@ -234,6 +227,20 @@ $ scl enable devtoolset-8 bash  # for current session
 $ vi ~/.bashrc
   source scl_source enable devtoolset-8  # for all sessions
 $
+
+## turn off auto suspend and hibernation
+$ systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+$ gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
+
+## https://extensions.gnome.org/
+## install browser extension
+##
+## Dash to Dock , by michel_g
+## Logo Activities, by orbitcorrection
+##
+## dnf install gnome-shell
+## /usr/bin/gnome-shell-extension-prefs
+##
 
 ## Super (Command) on Left
 $ gsettings get org.gnome.mutter overlay-key
