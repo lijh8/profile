@@ -18,7 +18,7 @@ iface ens33 inet static
   address 192.168.1.2/24
   gateway 192.157.1.1
 $
-$ ifup ens33
+$ ifup ens33  # su -c "/sbin/shutdown -r now"  # No DHCP client software found
 $ ifdown ens33
 $ ethtool ens33
 
@@ -51,6 +51,7 @@ $
 $ apt update
 $ apt upgrade
 
+$ apt install sudo
 $ grep sudo /etc/group
 $ su -c "/usr/sbin/usermod -a -G sudo `whoami`"
 $ sg sudo
@@ -78,31 +79,27 @@ set incsearch
 set nowrapscan
 syntax off
 $
-
-$ apt list --installed ifupdown openssh-server isc-dhcp-client sudo
+$ apt list --installed | grep vim
 
 ## list content of installed package
-$ dpkg -L gcc
-/usr/bin/c99-gcc
-/usr/bin/gcc
+$ dpkg -L vim
+/usr/bin/vim
 $
 ## which installed package has the file
-$ dpkg -S /usr/bin/gcc
-gcc: /usr/bin/c99-gcc
+$ dpkg -S /usr/bin/vim
+vim: /usr/bin/vim
 $
 
 $ apt install apt-file
 $ apt-file update
 $
 ## list content of package
-$ apt-file list gcc
-gcc: /usr/bin/c99-gcc
-gcc: /usr/bin/gcc
+$ apt-file list vim
+vim: /usr/bin/vim
 $
 ## which package has the file
-$ apt-file --package-only search /usr/bin/gcc
+$ apt-file --package-only search /usr/bin/vim
 gcc
-gcc-11
 $
 
 $ apt install openssh-server samba
