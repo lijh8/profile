@@ -1,7 +1,7 @@
 
 Debian Linux install
 
-## download the first iso ("DVD-1"): debian-11.5.0-amd64-DVD-1.iso
+## download the first iso ("DVD-1"): debian-12.1.0-amd64-DVD-1.iso
 ## disconnect network cable for fast installation
 
 $ ls /sys/class/net/
@@ -9,13 +9,8 @@ ens33
 $
 $ ip addr
 
-## dynamic ip
-$ vi /etc/network/interfaces
-auto ens33
-allow-hotplug ens33
-iface ens33 inet dhcp
-$
-## static ip
+## without desktop environment
+## iface ens33 inet dhcp
 $ vi /etc/network/interfaces
 auto ens33
 allow-hotplug ens33
@@ -28,20 +23,19 @@ $ ifdown ens33
 $ ethtool ens33
 
 ## gnome desktop
+## method=auto
 $ vi /etc/NetworkManager/system-connections/ens33.nmconnection
 [ipv4]
-method=auto
-#method=manual
-#address=192.168.1.100/24
-#gateway=192.168.1.1
-#dns=8.8.8.8;192.168.1.1
+address1=192.168.1.5/24,192.168.1.1
+dns=8.8.8.8;192.168.1.1;
+method=manual
 $
 $ systemctl restart NetworkManager
 
 ## dns
 $ vi /etc/resolv.conf
-nameserver 192.168.1.1
 nameserver 8.8.8.8
+nameserver 192.168.1.1
 $
 $ ping debian.org
 
@@ -57,7 +51,7 @@ $
 $ apt update
 $ apt upgrade
 
-$ vi /etc/group
+$ grep sudo /etc/group
 $ su -c "/usr/sbin/usermod -a -G sudo `whoami`"
 $ sg sudo
 $ groups
@@ -76,7 +70,7 @@ alias ls="ls --color=never"
 alias tree="tree -n"
 $
 
-$ apt install vim # vim-tiny is not enough
+$ apt install vim  # vim-tiny pre-installed
 $ update-alternatives --config editor
 $ vi -u /home/ljh/.vimrc ~/.vimrc
 set hlsearch
@@ -123,18 +117,20 @@ $ vi /etc/samba/smb.conf
 $
 
 ## LeakSanitizer does not work under ptrace (strace, gdb)
-## Address Sanitizer (asan) will report memory usage problems
+## Address Sanitizer (asan) will report memory usage problems 
 ## by running a program built with asan. do not run it in a debugger.
 $ apt install build-essential
-$ apt install gdb
+$ apt install gdb 
 $ apt install cmake
 $ apt install automake autoconf libtool pkg-config gettext
 $ apt install gcc-doc gdb-doc manpages-dev
-$ apt install clang llvm lldb
+$ apt install clang llvm lldb  
 
 ## VSCode, cpptools, clangd, CodeLLDB
+
+$ apt install ./code_1.86.1-1707298119_amd64.deb
 $ dpkg -i code_1.86.1-1707298119_amd64.deb
-$ apt install -f # Install dependencies
+$ apt install -f  # Install dependencies
 $ /usr/bin/code
 
 ## https://clangd.llvm.org/installation
@@ -200,7 +196,7 @@ $ apt install gparted
 ## chinese input method editor (ime)
 $ apt install ibus-libpinyin
 
-## page down and add zh_CN.UTF-i locale
+## page down to select and add zh_CN.UTF-8 locale
 ## keep the default locale (en_US.UTF-8)
 $ dpkg-reconfigure locales
 ##
@@ -244,5 +240,5 @@ $ vi /etc/fstab
 ## /usr/sbin/update-initramfs: 142: mkinitramfs: not found
 $ PATH=$PATH:/usr/sbin sudo /usr/sbin/update-initramfs -u
 update-initramfs: Generating /boot/initrd.img-5.10.0-20-amd64
-$
-$
+$ 
+$ 
