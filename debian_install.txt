@@ -193,17 +193,18 @@ $ apt install gparted
 ##  / resize: reserve 1.0 GB (same) free space for extended and swap
 ##  / create extended partition / create swap partition
 ##
-## chinese input method editor (ime)
-$ apt install ibus-libpinyin
 
 ## page down to select and add zh_CN.UTF-8 locale
 ## keep the default locale (en_US.UTF-8)
 $ dpkg-reconfigure locales
-##
+
+## chinese input method editor (ime)
+$ apt install ibus-libpinyin
+
 ## re-login or restart to take effect
-##
 ## Settings / Keyboard / Input Sources / + / Chinese /
 ##  Chinese (Intelligent Pinyin) / Add
+##
 
 ## disable suspend or hibernation
 ## automatic suspend - computer will suspend very soon because of inactivity
@@ -218,6 +219,7 @@ $ gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type '
 ##
 ## apt install gnome-shell-extension-prefs ,
 ## /usr/bin/gnome-shell-extension-prefs ,
+##
 
 ## Left Super
 $ gsettings get org.gnome.mutter overlay-key
@@ -242,3 +244,4 @@ $ PATH=$PATH:/usr/sbin sudo /usr/sbin/update-initramfs -u
 update-initramfs: Generating /boot/initrd.img-5.10.0-20-amd64
 $ 
 $ 
+ 
