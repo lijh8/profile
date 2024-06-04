@@ -84,6 +84,14 @@ $ dnf repoquery --file /usr/bin/vim
 $ dnf repoquery --installed --list vim-enhanced
 $ dnf repoquery --installed --file /usr/bin/vim
 
+$ dnf provides "*/bin/vim"
+vim-enhanced-2:9.1.393-1.fc40
+$
+
+$ dnf repoquery --file "*/bin/vim"
+vim-enhanced-2:9.1.393-1.fc40.x86_64
+$
+
 $ vi ~/.vimrc
 set hlsearch
 set incsearch
