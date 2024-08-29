@@ -216,6 +216,40 @@ $ vi settings.json:
 
 $
 
+
+#---
+
+
+## enable clang-tidy static checks
+
+clang-tidy is in package clang-tools-extra.
+
+Clang-Tidy Checks list:
+https://clang.llvm.org/extra/clang-tidy/checks/list.html ,
+
+1. to enable clang-tidy static checks for c++ program in vscode,
+just create a file .clang-tidy in the workspace root directory,
+with the content:
+
+C++ Core Guidelines: Appendix D: Supporting tools
+These rules are named in the pattern cppcoreguidelines-* .
+
+$ vi .clang-tidy
+Checks: 'cppcoreguidelines-*'
+$
+
+on fedora linux, clang-tidy is provided by package clang-tools-extra,
+$ dnf install clang-tools-extra
+
+2. no compile_commands.json is needed.
+
+3. do not try to enable clang-tidy static checks in vscode settings.json,
+    it will not work. create .clang-tidy in root directory is the correct way.
+
+
+#---
+
+
 ## run level
 $ ls /lib/systemd/system/*.target | grep multi-user
 /lib/systemd/system/multi-user.target
