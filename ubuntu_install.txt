@@ -39,32 +39,40 @@ $
 $ systemctl restart NetworkManager
 
 ## dynamic ip address
-$ vi /etc/netplan/00-installer-config.yaml
+$ vi /etc/netplan/99-config.yaml
 network:
+  version: 2
+  renderer: networkd
   ethernets:
     eth0:
       dhcp4: true
+
 $
 
-## replace `dhcp4` with static ip
-$ vi /etc/netplan/00-installer-config.yaml
+## replace `dhcp4` with static ip, dns,
+$ vi /etc/netplan/99-config.yaml
 network:
+  version: 2
+  renderer: networkd
   ethernets:
     eth0:
       addresses:
         - 192.168.1.123/24
-      gateway4: 192.168.1.1
+      routes:
+        - to: default
+          via: 192.168.1.1
       nameservers:
         search: [mydomain, otherdomain]
         addresses: [192.168.1.1, 8.8.8.8]
+
 $
 $ netplan apply
 
-## dns
-$ vi /etc/resolv.conf
-nameserver 192.168.1.1
-nameserver 8.8.8.8
-$
+## dns, use netplan configuration instead,
+# $ vi /etc/resolv.conf
+# nameserver 192.168.1.1
+# nameserver 8.8.8.8
+# $
 
 $ ping ubuntu.com
 
@@ -75,11 +83,17 @@ $ cp /etc/apt/sources.list /etc/apt/sources.list.bak
 $ sudo sed -i "s@http://.*archive.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
 $ sudo sed -i "s@http://.*security.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
 $
+
+# oracular is codename of ubuntu 24.10
+$ lsb_release -a | grep -i codename
+Codename:       oracular
+$
+
 $ vi /etc/apt/sources.list
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ mantic           main restricted universe multiverse
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ mantic-updates   main restricted universe multiverse
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ mantic-backports main restricted universe multiverse
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ mantic-security  main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular           main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-updates   main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-backports main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-security  main restricted universe multiverse
 $
 $ apt update
 $ apt upgrade
@@ -165,6 +179,7 @@ $ apt install cmake
 $ apt install automake autoconf libtool pkg-config
 $ apt install gcc-doc gdb-doc manpages-dev
 $ apt install clang llvm lldb
+$ apt install systemd-coredump
 
 ## VSCode, cpptools, clangd, CodeLLDB
 $ apt install ./<file>.deb
