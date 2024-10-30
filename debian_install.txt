@@ -20,7 +20,7 @@ iface ens33 inet static
 $
 
 ## "No DHCP client software found!", then restart to take effect
-$ ifup ens33  
+$ ifup ens33
 $ ifdown ens33
 $ ethtool ens33
 
@@ -68,7 +68,7 @@ $
 ## environment variables in ~/.profile, eg. PATH
 $ vi ~/.bashrc
 PS1='\$ '
-ulimit -c unlimited  # coredump
+ulimit -c unlimited  # systemd-coredump
 alias ls="ls --color=never"
 alias tree="tree -n"
 $
@@ -116,14 +116,14 @@ $ vi /etc/samba/smb.conf
 $
 
 ## LeakSanitizer does not work under ptrace (strace, gdb)
-## Address Sanitizer (asan) will report memory usage problems 
+## Address Sanitizer (asan) will report memory usage problems
 ## by running a program built with asan. do not run it in a debugger.
 $ apt install build-essential
-$ apt install gdb 
+$ apt install gdb
 $ apt install cmake
 $ apt install automake autoconf libtool pkg-config gettext
 $ apt install gcc-doc gdb-doc manpages-dev
-$ apt install clang llvm lldb  
+$ apt install clang llvm lldb
 
 ## VSCode, cpptools, clangd, CodeLLDB
 $ apt install ./code_1.86.1-1707298119_amd64.deb
@@ -240,6 +240,5 @@ $ vi /etc/fstab
 ## /usr/sbin/update-initramfs: 142: mkinitramfs: not found
 $ PATH=$PATH:/usr/sbin sudo /usr/sbin/update-initramfs -u
 update-initramfs: Generating /boot/initrd.img-5.10.0-20-amd64
-$ 
-$ 
- 
+$
+$

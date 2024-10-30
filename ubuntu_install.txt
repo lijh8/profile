@@ -44,7 +44,7 @@ network:
   ethernets:
     eth0:
       dhcp4: true
-$ 
+$
 
 ## replace `dhcp4` with static ip
 $ vi /etc/netplan/00-installer-config.yaml
@@ -80,7 +80,7 @@ deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ mantic           main restricte
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ mantic-updates   main restricted universe multiverse
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ mantic-backports main restricted universe multiverse
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ mantic-security  main restricted universe multiverse
-$ 
+$
 $ apt update
 $ apt upgrade
 
@@ -98,7 +98,7 @@ $
 ## environment variables in ~/.profile, eg. PATH
 $ vi ~/.bashrc
 PS1='\$ '
-ulimit -c unlimited  # coredump
+ulimit -c unlimited  # systemd-coredump
 alias ls="ls --color=never"
 alias tree="tree -n"
 export HISTCONTROL="ignoredups:erasedups"
@@ -160,11 +160,11 @@ $ ufw app list
 $ ufw allow Samba
 
 $ apt install build-essential
-$ apt install gdb 
+$ apt install gdb
 $ apt install cmake
 $ apt install automake autoconf libtool pkg-config
 $ apt install gcc-doc gdb-doc manpages-dev
-$ apt install clang llvm lldb  
+$ apt install clang llvm lldb
 
 ## VSCode, cpptools, clangd, CodeLLDB
 $ apt install ./<file>.deb
