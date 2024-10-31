@@ -313,3 +313,10 @@ $
 ## then restart
 $ shutdown -r now
 $
+
+# ubuntu server 24.10 on VirtualBox:
+Ctrl-S: freeze or pause terminal
+Ctrl-Q: resume terminal
+# it also conflicts with vi window split: Ctrl-W-S,
+
+##
