@@ -184,17 +184,18 @@ $ apt install automake autoconf libtool pkg-config
 $ apt install gcc-doc gdb-doc manpages-dev
 $ apt install clang llvm lldb
 
-# $ apt install systemd-coredump  # ubuntu default: apport-core-dump-handler,
+$ apt install systemd-coredump  # ubuntu default: apport-core-dump-handler,
+$ coredumpctl debug # gdb backtrace: bt
 
-# do not use apport, use systemd-coredump instead.
-# apport is mostly for collecting and sending crash report for packaged software.
-$ cat .config/apport/settings
+# apport collects and sends crash report for packaged softwares
+# on production system on user side.
+$ cat ~/.config/apport/settings
 [main]
 unpackaged=true
 $
 $ sudo systemctl restart apport
-$ apport-unpack /var/crash/_home_ljh_a.out.1000.crash temp
-$ gdb `cat temp/ExecutablePath` temp/CoreDump
+$ apport-unpack /var/crash/_home_ljh_a.out.1000.crash ~/temp
+$ gdb `cat ~/temp/ExecutablePath` ~/temp/CoreDump
 
 ## VSCode, cpptools, clangd, CodeLLDB
 $ apt install ./<file>.deb
