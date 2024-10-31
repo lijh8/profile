@@ -41,6 +41,12 @@ nameserver 192.168.1.1
 $
 $ ping debian.org
 
+$ grep -i Codename /etc/os-release
+$
+$ lsb_release -a | grep -i codename
+Codename:       bookworm
+$
+
 ## https://mirrors.tuna.tsinghua.edu.cn/help/debian/
 ## click (?) for help on mirror in china
 
