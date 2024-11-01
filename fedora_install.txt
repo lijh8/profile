@@ -190,7 +190,7 @@ $
 $ dnf group install "development-tools"  # use group id, dnf 5
 $ dnf group install "c-development"  # use group id, dnf 5
 $
-# $ group install "Development Tools"
+# $ dnf group install "Development Tools"
 # $ dnf group install "C Development Tools and Libraries"
 
 $ dnf install cmake
@@ -217,7 +217,7 @@ $ wget https://github.com/vadimcn/codelldb/releases/download/v1.9.2/codelldb-x86
 $ dnf install llvm
 $ dnf install lldb
 $ dnf install libasan  # address sanitizer
-$ dnf install systemd-udev  # debian: systemd-coredump
+$ dnf install systemd-udev  # coredump, debian: systemd-coredump
 $ coredumpctl debug  # gdb: bt, backtrace
 $ coredumpctl --output=~/foo.core dump
 
