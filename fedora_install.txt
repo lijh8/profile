@@ -179,19 +179,20 @@ $ timedatectl set-timezone "Asia/Shanghai"
 
 
 $
+$ dnf group list "C Development Tools and Libraries"
+c-development        C Development Tools and Libraries        no
 $ dnf group list "Development Tools"
-ID                   Name              Installed
 development-tools    Development Tools        no
 $
-$ dnf group list "C Development Tools and Libraries"
-ID                   Name                              Installed
-c-development        C Development Tools and Libraries        no
+$ dnf group info "C Development Tools and Libraries"
+$ dnf group info "Development Tools"
 $
-$ dnf group install "development-tools"  # use group id, dnf 5
-$ dnf group install "c-development"  # use group id, dnf 5
+$ dnf group install "c-development"  # use group id, dnf 5,
+$ dnf group install "development-tools"  # use group id, dnf 5,
 $
-# $ dnf group install "Development Tools"
-# $ dnf group install "C Development Tools and Libraries"
+
+# $ dnf group install "Development Tools"  # dnf 4,
+# $ dnf group install "C Development Tools and Libraries"  # dnf 4,
 
 $ dnf install cmake
 $ dnf install automake autoconf libtool
