@@ -94,6 +94,7 @@ Codename:       oracular
 $
 
 # < ubuntu 24.04
+
 $ vi /etc/apt/sources.list
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular           main restricted universe multiverse
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-updates   main restricted universe multiverse
@@ -101,8 +102,21 @@ deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-backports main restric
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-security  main restricted universe multiverse
 $
 
-# >= ubuntu 24.04
-$ vi /etc/apt/sources.list.d/mirror.sources
+# >= ubuntu 24.04, DEB822,
+
+$ vi /etc/apt/sources.list.d/ubuntu.sources
+# Types: deb
+# URIs: http://archive.ubuntu.com/ubuntu/
+# Suites: oracular oracular-updates oracular-backports
+# Components: main restricted universe multiverse
+# Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+# Types: deb
+# URIs: http://security.ubuntu.com/ubuntu/
+# Suites: oracular-security
+# Components: main restricted universe multiverse
+# Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
 Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/ubuntu
 Suites: oracular oracular-updates oracular-backports oracular-security
