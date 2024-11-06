@@ -93,12 +93,23 @@ $ lsb_release -a | grep -i codename
 Codename:       oracular
 $
 
+# < ubuntu 24.04
 $ vi /etc/apt/sources.list
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular           main restricted universe multiverse
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-updates   main restricted universe multiverse
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-backports main restricted universe multiverse
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-security  main restricted universe multiverse
 $
+
+# >= ubuntu 24.04
+$ vi /etc/apt/sources.list.d/mirror.sources
+Types: deb
+URIs: https://mirrors.tuna.tsinghua.edu.cn/ubuntu
+Suites: oracular oracular-updates oracular-backports oracular-security
+Components: main restricted universe multiverse
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+$
+
 $ apt update
 $ apt upgrade
 
