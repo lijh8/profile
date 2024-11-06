@@ -115,13 +115,17 @@ $
 
 ## environment variables in ~/.profile, eg. PATH
 $ vi ~/.bashrc
-PS1='\$ '
-ulimit -c unlimited  # systemd-coredump
 alias ls="ls --color=never"
-alias tree="tree -n"
+EDITOR=/usr/bin/vim
 export HISTCONTROL="ignoredups:erasedups"
 export PROMPT_COMMAND='history -a'
+PS1='\$ '
+set -o vi  # set editing-mode vi # ~/.inputrc,
+stty -ixon  # terminal flow control Ctrl-S conflicts with vim, emacs.
+ulimit -c unlimited  # systemd-coredump
 $
+
+$ echo > ~/.hushlogin
 
 $ apt install vim
 $ update-alternatives --config editor
@@ -319,4 +323,11 @@ Ctrl-S: freeze or pause terminal
 Ctrl-Q: resume terminal
 # it also conflicts with vi window split: Ctrl-W-S,
 
-##
+#
+
+# https://askubuntu.com/questions/1201185/failed-to-connect-to-https-changelogs-ubuntu-com-meta-release-develpment ,
+# Q: Failed to connect to https://changelogs.ubuntu.com/meta-release-develpment,
+$ sudo rm /var/lib/ubuntu-release-upgrader/release-upgrade-available
+$ sudo /usr/lib/ubuntu-release-upgrader/release-upgrade-motd
+
+#
