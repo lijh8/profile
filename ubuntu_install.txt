@@ -1,8 +1,14 @@
 
 Ubuntu Linux
 
+# unplug or disconnect network cable for fast installation.
 
-## disconnect network cable for fast installation
+# add ubuntu image .iso in cdrom, and install from cdrom.
+$ sudo apt-cdrom add
+$ cat /etc/apt/sources.list
+#deb cdrom:[Ubuntu-Server 24.10 _Oracular Oriole_ - Release amd64 (20241007.1)]/ oracular main restricted
+deb cdrom:[Ubuntu-Server 24.10 _Oracular Oriole_ - Release amd64 (20241007.1)]/ oracular main restricted
+$
 
 $ ls /sys/class/net/
 ens33
@@ -79,11 +85,6 @@ $ ping ubuntu.com
 ## https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/
 ## click (?) for help on mirror in china
 
-$ cp /etc/apt/sources.list /etc/apt/sources.list.bak
-$ sudo sed -i "s@http://.*archive.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
-$ sudo sed -i "s@http://.*security.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
-$
-
 # oracular is codename of ubuntu 24.10
 $ grep -i codename /etc/os-release
 VERSION_CODENAME=oracular
@@ -91,15 +92,6 @@ UBUNTU_CODENAME=oracular
 $
 $ lsb_release -a | grep -i codename
 Codename:       oracular
-$
-
-# < ubuntu 24.04
-
-$ vi /etc/apt/sources.list
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular           main restricted universe multiverse
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-updates   main restricted universe multiverse
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-backports main restricted universe multiverse
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-security  main restricted universe multiverse
 $
 
 # >= ubuntu 24.04, DEB822,
@@ -119,9 +111,28 @@ $ vi /etc/apt/sources.list.d/ubuntu.sources
 
 Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/ubuntu
-Suites: oracular oracular-updates oracular-backports oracular-security
+Suites: oracular oracular-updates oracular-backports
 Components: main restricted universe multiverse
 Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+Types: deb
+URIs: https://mirrors.tuna.tsinghua.edu.cn/ubuntu
+Suites: oracular-security
+Components: main restricted universe multiverse
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+$
+
+# < ubuntu 24.04
+
+$ cp /etc/apt/sources.list /etc/apt/sources.list.bak
+$ sudo sed -i "s@http://.*archive.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
+$ sudo sed -i "s@http://.*security.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
+$
+$ vi /etc/apt/sources.list
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular           main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-updates   main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-backports main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-security  main restricted universe multiverse
 $
 
 $ apt update
@@ -150,14 +161,15 @@ stty -ixon  # terminal flow control Ctrl-S conflicts with vim, emacs.
 ulimit -c unlimited  # systemd-coredump
 $
 
-$ echo > ~/.hushlogin
+$ touch ~/.hushlogin
 
 $ apt install vim
 $ update-alternatives --config editor
 $ vi -u /home/ljh/.vimrc ~/.vimrc
 set hlsearch
+set nocompatible  " u always undo, Ctrl-r always redo,
 set nowrapscan
-syntax off
+"syntax off
 $
 
 $ apt list --installed ifupdown openssh-server isc-dhcp-client sudo

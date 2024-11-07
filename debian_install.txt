@@ -1,8 +1,27 @@
 
 Debian Linux install
 
-## download the first iso ("DVD-1"): debian-12.1.0-amd64-DVD-1.iso
-## disconnect network cable for fast installation
+# download the first .iso ("*-DVD-1.iso"): debian-12.1.0-amd64-DVD-1.iso
+# unplug and disconnect network cable for fast installation
+
+# add the debian image .iso file in cdrom, install from cdrom.
+$ sudo apt-cdrom add
+Using CD-ROM mount point /media/cdrom/
+$
+$ cat /etc/apt/sources.list
+deb cdrom:[Debian GNU/Linux 12.7.0 _Bookworm_ - Official amd64 DVD Binary-1 with firmware 20240831-10:40]/ bookworm contrib main non-free-firmware
+$
+$ apt list
+$ apt-cache pkgnames
+$
+$ su -c "apt install sudo"
+$ grep sudo /etc/group
+$ su -c "/usr/sbin/usermod -a -G sudo `whoami`"
+$ sg sudo
+$ groups
+sudo
+$
+$ sudo apt install build-essential gdb-minimal cmake automake autoconf libtool pkg-config gettext manpages-dev
 
 $ ls /sys/class/net/
 ens33
@@ -20,8 +39,8 @@ iface ens33 inet static
 $
 
 ## "No DHCP client software found!", then restart to take effect
-$ ifup ens33
-$ ifdown ens33
+$ /usr/sbin/ifup ens33
+$ /usr/sbin/ifdown ens33
 $ ethtool ens33
 
 ## gnome desktop
@@ -36,8 +55,8 @@ $ systemctl restart NetworkManager
 
 ## dns
 $ vi /etc/resolv.conf
-nameserver 8.8.8.8
 nameserver 192.168.1.1
+nameserver 8.8.8.8
 $
 $ ping debian.org
 
@@ -50,22 +69,37 @@ $
 ## https://mirrors.tuna.tsinghua.edu.cn/help/debian/
 ## click (?) for help on mirror in china
 
+# >= debian 12, deb822,
+
+$ vi /etc/apt/sources.list.d/debian.sources
+Types: deb
+URIs: https://mirrors.tuna.tsinghua.edu.cn/debian
+Suites: bookworm bookworm-updates bookworm-backports
+#Suites: testing testing-updates testing-backports
+#Suites: sid
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+
+Types: deb
+URIs: https://mirrors.tuna.tsinghua.edu.cn/debian-security
+Suites: bookworm-security
+#Suites: testing-security
+#Suites: no sid security for it is unstable, comment whole security section for sid.
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+$
+
+# < debian 12,
+
 $ vi /etc/apt/sources.list
 deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm            main contrib non-free non-free-firmware
 deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm-updates    main contrib non-free non-free-firmware
 deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm-backports  main contrib non-free non-free-firmware
 deb https://mirrors.tuna.tsinghua.edu.cn/debian-security  bookworm-security   main contrib non-free non-free-firmware
 $
+
 $ apt update
 $ apt upgrade
-
-$ apt install sudo
-$ grep sudo /etc/group
-$ su -c "/usr/sbin/usermod -a -G sudo `whoami`"
-$ sg sudo
-$ groups
-sudo
-$
 
 $ vi ~/.inputrc  # readline
 set editing-mode vi
@@ -83,13 +117,15 @@ stty -ixon  # terminal flow control Ctrl-S conflicts with vim, emacs.
 ulimit -c unlimited  # systemd-coredump
 $
 
+$ touch ~/.hushlogin
+
 $ apt install vim  # vim-tiny pre-installed
 $ update-alternatives --config editor
 $ vi -u /home/ljh/.vimrc ~/.vimrc
 set hlsearch
 set incsearch
 set nowrapscan
-syntax off
+"syntax off
 $
 $ apt list --installed | grep vim
 
