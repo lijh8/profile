@@ -5,14 +5,17 @@ Debian Linux install
 # unplug and disconnect network cable for fast installation
 
 # add the debian image .iso file in cdrom, install from cdrom.
-$ sudo apt-cdrom add
+
+$ apt-cdrom add
 Using CD-ROM mount point /media/cdrom/
 $
+
+# E: The repository 'cdrom://[Debian GNU/Linux 12.7.0] bookworm Release' does not have a Release file.
 $ cat /etc/apt/sources.list
-deb cdrom:[Debian GNU/Linux 12.7.0 _Bookworm_ - Official amd64 DVD Binary-1 with firmware 20240831-10:40]/ bookworm contrib main non-free-firmware
+#deb [trusted=yes] cdrom:[Debian GNU/Linux 12.7.0 _Bookworm_ - Official amd64 DVD Binary-1 with firmware 20240831-10:40]/ bookworm contrib main non-free-firmware
+deb [trusted=yes] cdrom:[Debian GNU/Linux 12.7.0 _Bookworm_ - Official amd64 DVD Binary-1 with firmware 20240831-10:40]/ bookworm contrib main non-free-firmware
 $
 $ apt list
-$ apt-cache pkgnames
 $
 $ su -c "apt install sudo"
 $ grep sudo /etc/group
@@ -21,15 +24,15 @@ $ sg sudo
 $ groups
 sudo
 $
-$ sudo apt install build-essential gdb-minimal cmake automake autoconf libtool pkg-config gettext manpages-dev
+$ apt install sudo openssh-server build-essential gdb-minimal cmake automake autoconf libtool pkg-config gettext manpages-dev
 
 $ ls /sys/class/net/
 ens33
 $
 $ ip addr
 
-## without desktop environment
-## iface ens33 inet dhcp
+# without desktop environment
+# iface ens33 inet dhcp
 $ vi /etc/network/interfaces
 auto ens33
 allow-hotplug ens33
@@ -38,13 +41,13 @@ iface ens33 inet static
   gateway 192.157.1.1
 $
 
-## "No DHCP client software found!", then restart to take effect
+# "No DHCP client software found!", then restart to take effect
 $ /usr/sbin/ifup ens33
 $ /usr/sbin/ifdown ens33
 $ ethtool ens33
 
-## gnome desktop
-## method=auto
+# gnome desktop
+# method=auto
 $ vi /etc/NetworkManager/system-connections/ens33.nmconnection
 [ipv4]
 address1=192.168.1.5/24,192.168.1.1
@@ -53,7 +56,7 @@ method=manual
 $
 $ systemctl restart NetworkManager
 
-## dns
+# dns
 $ vi /etc/resolv.conf
 nameserver 192.168.1.1
 nameserver 8.8.8.8
@@ -66,8 +69,8 @@ $ lsb_release -a | grep -i codename
 Codename:       bookworm
 $
 
-## https://mirrors.tuna.tsinghua.edu.cn/help/debian/
-## click (?) for help on mirror in china
+# https://mirrors.tuna.tsinghua.edu.cn/help/debian/
+# click (?) for help on mirror in china
 
 # >= debian 12, deb822,
 
@@ -105,7 +108,7 @@ $ vi ~/.inputrc  # readline
 set editing-mode vi
 $
 
-## environment variables in ~/.profile, eg. PATH
+# environment variables in ~/.profile, eg. PATH
 $ vi ~/.bashrc
 alias ls="ls --color=never"
 EDITOR=/usr/bin/vim
@@ -129,11 +132,11 @@ set nowrapscan
 $
 $ apt list --installed | grep vim
 
-## list content of installed package
+# list content of installed package
 $ dpkg -L vim
 /usr/bin/vim
 $
-## which installed package has the file
+# which installed package has the file
 $ dpkg -S /usr/bin/vim
 vim: /usr/bin/vim
 $
@@ -141,11 +144,11 @@ $
 $ apt install apt-file
 $ apt-file update
 $
-## list content of package
+# list content of package
 $ apt-file list vim
 vim: /usr/bin/vim
 $
-## which package has the file
+# which package has the file
 $ apt-file --package-only search /usr/bin/vim
 gcc
 $
@@ -161,28 +164,28 @@ $ vi /etc/samba/smb.conf
   directory mask = 0755
 $
 
-## LeakSanitizer does not work under ptrace (strace, gdb)
-## Address Sanitizer (asan) will report memory usage problems
-## by running a program built with asan. do not run it in a debugger.
+# LeakSanitizer does not work under ptrace (strace, gdb)
+# Address Sanitizer (asan) will report memory usage problems
+# by running a program built with asan. do not run it in a debugger.
 $ apt install build-essential
-$ apt install gdb
+$ apt install gdb  # only gdb-minimal in install image .iso
 $ apt install cmake
 $ apt install automake autoconf libtool pkg-config gettext
 $ apt install gcc-doc gdb-doc manpages-dev
 $ apt install clang llvm lldb
 
-## VSCode, cpptools, clangd, CodeLLDB
+# VSCode, cpptools, clangd, CodeLLDB
 $ apt install ./code_1.86.1-1707298119_amd64.deb
 $ dpkg -i code_1.86.1-1707298119_amd64.deb
 $ apt install -f  # Install dependencies
 $ /usr/bin/code
 
-## https://clangd.llvm.org/installation
+# https://clangd.llvm.org/installation
 $ apt install clangd
 $ apt install clangd-13
 $ update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-13 100
 
-## install multiple gcc compiler versions
+# install multiple gcc compiler versions
 $ apt install gcc-10 gcc-9
 
 $ update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90
@@ -190,23 +193,23 @@ $ update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100
 $ update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
 $ update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 100
 
-## mode: auto, manual. priority matters in auto mode.
+# mode: auto, manual. priority matters in auto mode.
 $ update-alternatives --config gcc
 $ update-alternatives --config g++
 $ gcc --version
 $ g++ --version
 
-## tree using find
+# tree using find
 $ find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
 
-## find large size directories or files (use -h in both commands)
+# find large size directories or files (use -h in both commands)
 $ du -h -d1 /home/* | sort -hr | head -5
 
 $ timedatectl list-timezones
 $ timedatectl set-timezone "Asia/Shanghai"
 $ /usr/sbin/dpkg-reconfigure tzdata
 
-## Console Font: VGA
+# Console Font: VGA
 $ /usr/sbin/dpkg-reconfigure console-setup
 
 $ systemctl get-default
@@ -231,60 +234,61 @@ $ df -h
 /dev/sr0 3.7G /media/cdrom0
 $
 
-## resize disk partition
+# resize disk partition
 $ apt install gparted
-## Disks / Delete swap partition / Delete extended partition
-##  / resize: reserve 1.0 GB (same) free space for extended and swap
-##  / create extended partition / create swap partition
-##
+# Disks / Delete swap partition / Delete extended partition
+#  / resize: reserve 1.0 GB (same) free space for extended and swap
+#  / create extended partition / create swap partition
+#
 
-## page down to select and add zh_CN.UTF-8 locale
-## keep the default locale (en_US.UTF-8)
+# page down to select and add zh_CN.UTF-8 locale
+# keep the default locale (en_US.UTF-8)
 $ dpkg-reconfigure locales
 
-## chinese input method editor (ime)
+# chinese input method editor (ime)
 $ apt install ibus-libpinyin
 
-## re-login or restart to take effect
-## Settings / Keyboard / Input Sources / + / Chinese /
-##  Chinese (Intelligent Pinyin) / Add
-##
+# re-login or restart to take effect
+# Settings / Keyboard / Input Sources / + / Chinese /
+#  Chinese (Intelligent Pinyin) / Add
+#
 
-## disable suspend or hibernation
-## automatic suspend - computer will suspend very soon because of inactivity
+# disable suspend or hibernation
+# automatic suspend - computer will suspend very soon because of inactivity
 $ systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
 $ gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
 
-## https://extensions.gnome.org/
-## install browser extension ,
-##
-## Dash to Dock , by michel_g ,
-## Logo Activities, by orbitcorrection ,
-##
-## apt install gnome-shell-extension-prefs ,
-## /usr/bin/gnome-shell-extension-prefs ,
-##
+# https://extensions.gnome.org/
+# install browser extension ,
+#
+# Dash to Dock , by michel_g ,
+# Logo Activities, by orbitcorrection ,
+#
+# apt install gnome-shell-extension-prefs ,
+# /usr/bin/gnome-shell-extension-prefs ,
+#
 
-## Left Super
+# Left Super
 $ gsettings get org.gnome.mutter overlay-key
 'Super_L'
 $ gsettings set org.gnome.mutter overlay-key ''
 
-## settings / keyboard shortcuts
+# settings / keyboard shortcuts
 View split on left : Super + Left arrow
 View split on right: Super + Left arrow
 Restore window     : Super + Down arrow
 Maximize window    : Super + Up arrow
 
-## gave up waiting for suspend / resume device
-## a start job is running for dev-disk-by
-## use UUID from blkid to correct wrong UUID in files
+# gave up waiting for suspend / resume device
+# a start job is running for dev-disk-by
+# use UUID from blkid to correct wrong UUID in files
 $ blkid
 $ vi /etc/initramfs-tools/conf.d/resume
 $ vi /etc/fstab
 
-## /usr/sbin/update-initramfs: 142: mkinitramfs: not found
-$ PATH=$PATH:/usr/sbin sudo /usr/sbin/update-initramfs -u
+# /usr/sbin/update-initramfs: 142: mkinitramfs: not found
+$ PATH=$PATH:/usr/sbin /usr/sbin/update-initramfs -u
 update-initramfs: Generating /boot/initrd.img-5.10.0-20-amd64
 $
-$
+
+#
