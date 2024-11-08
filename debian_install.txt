@@ -69,6 +69,11 @@ $ lsb_release -a | grep -i codename
 Codename:       bookworm
 $
 
+
+# https://wiki.debian.org/DebianUnstable ,
+# Change your apt sources to point to "unstable" ;
+# Run apt update and apt full-upgrade ;
+
 # https://mirrors.tuna.tsinghua.edu.cn/help/debian/
 # click (?) for help on mirror in china
 
@@ -103,6 +108,7 @@ $
 
 $ apt update
 $ apt upgrade
+$ apt full-upgrade  # upgrade build-essential c++ gcc g++ to latest or newest version in sid unstable
 
 $ vi ~/.inputrc  # readline
 set editing-mode vi
