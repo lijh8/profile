@@ -109,6 +109,10 @@ $
 $ apt update
 $ apt upgrade
 $ apt full-upgrade  # upgrade build-essential c++ gcc g++ to latest or newest version in sid unstable
+$ apt autoremove
+
+# c++ programs compiled on sid, does not run on stable:
+# ./main: /lib/x86_64-linux-gnu/libstdc++.so.6: version `GLIBCXX_3.4.32' not found (required by ./main)
 
 $ vi ~/.inputrc  # readline
 set editing-mode vi
