@@ -92,7 +92,7 @@ Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/debian-security
 Suites: bookworm-security
 #Suites: testing-security
-#Suites: no sid security for it is unstable, comment whole security section for sid.
+#Suites: comment security section for unstable (sid).
 Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 $
@@ -108,7 +108,7 @@ $
 
 $ apt update
 $ apt upgrade
-$ apt full-upgrade  # upgrade build-essential c++ gcc g++ to latest or newest version in sid unstable
+$ apt full-upgrade  # testing, unstable (sid): build-essential c++ gcc g++,
 $ apt autoremove
 
 # c++ programs compiled on sid, does not run on stable:
