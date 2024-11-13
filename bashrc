@@ -2,7 +2,7 @@
 ## put environment variables like PATH in ~/.profile
 
 alias ls="ls --color=never"
-EDITOR=/usr/bin/vim
+EDITOR=/usr/bin/vi
 export HISTCONTROL="ignoredups:erasedups"
 export PROMPT_COMMAND='history -a'
 PS1='\$ '
