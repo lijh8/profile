@@ -5,7 +5,9 @@
 # TAB for filename completion
 bindkey -v
 
+EDITOR=/usr/bin/vi
 PS1='$ '
+
 set -k
 set -o vi
 
