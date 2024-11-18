@@ -219,7 +219,10 @@ $ wget https://github.com/vadimcn/codelldb/releases/download/v1.9.2/codelldb-x86
 $ dnf install llvm
 $ dnf install lldb
 $ dnf install clang
-$ dnf install libasan  # address sanitizer
+
+# address(leak), undefined behavior, thread sanitizer
+$ dnf install libasan liblsan libubsan libtsan
+
 $ dnf install systemd-udev  # coredump, debian: systemd-coredump
 $ coredumpctl debug  # gdb: bt, backtrace
 $ coredumpctl --output=~/foo.core dump
