@@ -4,7 +4,7 @@ Ubuntu Linux
 # unplug or disconnect network cable for fast installation.
 
 # add ubuntu image .iso in cdrom, and install from cdrom.
-$ sudo apt-cdrom add
+$ apt-cdrom add
 $ cat /etc/apt/sources.list
 #deb cdrom:[Ubuntu-Server 24.10 _Oracular Oriole_ - Release amd64 (20241007.1)]/ oracular main restricted
 deb cdrom:[Ubuntu-Server 24.10 _Oracular Oriole_ - Release amd64 (20241007.1)]/ oracular main restricted
@@ -125,8 +125,8 @@ $
 # < ubuntu 24.04
 
 $ cp /etc/apt/sources.list /etc/apt/sources.list.bak
-$ sudo sed -i "s@http://.*archive.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
-$ sudo sed -i "s@http://.*security.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
+$ sed -i "s@http://.*archive.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
+$ sed -i "s@http://.*security.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
 $
 $ vi /etc/apt/sources.list
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular           main restricted universe multiverse
@@ -239,7 +239,7 @@ $ cat ~/.config/apport/settings
 [main]
 unpackaged=true
 $
-$ sudo systemctl restart apport
+$ systemctl restart apport
 $ apport-unpack /var/crash/_home_ljh_a.out.1000.crash ~/temp
 $ gdb `cat ~/temp/ExecutablePath` ~/temp/CoreDump
 
@@ -302,9 +302,9 @@ sda                         8:0    0   35G  0 disk
   └─ubuntu--vg-ubuntu--lv 252:0    0 16.5G  0 lvm  /
 sr0                        11:0    1 1024M  0 rom
 $
-$ sudo pvresize /dev/sda3
-$ sudo lvextend  -r  -l  +100%FREE  /dev/mapper/ubuntu--vg-ubuntu--lv
-$ sudo resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
+$ pvresize /dev/sda3
+$ lvextend  -r  -l  +100%FREE  /dev/mapper/ubuntu--vg-ubuntu--lv
+$ resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
 $
 
 $ fdisk /dev/sdb
@@ -369,7 +369,7 @@ Ctrl-Q: resume terminal
 
 # https://askubuntu.com/questions/1201185/failed-to-connect-to-https-changelogs-ubuntu-com-meta-release-develpment ,
 # Q: Failed to connect to https://changelogs.ubuntu.com/meta-release-develpment,
-$ sudo rm /var/lib/ubuntu-release-upgrader/release-upgrade-available
-$ sudo /usr/lib/ubuntu-release-upgrader/release-upgrade-motd
+$ rm /var/lib/ubuntu-release-upgrader/release-upgrade-available
+$ /usr/lib/ubuntu-release-upgrader/release-upgrade-motd
 
 #
