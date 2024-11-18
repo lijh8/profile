@@ -4,19 +4,22 @@ Debian Linux install
 # download the first .iso ("*-DVD-1.iso"): debian-12.1.0-amd64-DVD-1.iso
 # unplug and disconnect network cable for fast installation
 
-# add the debian image .iso file in cdrom, install from cdrom.
+# add the debian installation image .iso file in cdrom, install from cdrom.
 
 $ apt-cdrom add
 Using CD-ROM mount point /media/cdrom/
 $
 
 # E: The repository 'cdrom://[Debian GNU/Linux 12.7.0] bookworm Release' does not have a Release file.
+# add: [trusted=yes]
+#
 $ cat /etc/apt/sources.list
 #deb [trusted=yes] cdrom:[Debian GNU/Linux 12.7.0 _Bookworm_ - Official amd64 DVD Binary-1 with firmware 20240831-10:40]/ bookworm contrib main non-free-firmware
 deb [trusted=yes] cdrom:[Debian GNU/Linux 12.7.0 _Bookworm_ - Official amd64 DVD Binary-1 with firmware 20240831-10:40]/ bookworm contrib main non-free-firmware
 $
 $ apt list
 $
+
 $ su -c "apt install sudo"
 $ grep sudo /etc/group
 $ su -c "/usr/sbin/usermod -a -G sudo `whoami`"
@@ -24,12 +27,15 @@ $ sg sudo
 $ groups
 sudo
 $
+
 $ apt install sudo openssh-server build-essential gdb-minimal cmake automake autoconf libtool pkg-config gettext manpages-dev
+$
 
 $ ls /sys/class/net/
 ens33
 $
 $ ip addr
+$
 
 # without desktop environment
 # iface ens33 inet dhcp
@@ -42,9 +48,11 @@ iface ens33 inet static
 $
 
 # "No DHCP client software found!", then restart to take effect
+
 $ /usr/sbin/ifup ens33
 $ /usr/sbin/ifdown ens33
 $ ethtool ens33
+$
 
 # gnome desktop
 # method=auto
@@ -55,6 +63,7 @@ dns=8.8.8.8;192.168.1.1;
 method=manual
 $
 $ systemctl restart NetworkManager
+$
 
 # dns
 $ vi /etc/resolv.conf
@@ -71,11 +80,12 @@ $
 
 
 # https://wiki.debian.org/DebianUnstable ,
-# Change your apt sources to point to "unstable" ;
+# Change your apt sources to point to "unstable", or "testing",
 # Run apt update and apt full-upgrade ;
 
-# https://mirrors.tuna.tsinghua.edu.cn/help/debian/
-# click (?) for help on mirror in china
+# https://www.debian.org/mirror/list.html ,
+# https://mirrors.tuna.tsinghua.edu.cn/help/debian/ ,
+# https://mirror.nyist.edu.cn/help/debian/ ,
 
 # >= debian 12, deb822,
 
@@ -97,7 +107,7 @@ Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 $
 
-# < debian 12,
+# or non-deb822 style,
 
 $ vi /etc/apt/sources.list
 deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm            main contrib non-free non-free-firmware
@@ -106,10 +116,18 @@ deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm-backports  ma
 deb https://mirrors.tuna.tsinghua.edu.cn/debian-security  bookworm-security   main contrib non-free non-free-firmware
 $
 
+$ vi /etc/apt/sources.list
+deb https://mirror.nyist.edu.cn/debian/ bookworm main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian/ bookworm-updates main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian/ bookworm-backports main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian-security bookworm-security main contrib non-free non-free-firmware
+$
+
 $ apt update
 $ apt upgrade
 $ apt full-upgrade  # testing, unstable (sid): build-essential c++ gcc g++,
 $ apt autoremove
+$
 
 # c++ programs compiled on sid, does not run on stable:
 # ./main: /lib/x86_64-linux-gnu/libstdc++.so.6: version `GLIBCXX_3.4.32' not found (required by ./main)
@@ -136,6 +154,7 @@ ulimit -c unlimited  # systemd-coredump
 $
 
 $ touch ~/.hushlogin
+$
 
 $ apt install vim  # vim-tiny pre-installed
 $ update-alternatives --config editor
@@ -146,6 +165,7 @@ set nowrapscan
 "syntax off
 $
 $ apt list --installed | grep vim
+$
 
 # list content of installed package
 $ dpkg -L vim
@@ -188,44 +208,54 @@ $ apt install cmake
 $ apt install automake autoconf libtool pkg-config gettext
 $ apt install gcc-doc gdb-doc manpages-dev
 $ apt install clang llvm lldb
+$
 
 # VSCode, cpptools, clangd, CodeLLDB
 $ apt install ./code_1.86.1-1707298119_amd64.deb
 $ dpkg -i code_1.86.1-1707298119_amd64.deb
 $ apt install -f  # Install dependencies
 $ /usr/bin/code
+$
 
 # https://clangd.llvm.org/installation
 $ apt install clangd
 $ apt install clangd-13
 $ update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-13 100
+$
 
 # install multiple gcc compiler versions
 $ apt install gcc-10 gcc-9
+$
 
 $ update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90
 $ update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100
 $ update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
 $ update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 100
+$
 
 # mode: auto, manual. priority matters in auto mode.
 $ update-alternatives --config gcc
 $ update-alternatives --config g++
 $ gcc --version
 $ g++ --version
+$
 
 # tree using find
 $ find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
+$
 
 # find large size directories or files (use -h in both commands)
 $ du -h -d1 /home/* | sort -hr | head -5
+$
 
 $ timedatectl list-timezones
 $ timedatectl set-timezone "Asia/Shanghai"
 $ /usr/sbin/dpkg-reconfigure tzdata
+$
 
 # Console Font: VGA
 $ /usr/sbin/dpkg-reconfigure console-setup
+$
 
 $ systemctl get-default
 graphical.target
@@ -235,11 +265,13 @@ $ ls /lib/systemd/system/*.target | grep multi-user
 $
 $ systemctl set-default multi-user.target  # graphical.target
 $ init 3  # 5
+$
 
 $ lsblk
 $ fdisk /dev/sdb
 $ mkfs.ext4 /dev/sdb1
 $ mount /dev/sdb1 /mnt/data
+$
 
 $ vi /etc/fstab
 /dev/sr0 /media/cdrom0
@@ -259,9 +291,11 @@ $ apt install gparted
 # page down to select and add zh_CN.UTF-8 locale
 # keep the default locale (en_US.UTF-8)
 $ dpkg-reconfigure locales
+$
 
 # chinese input method editor (ime)
 $ apt install ibus-libpinyin
+$
 
 # re-login or restart to take effect
 # Settings / Keyboard / Input Sources / + / Chinese /
@@ -272,6 +306,7 @@ $ apt install ibus-libpinyin
 # automatic suspend - computer will suspend very soon because of inactivity
 $ systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
 $ gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
+$
 
 # https://extensions.gnome.org/
 # install browser extension ,
@@ -287,6 +322,7 @@ $ gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type '
 $ gsettings get org.gnome.mutter overlay-key
 'Super_L'
 $ gsettings set org.gnome.mutter overlay-key ''
+$
 
 # settings / keyboard shortcuts
 View split on left : Super + Left arrow
@@ -300,6 +336,7 @@ Maximize window    : Super + Up arrow
 $ blkid
 $ vi /etc/initramfs-tools/conf.d/resume
 $ vi /etc/fstab
+$
 
 # /usr/sbin/update-initramfs: 142: mkinitramfs: not found
 $ PATH=$PATH:/usr/sbin /usr/sbin/update-initramfs -u
