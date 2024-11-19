@@ -46,20 +46,20 @@ iface ens33 inet static
   address 192.168.1.2/24
   gateway 192.157.1.1
 $
-
-# "No DHCP client software found!", then restart to take effect
-
 $ /usr/sbin/ifup ens33
 $ /usr/sbin/ifdown ens33
 $ ethtool ens33
 $
+
+# "No DHCP client software found!"
+# reboot to take effect.
 
 # gnome desktop
 # method=auto
 $ vi /etc/NetworkManager/system-connections/ens33.nmconnection
 [ipv4]
 address1=192.168.1.5/24,192.168.1.1
-dns=8.8.8.8;192.168.1.1;
+dns=192.168.1.1;8.8.8.8;
 method=manual
 $
 $ systemctl restart NetworkManager
@@ -71,6 +71,7 @@ nameserver 192.168.1.1
 nameserver 8.8.8.8
 $
 $ ping debian.org
+$
 
 $ grep -i Codename /etc/os-release
 $
@@ -87,7 +88,7 @@ $
 # https://mirrors.tuna.tsinghua.edu.cn/help/debian/ ,
 # https://mirror.nyist.edu.cn/help/debian/ ,
 
-# >= debian 12, deb822,
+# deb822 format, debian 12 or later,
 
 $ vi /etc/apt/sources.list.d/debian.sources
 Types: deb
@@ -107,7 +108,7 @@ Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 $
 
-# or non-deb822 style,
+# older foramt,
 
 $ vi /etc/apt/sources.list
 deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm            main contrib non-free non-free-firmware
@@ -117,10 +118,10 @@ deb https://mirrors.tuna.tsinghua.edu.cn/debian-security  bookworm-security   ma
 $
 
 $ vi /etc/apt/sources.list
-deb https://mirror.nyist.edu.cn/debian/ bookworm main contrib non-free non-free-firmware
-deb https://mirror.nyist.edu.cn/debian/ bookworm-updates main contrib non-free non-free-firmware
-deb https://mirror.nyist.edu.cn/debian/ bookworm-backports main contrib non-free non-free-firmware
-deb https://mirror.nyist.edu.cn/debian-security bookworm-security main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian/          bookworm            main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian/          bookworm-updates    main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian/          bookworm-backports  main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian-security  bookworm-security   main contrib non-free non-free-firmware
 $
 
 $ apt update
@@ -129,7 +130,7 @@ $ apt full-upgrade  # testing, unstable (sid): build-essential c++ gcc g++,
 $ apt autoremove
 $
 
-# c++ programs compiled on sid, does not run on stable:
+# c++ programs compiled on testing, does not run on stable:
 # ./main: /lib/x86_64-linux-gnu/libstdc++.so.6: version `GLIBCXX_3.4.32' not found (required by ./main)
 
 $ vi ~/.inputrc  # readline
@@ -150,6 +151,7 @@ export PATH=$PATH:../boost_1_73_0/stage/lib
 PS1='\$ '
 set -o vi  # set editing-mode vi # ~/.inputrc,
 stty -ixon  # terminal flow control Ctrl-S conflicts with vim, emacs.
+#stty columns 80
 ulimit -c unlimited  # systemd-coredump
 $
 
@@ -158,7 +160,7 @@ $
 
 $ apt install vim  # vim-tiny pre-installed
 $ update-alternatives --config editor
-$ vi -u /home/ljh/.vimrc ~/.vimrc
+$ vi -u ~/.vimrc ~/.vimrc
 set hlsearch
 set incsearch
 set nowrapscan
@@ -179,11 +181,11 @@ $
 $ apt install apt-file
 $ apt-file update
 $
-# list content of package
+# package content
 $ apt-file list vim
 vim: /usr/bin/vim
 $
-# which package has the file
+# package contains a file
 $ apt-file --package-only search /usr/bin/vim
 gcc
 $
@@ -203,7 +205,7 @@ $
 # Address Sanitizer (asan) will report memory usage problems
 # by running a program built with asan. do not run it in a debugger.
 $ apt install build-essential
-$ apt install gdb  # only gdb-minimal in install image .iso
+$ apt install gdb  # gdb-minimal in installation image .iso
 $ apt install cmake
 $ apt install automake autoconf libtool pkg-config gettext
 $ apt install gcc-doc gdb-doc manpages-dev
