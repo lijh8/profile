@@ -1,0 +1,171 @@
+---
+
+
+my c++ program has three source files: main.cpp, foo.h, foo.cpp,
+the main function in main.cpp calls foo function which involved foo.h, foo.cpp,
+this program is developed on debian linux machine.
+
+my c++ program will be compiled and tested by test team on separate test
+machine. how do i use docker for my c++ program, so the test team can use same
+compiler, libraries, and environment like it on my own development machine?
+
+and, what if my program replies on a library of specific version,
+eg. libxml-2.12, from debian repository.
+
+and again, what if my program contains a custom private library,
+eg. libbar.so of my own.
+
+
+---
+
+
+# install docker community edition:
+
+sudo apt update
+sudo apt upgrade -y
+sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update
+sudo apt install docker-ce -y
+sudo systemctl start docker
+sudo systemctl enable docker
+docker --version
+
+
+---
+
+
+If your C++ program relies on a specific version of a library (like libxml),
+and also includes a custom private library (like libbar.so), you will need to
+ensure that these dependencies are included in your Docker environment. Below
+are the steps to handle both scenarios using Docker.
+
+Step 1: Update the Dockerfile for Library Dependencies
+
+You will need to modify your Dockerfile to install the specific version of
+libxml2 and include your custom library. Here’s an updated version of the
+Dockerfile:
+
+```
+
+# dockerfile
+
+# Use the official Debian image
+FROM debian:bullseye
+
+# Set environment variables for library paths
+ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+
+# Install build tools and the specific version of libxml2
+RUN apt-get update && \
+    apt-get install -y \
+    g++ \
+    make \
+    cmake \
+    libxml2=2.12.* \      # Specify the exact version or pattern as needed
+    libxml2-dev=2.12.* \  # Include development files for compiling
+    && rm -rf /var/lib/apt/lists/*  # Clean up
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the source files into the container
+COPY . .
+
+# Copy the custom library into the appropriate directory
+# Assuming 'libbar.so' is in the same directory as your Dockerfile
+COPY libbar.so /usr/local/lib/
+
+# Optionally run ldconfig to refresh shared library cache
+RUN ldconfig
+
+# Compile your program with the required libraries
+RUN g++ -o my_program main.cpp foo.cpp -lxml2 -L/usr/local/lib -lbar
+
+# Command to run the compiled program
+CMD ["./my_program"]
+
+# or,
+# Set the entrypoint to run the program
+#ENTRYPOINT ["./my_program"]
+#CMD []
+
+```
+
+Step 2: Prepare Custom Library
+
+Ensure that your custom library (libbar.so) is available in the same directory
+as your Dockerfile. The COPY command in the Dockerfile will copy this file into
+the /usr/local/lib/ directory inside the Docker image. After copying, we run
+ldconfig to refresh the shared library cache, which helps the dynamic linker
+find libbar.so.
+
+Step 3: Build the Docker Image
+
+You can build your Docker image as before:
+
+bash
+docker build -t my_cpp_program .
+
+Step 4: Run the Docker Container
+
+Once built, you can run the image with:
+
+bash
+docker run --rm my_cpp_program
+
+# or,
+docker run -it --rm my_cpp_program /bin/bash
+./my_cpp_program
+
+# or,
+docker run -d --rm my_daemon_service
+
+
+Handling Custom Libraries and External Dependencies
+
+Library Versioning: By specifying the version of libxml2 in the apt-get install
+command (e.g., libxml2=2.12.*), you ensure that the Docker image uses the
+desired version. Make sure that this version is available in the Debian
+repository you're targeting.
+
+Custom Libraries: If you have more custom libraries, follow the same pattern as
+libbar.so:
+
+Copy them into the appropriate location using the COPY instruction.
+Ensure they are linked correctly during the compilation step by including the
+-L flag (to specify the library path) and the -l flag (to specify the library
+name without the lib prefix).
+
+Example Project Structure
+
+Your project directory structure should look like this:
+
+/your_project_directory
+|-- Dockerfile
+|-- main.cpp
+|-- foo.h
+|-- foo.cpp
+|-- libbar.so  # Your custom library
+
+Testing the Environment
+
+Once you have set everything up, you can test your program within the Docker
+container to ensure that all dependencies are correctly resolved and that the
+program behaves as expected.
+
+Use supervisord if your program needs auto-restarting.
+
+
+Summary
+
+By updating your Docker setup to include specific library versions and custom
+libraries, you create a complete and isolated environment for your C++ program.
+This method allows consistent building and testing across different machines,
+making it easier for the test team to validate functionality against the
+specific dependencies you've defined.
+
+
+---
+
