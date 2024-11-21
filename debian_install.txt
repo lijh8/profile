@@ -209,7 +209,7 @@ $ apt install gdb  # gdb-minimal in installation image .iso
 $ apt install cmake
 $ apt install automake autoconf libtool pkg-config gettext
 $ apt install gcc-doc gdb-doc manpages-dev
-$ apt install clang llvm lldb
+$ apt install clang llvm lldb libc++-dev libc++abi-dev
 $
 
 # VSCode, cpptools, clangd, CodeLLDB
