@@ -2,6 +2,7 @@
 
 " $ vi ~/.bashrc
 " stty -ixon  # terminal flow control Ctrl-s conflicts with vim, emacs.
+" #stty columns 80
 " $
 
 " $ sudo vim -u ~/.vimrc /etc/systemd/system.conf
@@ -14,8 +15,18 @@
 " command-line window, search for command history inside vim.
 " :Ctrl-f, :Ctrl-p, :Ctrl-n,
 
-" multiple tab,
-" :e a.txt, :tabnew [a.txt], :tabedit [a.txt], :tabn [N], gt, gT, g<Tab>,
+" multiple tab(s),
+" :e a.txt, :w, :qa, :close,
+" :tabnew [a.txt], :tabedit [a.txt],
+" gt, gT, [x]gt, :tabn [x],
+
+" multiple buffer(s),
+" :args, :n, :N, :rewind,
+
+" search a single letter inside a line,
+" search a letter `c`: f c
+" repeat forward: ;
+" repeat backword: ,
 
 " multiple window,
 " C-W-H, C-W-L, C-W-J, C-W-K, C-W-S, C-W-V,
@@ -40,31 +51,28 @@ set autoindent
 set expandtab
 set hlsearch
 set incsearch
-
-" select for copy: windows:shift+mouse, macOS:fn+mouse,
-set mouse=a " Win:SHIFT+mouse, Mac:fn+mouse
-
-set nocompatible  " u always undo, Ctrl-r always redo,
+set mouse=a " selection: Win:shift+mouse, Mac:fn+mouse,
+set nocompatible " u always undo, Ctrl-r always redo,
 set nowrapscan
 set number
-set ruler
+set ruler " older vim on macos not show current line number at status line,
 set shiftwidth=4
 set tabstop=4
 set updatetime=100
 "syntax off
 
-" auto save, works with vim rather than vim-tiny.
-autocmd TextChanged,TextChangedI * if &modifiable && !&readonly && expand("%") != "" && &buftype == '' | silent write | endif
+" auto save, works with vim but not vim-tiny,
+autocmd TextChanged,TextChangedI * if &modifiable && !&readonly && expand("%") != "" && &buftype == "" | silent write | endif
 
 " netrw,
 "autocmd VimEnter * Lexplore
-"nnoremap <F2> :Lexplore<CR>
-"let g:netrw_banner = 0
-"let g:netrw_browse_split = 4
-"let g:netrw_list_hide = '.*\.swp$'
-"let g:netrw_liststyle = 3
-"let g:netrw_winsize = 16
-"let g:netrw_mousemaps = 0
+nnoremap <F2> :Lexplore<CR>
+let g:netrw_banner = 0
+let g:netrw_browse_split = 4
+let g:netrw_list_hide = '.*\.swp$'
+let g:netrw_liststyle = 3
+let g:netrw_winsize = 16
+let g:netrw_mousemaps = 0
 
 " highlight occurrences of word when cursor is inside the word,
 " cancel highlight when cursor is outside.
@@ -84,6 +92,14 @@ autocmd TextChanged,TextChangedI * if &modifiable && !&readonly && expand("%") !
 
 
 """ non built-in plugins """
+
+" vim-lsp, vim-lsp-settings,
+" similar to neovim: tagfunc is set to vim.lsp.tagfunc(),
+" add vim-lsp in vim only install in `opt` (not `start`) directory then packadd,
+" neovim has built-in lsp, and should source a modified copy eg. ~/.vimrc2,
+packadd! vim-lsp          " comment for neovim
+packadd! vim-lsp-settings " comment for neovim
+set tagfunc=lsp#tagfunc   " comment for neovim
 
 " Tagbar,
 " https://github.com/preservim/tagbar/issues/851 ,
