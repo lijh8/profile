@@ -353,3 +353,13 @@ Debian 9 (Stretch), 2017-06, GCC 6.3;
 Debian 8 (Jessie), 2015-04, GCC 4.9;
 
 #
+
+# sudo: unable to resolve host debian: Name or service not known
+# make the host names eg. `abc` match in the two files:
+$ cat /etc/hostname
+abc
+$
+$ cat /etc/hosts
+127.0.0.1  localhost
+127.0.1.1  abc
+$
