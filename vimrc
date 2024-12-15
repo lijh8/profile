@@ -64,7 +64,7 @@ set number
 set ruler " vim-tiny, show current line number at status line
 set shiftwidth=2
 set tabstop=2
-"set updatetime=100 " CursorHold
+set updatetime=100 " CursorHold, tagbar,
 "syntax off
 
 " auto save works with vim, not vim-tiny
@@ -86,7 +86,7 @@ let g:netrw_banner = 0
 let g:netrw_browse_split = 4 " press t to open file in new tab,
 let g:netrw_list_hide = '.*\.swp$'
 let g:netrw_liststyle = 3
-let g:netrw_winsize = 16
+let g:netrw_winsize = 20 " percentage of the window size
 let g:netrw_mousemaps = 0
 
 " Termdebug
@@ -107,18 +107,24 @@ if !has('nvim') && filereadable(expand('~/.vim/pack/*/*/vim-lsp/plugin/lsp.vim')
   packadd! vim-lsp-settings
   set tagfunc=lsp#tagfunc
 
-  " auto format when manually save with :w , :w! ,
+  " auto format on save by :w ,
   autocmd BufWritePre * if exists(':LspDocumentFormat') | execute ':LspDocumentFormat' | endif
 endif
 
 " Tagbar
 " https://github.com/preservim/tagbar/issues/851 ,
-"autocmd QuitPre * qall
-"autocmd VimEnter * Tagbar
-"let g:tagbar_sort = 0
-"nnoremap <F7> :TagbarToggle<CR>
+if !has('nvim') && filereadable(expand('~/.vim/pack/*/*/tagbar/plugin/tagbar.vim'))
+  packadd! tagbar
+  autocmd QuitPre * qall
+  let g:tagbar_sort = 0
+  let g:tagbar_compact = 1
+  nnoremap <F3> :TagbarToggle<CR>
+endif
 
 " gutentags
 " ctags: Ctrl-], Ctrl-t, Ctrl-o, Ctrl-i,
 " $ mkdir ~/myproject_root_dir/.git
-"let g:gutentags_add_default_project_roots = 1
+if !has('nvim') && filereadable(expand('~/.vim/pack/*/*/gutentags/plugin/gutentags.vim'))
+  packadd! gutentags
+  let g:gutentags_add_default_project_roots = 1
+endif
