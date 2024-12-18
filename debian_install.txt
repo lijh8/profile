@@ -81,8 +81,9 @@ $
 
 
 # https://wiki.debian.org/DebianUnstable ,
+# https://wiki.debian.org/DebianTesting ,
 # Change your apt sources to point to "unstable", or "testing",
-# Run apt update and apt full-upgrade ;
+# apt update ; apt full-upgrade ;
 
 # https://www.debian.org/mirror/list.html ,
 # https://mirrors.tuna.tsinghua.edu.cn/help/debian/ ,
@@ -93,17 +94,18 @@ $
 $ vi /etc/apt/sources.list.d/debian.sources
 Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/debian
-Suites: bookworm bookworm-updates bookworm-backports
-#Suites: testing testing-updates testing-backports
+Suites: stable stable-updates stable-backports
+#Suites: testing
 #Suites: sid
 Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 
+# security section
 Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/debian-security
-Suites: bookworm-security
+Suites: stable-security
 #Suites: testing-security
-#Suites: comment security section for unstable (sid).
+#Suites: for sid, comment whole security section: Types: , .. ,  Signed-by: ,
 Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 $
@@ -111,22 +113,22 @@ $
 # older foramt,
 
 $ vi /etc/apt/sources.list
-deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm            main contrib non-free non-free-firmware
-deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm-updates    main contrib non-free non-free-firmware
-deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm-backports  main contrib non-free non-free-firmware
-deb https://mirrors.tuna.tsinghua.edu.cn/debian-security  bookworm-security   main contrib non-free non-free-firmware
+deb https://mirrors.tuna.tsinghua.edu.cn/debian           stable            main contrib non-free non-free-firmware
+deb https://mirrors.tuna.tsinghua.edu.cn/debian           stable-updates    main contrib non-free non-free-firmware
+deb https://mirrors.tuna.tsinghua.edu.cn/debian           stable-backports  main contrib non-free non-free-firmware
+deb https://mirrors.tuna.tsinghua.edu.cn/debian-security  stable-security   main contrib non-free non-free-firmware
 $
 
 $ vi /etc/apt/sources.list
-deb https://mirror.nyist.edu.cn/debian/          bookworm            main contrib non-free non-free-firmware
-deb https://mirror.nyist.edu.cn/debian/          bookworm-updates    main contrib non-free non-free-firmware
-deb https://mirror.nyist.edu.cn/debian/          bookworm-backports  main contrib non-free non-free-firmware
-deb https://mirror.nyist.edu.cn/debian-security  bookworm-security   main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian/          stable            main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian/          stable-updates    main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian/          stable-backports  main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian-security  stable-security   main contrib non-free non-free-firmware
 $
 
 $ apt update
 $ apt upgrade
-$ apt full-upgrade  # testing, unstable (sid): build-essential c++ gcc g++,
+$ apt full-upgrade  # testing, sid (unstable): build-essential c++ gcc g++,
 $ apt autoremove
 $
 
