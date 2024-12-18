@@ -94,16 +94,16 @@ $
 $ vi /etc/apt/sources.list.d/debian.sources
 Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/debian
-Suites: stable stable-updates stable-backports
+Suites: bookworm bookworm-updates bookworm-backports
 #Suites: testing
-#Suites: unstable
+#Suites: sid
 Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 
-# security section is for stable, comment it for testing, unstable.
+# security section is not available for sid (unstable).
 Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/debian-security
-Suites: stable-security
+Suites: bookworm-security
 #Suites: testing-security
 Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
@@ -112,17 +112,17 @@ $
 # older foramt,
 
 $ vi /etc/apt/sources.list
-deb https://mirrors.tuna.tsinghua.edu.cn/debian           stable            main contrib non-free non-free-firmware
-deb https://mirrors.tuna.tsinghua.edu.cn/debian           stable-updates    main contrib non-free non-free-firmware
-deb https://mirrors.tuna.tsinghua.edu.cn/debian           stable-backports  main contrib non-free non-free-firmware
-deb https://mirrors.tuna.tsinghua.edu.cn/debian-security  stable-security   main contrib non-free non-free-firmware
+deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm            main contrib non-free non-free-firmware
+deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm-updates    main contrib non-free non-free-firmware
+deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm-backports  main contrib non-free non-free-firmware
+deb https://mirrors.tuna.tsinghua.edu.cn/debian-security  bookworm-security   main contrib non-free non-free-firmware
 $
 
 $ vi /etc/apt/sources.list
-deb https://mirror.nyist.edu.cn/debian/          stable            main contrib non-free non-free-firmware
-deb https://mirror.nyist.edu.cn/debian/          stable-updates    main contrib non-free non-free-firmware
-deb https://mirror.nyist.edu.cn/debian/          stable-backports  main contrib non-free non-free-firmware
-deb https://mirror.nyist.edu.cn/debian-security  stable-security   main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian/          bookworm            main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian/          bookworm-updates    main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian/          bookworm-backports  main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian-security  bookworm-security   main contrib non-free non-free-firmware
 $
 
 $ apt update
