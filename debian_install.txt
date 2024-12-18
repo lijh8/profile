@@ -96,16 +96,15 @@ Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/debian
 Suites: stable stable-updates stable-backports
 #Suites: testing
-#Suites: sid
+#Suites: unstable
 Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 
-# security section
+# security section is for stable, comment it for testing, unstable.
 Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/debian-security
 Suites: stable-security
 #Suites: testing-security
-#Suites: for sid, comment whole security section: Types: , .. ,  Signed-by: ,
 Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 $
