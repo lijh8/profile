@@ -367,11 +367,12 @@ $
 
 # terminal console
 
-# pseudo terminal TTY:
-switch: Ctrl-Alt-F1, .. , -F6,
+# pseudo terminal: TTY,
+# ASCII,
+# switch: Ctrl-Alt-F1, .. , -F6,
 
-# terminal emulator:
-xterm, gnome-terminal,
+# terminal emulator: xterm, gnome-terminal,
+# UTF-8, CJK,
 
 $ tty
 $ w
