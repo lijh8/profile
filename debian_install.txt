@@ -28,7 +28,7 @@ $ groups
 sudo
 $
 
-$ apt install sudo openssh-server build-essential gdb-minimal cmake automake autoconf libtool pkg-config gettext manpages-dev
+$ apt install sudo openssh-server build-essential gdb cmake automake autoconf libtool pkg-config gettext manpages-dev
 $
 
 $ ls /sys/class/net/
@@ -364,3 +364,20 @@ $ cat /etc/hosts
 127.0.0.1  localhost
 127.0.1.1  abc
 $
+
+# terminal console
+
+# pseudo terminal TTY:
+switch: Ctrl-Alt-F1, .. , -F6,
+
+# terminal emulator:
+xterm, gnome-terminal,
+
+$ tty
+$ w
+$ who
+$ tty -s && echo "In a TTY"
+# $ dpkg-reconfigure locales
+$
+
+#
