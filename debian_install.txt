@@ -6,6 +6,7 @@ Debian Linux install
 # avoid download security packages on slow network connection durign installation.
 # enable network but unplug or disconnect network cable for fast installation.
 
+# virtualbox network: Bridged Adapter,
 # clone virtual machine in virtualbox,
 # generate new MAC addresses for all network adapters.
 
