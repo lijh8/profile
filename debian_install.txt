@@ -1,8 +1,13 @@
 
 Debian Linux install
 
-# download the first .iso ("*-DVD-1.iso"): debian-12.1.0-amd64-DVD-1.iso
-# unplug and disconnect network cable for fast installation
+# download the first .iso ("*-DVD-1.iso"): debian-12.1.0-amd64-DVD-1.iso ,
+
+# avoid download security from slow network connection durign installation.
+# enable network but unplug and disconnect network cable for fast installation.
+
+# clone or copy virtual machine in virtualbox,
+# generate new MAC addresses for all network adapters.
 
 # add the debian installation image .iso file in cdrom, install from cdrom.
 
@@ -38,6 +43,7 @@ $ ip addr
 $
 
 # without desktop environment
+# https://wiki.debian.org/NetworkConfiguration ,
 # iface ens33 inet dhcp
 $ vi /etc/network/interfaces
 auto ens33
