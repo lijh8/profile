@@ -137,8 +137,9 @@ $ apt full-upgrade  # testing, sid (unstable): build-essential c++ gcc g++,
 $ apt autoremove
 $
 
-# c++ programs compiled on testing, does not run on stable:
+# c++ program compiled on sid(unstable), testing with dynamical link, does not run on stable,
 # ./main: /lib/x86_64-linux-gnu/libstdc++.so.6: version `GLIBCXX_3.4.32' not found (required by ./main)
+# use fully static link with -static instead,
 
 $ vi ~/.inputrc  # readline
 set editing-mode vi
@@ -386,3 +387,8 @@ $ who
 $ tty -s && echo "In a TTY"
 # $ dpkg-reconfigure locales
 $
+
+# Old Debian releases on CD/DVD ,
+# https://cdimage.debian.org/mirror/cdimage/archive/ ,
+
+#
