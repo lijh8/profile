@@ -1,0 +1,91 @@
+
+How Linux Kernel Runs Executables ,
+https://www.youtube.com/watch?v=ZlZDWeVL2LI&t=11s ,
+https: //github.com/nir9/welcome ,
+
+# building a kernel,
+# which we can debug with gdb,
+
+$ cd ~/cloned/linux
+
+$ make defconfig
+
+# or copy a existing running config
+
+$ cp /boot/config-6.12.8-amd64 .
+
+# enable debugging options:
+# - kernel hacking, .. , Debug information,
+# - Generic Kernel Debugging Instruments, KGDB: kernel debugger,
+
+$ make menuconfig
+$ make -j 4
+$ make scripts_gdb
+
+$ cd ~/fun/bash-5.2.37
+$ ./configure --enable-static-link
+$ make -j 4
+
+# rename the output executable bash as init
+$ cd ~/fun/
+$ mv ~/fun/bash-5.2.37/bash init
+
+$ cd ~/fun/
+$ vi hello.c
+#include <unistd.h>
+void main(){
+    write(1, "hello\n", 6);
+    _exit(0xa4);
+}
+
+$ gcc -static -o hello --entry main hello.c
+$ ldd hello
+
+# make initramfs that we can use with newly built kernel
+
+$ echo hello >> list
+$ echo init >> list
+$ cat list
+hello
+init
+$
+
+$ cat list | cpio -o -H newc > init.cpio
+$
+
+
+# https://docs.kernel.org/dev-tools/gdb-kernel-debugging.html ,
+
+$ vi ~/.gdbinit
+add-auto-load-safe-path ~/cloned/linux
+$
+
+boot the system that we just built.
+use QEMU for this.
+make QEMU to boot in debug mode so we can connect with GDB.
+
+# target
+# gdb server
+# bzImage is compressed kernel
+
+# https://www.qemu.org/docs/master/system/gdb.html#gdb-usage ,
+# The -s option will make QEMU listen for an incoming connection from gdb on TCP port 1234,
+# qemu option ` -s `, or -gdb tcp::1234 , default port 1234,
+
+$ cd ~/cloned/linux
+$ qemu-system-x86_64 -kernel ./arch/x86/boot/bzImage \
+> -initrd ~/fun/init.cpio -s
+$
+
+# the new kernel is booting up and we drop into bash.
+
+# host
+# vmlinux is uncompressed kernel,
+# it is with debug information like function name, line number,
+# ` target remote :1234 `, connects gdb to the server,
+
+$ cd ~/cloned/linux
+$ gdb ./vmlinux
+(gdb) target remote :1234
+(gdb)
+$
