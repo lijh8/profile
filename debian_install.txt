@@ -45,6 +45,15 @@ $
 # without desktop environment
 # https://wiki.debian.org/NetworkConfiguration ,
 # iface ens33 inet dhcp
+
+## dynamic ip
+$ vi /etc/network/interfaces
+auto ens33
+allow-hotplug ens33
+iface ens33 inet dhcp
+$
+
+## static ip
 $ vi /etc/network/interfaces
 auto ens33
 allow-hotplug ens33
@@ -149,7 +158,7 @@ $
 $ vi ~/.bashrc
 alias ls="ls --color=never"
 alias tree="tree -n"
-EDITOR=/usr/bin/vi
+EDITOR=$(which vi)  # update-alternative --config EDITOR
 
 export HISTCONTROL="ignoredups:erasedups:ignorespace"
 export PROMPT_COMMAND='history -a'
@@ -171,6 +180,7 @@ $ update-alternatives --config editor
 $ vi -u ~/.vimrc ~/.vimrc
 set hlsearch
 set incsearch
+set nocompatible " vim-tiny, u always undo, Ctrl-r always redo,
 set nowrapscan
 "syntax off
 $

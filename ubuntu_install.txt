@@ -1,13 +1,38 @@
 
 Ubuntu Linux
 
-# unplug or disconnect network cable for fast installation.
+# avoid download security packages on slow network connection durign installation.
+# enable network but unplug or disconnect network cable for fast installation.
 
-# add ubuntu image .iso in cdrom, and install from cdrom.
+# virtualbox network: Bridged Adapter,
+# clone virtual machine in virtualbox,
+# generate new MAC addresses for all network adapters.
+
+# add the debian installation image .iso file in cdrom, install from cdrom.
+
 $ apt-cdrom add
+Using CD-ROM mount point /media/cdrom/
+$
+
+# E: The repository 'cdrom://[Debian GNU/Linux 12.7.0] bookworm Release' does not have a Release file.
+# add: [trusted=yes]
+#
 $ cat /etc/apt/sources.list
-#deb cdrom:[Ubuntu-Server 24.10 _Oracular Oriole_ - Release amd64 (20241007.1)]/ oracular main restricted
-deb cdrom:[Ubuntu-Server 24.10 _Oracular Oriole_ - Release amd64 (20241007.1)]/ oracular main restricted
+deb [trusted=yes] cdrom:[Ubuntu-Server 24.10 _Oracular Oriole_ - Release amd64 (20241007.1)]/ oracular main restricted
+$
+$
+$ apt list
+$
+
+$ su -c "apt install sudo"
+$ grep sudo /etc/group
+$ su -c "/usr/sbin/usermod -a -G sudo `whoami`"
+$ sg sudo
+$ groups
+sudo
+$
+
+$ apt install sudo openssh-server build-essential gdb cmake automake autoconf libtool pkg-config gettext manpages-dev
 $
 
 $ ls /sys/class/net/
@@ -30,8 +55,8 @@ iface ens33 inet static
   address 192.168.1.2/24
   gateway 192.157.1.1
 $
-$ ifup ens33
-$ ifdown ens33
+$ /usr/sbin/ifup ens33
+$ /usr/sbin/ifdown ens33
 $ ethtool ens33
 
 $ vi /etc/NetworkManager/system-connections/ens33.nmconnection
@@ -135,17 +160,17 @@ deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-backports main restric
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-security  main restricted universe multiverse
 $
 
+$ vi /etc/apt/sources.list
+deb https://mirror.nyist.edu.cn/debian/          bookworm            main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian/          bookworm-updates    main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian/          bookworm-backports  main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian-security  bookworm-security   main contrib non-free non-free-firmware
+$
+
 $ apt update
 $ apt upgrade
 
-$ vi /etc/group
-$ usermod -a -G sudo `whoami`
-$ sg sudo
-$ groups
-sudo
-$
-
-$ vi ~/.inputrc
+$ vi ~/.inputrc  # readline
 set editing-mode vi
 $
 
@@ -153,7 +178,7 @@ $
 $ vi ~/.bashrc
 alias ls="ls --color=never"
 alias tree="tree -n"
-EDITOR=/usr/bin/vi
+EDITOR=$(which vi)  # update-alternative --config EDITOR
 
 export HISTCONTROL="ignoredups:erasedups:ignorespace"
 export PROMPT_COMMAND='history -a'
@@ -163,6 +188,7 @@ export PATH=$PATH:../boost_1_73_0/stage/lib
 PS1='\$ '
 set -o vi  # set editing-mode vi # ~/.inputrc,
 stty -ixon  # terminal flow control Ctrl-S conflicts with vim, emacs.
+#stty columns 80
 ulimit -c unlimited  # systemd-coredump
 $
 
@@ -172,7 +198,8 @@ $ apt install vim
 $ update-alternatives --config editor
 $ vi -u /home/ljh/.vimrc ~/.vimrc
 set hlsearch
-set nocompatible  " u always undo, Ctrl-r always redo,
+set incsearch
+set nocompatible " vim-tiny, u always undo, Ctrl-r always redo,
 set nowrapscan
 "syntax off
 $
@@ -213,7 +240,6 @@ $ systemctl disable ufw
 $ sudo smbpasswd -a `whoami`
 $ vi /etc/samba/smb.conf
 [homes]
-  browseable = no
   read only = no
   create mask = 0755
   directory mask = 0755
@@ -226,7 +252,7 @@ $ ufw allow Samba
 $ apt install build-essential
 $ apt install gdb
 $ apt install cmake
-$ apt install automake autoconf libtool pkg-config
+$ apt install automake autoconf libtool pkg-config gettext
 $ apt install gcc-doc gdb-doc manpages-dev
 $ apt install clang llvm lldb
 

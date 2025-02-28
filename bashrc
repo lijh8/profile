@@ -3,7 +3,7 @@
 
 alias ls="ls --color=never"
 alias tree="tree -n"
-EDITOR=/usr/bin/vi
+EDITOR=$(which vi)  # update-alternative --config EDITOR
 
 export HISTCONTROL="ignoredups:erasedups:ignorespace"
 export PROMPT_COMMAND='history -a'
