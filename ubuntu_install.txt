@@ -20,7 +20,6 @@ $
 $ cat /etc/apt/sources.list
 deb [trusted=yes] cdrom:[Ubuntu-Server 24.10 _Oracular Oriole_ - Release amd64 (20241007.1)]/ oracular main restricted
 $
-$
 $ apt list
 $
 
@@ -39,15 +38,16 @@ $ ls /sys/class/net/
 ens33
 $
 $ ip addr
+$
 
-## dynamic ip
+# dynamic ip
 $ vi /etc/network/interfaces
 auto ens33
 allow-hotplug ens33
 iface ens33 inet dhcp
 $
 
-## static ip
+# static ip
 $ vi /etc/network/interfaces
 auto ens33
 allow-hotplug ens33
@@ -58,18 +58,18 @@ $
 $ /usr/sbin/ifup ens33
 $ /usr/sbin/ifdown ens33
 $ ethtool ens33
+$
 
 $ vi /etc/NetworkManager/system-connections/ens33.nmconnection
 [ipv4]
 method=auto
 #method=manual
-#address=192.168.1.100/24
-#gateway=192.168.1.1
-#dns=8.8.8.8;192.168.1.1
+#address1=192.168.1.5/24,192.168.1.1
+#dns=192.168.1.1;8.8.8.8;
 $
 $ systemctl restart NetworkManager
 
-## dynamic ip address
+# dynamic ip address
 $ vi /etc/netplan/99-config.yaml
 network:
   version: 2
@@ -80,7 +80,7 @@ network:
 
 $
 
-## replace `dhcp4` with static ip, dns,
+# replace `dhcp4` with static ip, dns,
 $ vi /etc/netplan/99-config.yaml
 network:
   version: 2
@@ -99,17 +99,14 @@ network:
 $
 $ netplan apply
 
-## dns, use netplan configuration instead,
+# dns, use netplan configuration instead,
 # $ vi /etc/resolv.conf
 # nameserver 192.168.1.1
 # nameserver 8.8.8.8
 # $
 
 $ ping ubuntu.com
-
-## https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/
-## click (?) for help on mirror in china
-
+$
 # oracular is codename of ubuntu 24.10
 $ grep -i codename /etc/os-release
 VERSION_CODENAME=oracular
@@ -119,7 +116,7 @@ $ lsb_release -a | grep -i codename
 Codename:       oracular
 $
 
-# >= ubuntu 24.04, DEB822,
+# deb822 format, ubuntu 24.04 or latter,
 
 $ vi /etc/apt/sources.list.d/ubuntu.sources
 # Types: deb
@@ -147,7 +144,7 @@ Components: main restricted universe multiverse
 Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
 $
 
-# < ubuntu 24.04
+# older foramt,
 
 $ cp /etc/apt/sources.list /etc/apt/sources.list.bak
 $ sed -i "s@http://.*archive.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
@@ -169,12 +166,13 @@ $
 
 $ apt update
 $ apt upgrade
+$ apt autoremove
 
 $ vi ~/.inputrc  # readline
 set editing-mode vi
 $
 
-## environment variables in ~/.profile, eg. PATH
+# environment variables in ~/.profile, eg. PATH
 $ vi ~/.bashrc
 alias ls="ls --color=never"
 alias tree="tree -n"
@@ -193,10 +191,11 @@ ulimit -c unlimited  # systemd-coredump
 $
 
 $ touch ~/.hushlogin
+$
 
-$ apt install vim
+$ apt install vim  # vim-tiny pre-installed
 $ update-alternatives --config editor
-$ vi -u /home/ljh/.vimrc ~/.vimrc
+$ vi -u ~/.vimrc ~/.vimrc
 set hlsearch
 set incsearch
 set nocompatible " vim-tiny, u always undo, Ctrl-r always redo,
@@ -205,28 +204,29 @@ set nowrapscan
 $
 
 $ apt list --installed ifupdown openssh-server isc-dhcp-client sudo
+$
 
-## list content of installed package
+# list content of installed package
 $ dpkg -L gcc
 /usr/bin/c99-gcc
 /usr/bin/gcc
 $
 
-## which installed package has the file
+# which installed package has the file
 $ dpkg -S /usr/bin/gcc
 gcc: /usr/bin/c99-gcc
 $
 
 $ apt install apt-file
 $ apt-file update
-
-## list content of package
+$
+# package content
 $ apt-file list gcc
 gcc: /usr/bin/c99-gcc
 gcc: /usr/bin/gcc
 $
 
-## which package has the file
+# query package name by a file
 $ apt-file --package-only search /usr/bin/gcc
 gcc
 gcc-11
@@ -235,8 +235,6 @@ $
 $ apt install openssh-server samba
 $ systemctl enable ssh smbd nmbd
 $ systemctl start ssh smbd nmbd
-$ systemctl disable ufw
-
 $ sudo smbpasswd -a `whoami`
 $ vi /etc/samba/smb.conf
 [homes]
@@ -245,16 +243,22 @@ $ vi /etc/samba/smb.conf
   directory mask = 0755
 $
 
-## firewall
+# firewall
+$ systemctl disable ufw
 $ ufw app list
 $ ufw allow Samba
 
+# LeakSanitizer does not work under ptrace (strace, gdb)
+# Address Sanitizer (asan) will report memory usage problems
+# by running a program built with asan. do not run it in a debugger.
+
 $ apt install build-essential
-$ apt install gdb
+$ apt install gdb  # gdb-minimal in installation image .iso
 $ apt install cmake
 $ apt install automake autoconf libtool pkg-config gettext
 $ apt install gcc-doc gdb-doc manpages-dev
-$ apt install clang llvm lldb
+$ apt install clang llvm lldb libc++-dev libc++abi-dev
+$
 
 $ apt install systemd-coredump  # ubuntu default: apport-core-dump-handler,
 $ coredumpctl debug # gdb backtrace: bt
@@ -269,51 +273,62 @@ $ systemctl restart apport
 $ apport-unpack /var/crash/_home_ljh_a.out.1000.crash ~/temp
 $ gdb `cat ~/temp/ExecutablePath` ~/temp/CoreDump
 
-## VSCode, cpptools, clangd, CodeLLDB
-$ apt install ./<file>.deb
-$ dpkg -i <file>.deb
-$ apt install -f # Install dependencies
+# VSCode, cpptools, clangd, CodeLLDB
+$ apt install ./code_1.86.1-1707298119_amd64.deb
+$ dpkg -i code_1.86.1-1707298119_amd64.deb
+$ apt install -f  # Install dependencies
 $ /usr/bin/code
+$
 
-## https://clangd.llvm.org/installation
+# https://clangd.llvm.org/installation
 $ apt install clangd
 $ apt install clangd-13
 $ update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-13 100
+$
 
-## install multiple gcc compiler versions
+# install multiple gcc compiler versions
 $ apt install gcc-10 gcc-9
+$
 
 $ update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90
 $ update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100
 $ update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
 $ update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 100
+$
 
-## mode: auto, manual. priority matters in auto mode.
+# mode: auto, manual. priority matters in auto mode.
 $ update-alternatives --config gcc
 $ update-alternatives --config g++
 $ gcc --version
 $ g++ --version
+$
 
-## tree using find
+# tree using find
 $ find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
+$
 
-## find large size directories or files (use -h in both commands)
+# find large size directories or files (use -h in both commands)
 $ du -h -d1 /home/* | sort -hr | head -5
+$
 
 $ timedatectl list-timezones
 $ timedatectl set-timezone "Asia/Shanghai"
 $ /usr/sbin/dpkg-reconfigure tzdata
+$
 
-## Console Font: VGA
+# Console Font: VGA
 $ /usr/sbin/dpkg-reconfigure console-setup
+$
 
 $ ls -l /etc/systemd/system/default.target
 /etc/systemd/system/default.target -> /lib/systemd/system/multi-user.target
 $ systemctl get-default
-$ systemctl set-default multi-user.target # graphical.target
-$ init 3 # 5
+graphical.target
+$ systemctl set-default multi-user.target  # graphical.target
+$ init 3  # 5
+$
 
-## resize lvm volume to use unallocated free space
+# resize lvm volume to use unallocated free space
 $ df -h
 Filesystem                         Size  Used Avail Use% Mounted on
 /dev/mapper/ubuntu--vg-ubuntu--lv   17G  6.4G  8.9G  42% /
@@ -337,59 +352,83 @@ $ fdisk /dev/sdb
 $ mkfs.ext4 /dev/sdb1
 $ mkdir /mnt/data
 $ mount /dev/sdb1 /mnt/data
+$
+
 $ vi /etc/fstab
   /dev/sdb1 /mnt/data ext4 defaults 0 0
+  /dev/sr0 /media/cdrom0
+$
 $ mount /mnt/data/
 
-## resize disk partition
-$ apt install gparted
+$ df -h
+/dev/sr0 3.7G /media/cdrom0
+$
 
-## chinese input method editor (ime) ibus-libpinyin
+# resize disk partition
+$ apt install gparted
+# Disks / Delete swap partition / Delete extended partition
+#  / resize: reserve 1.0 GB (same) free space for extended and swap
+#  / create extended partition / create swap partition
+#
+
+# page down to select and add zh_CN.UTF-8 locale
+# keep the default locale (en_US.UTF-8)
+$ dpkg-reconfigure locales
+$
+
+# chinese input method editor (ime)
   Settings / Region & Language / Manage Installed Languages / Language
   / Install Remove Languages... / Chinese (Simplified): * / Apply
-## restart required
-## add an input source
+# restart required
+# add an input source
   Settings / Keyboard / Input Sources / + / Chinese
   / Chinese (intelligent pinyin) / Add
 
 $ apt install ibus-libpinyin
 $ dpkg-reconfigure locales
+$
 
-## disable suspend or hibernation
-## automatic suspend - computer will suspend very soon because of inactivity
+# re-login or restart to take effect
+# Settings / Keyboard / Input Sources / + / Chinese /
+#  Chinese (Intelligent Pinyin) / Add
+#
+
+# disable suspend or hibernation
+# automatic suspend - computer will suspend very soon because of inactivity
 $ systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
 $ gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
+$
 
-## hide "show apps" on dock
+Ctrl-S: freeze or pause terminal
+Ctrl-Q: resume terminal
+# it also conflicts with vi window split: Ctrl-W-S,
+
+# hide "show apps" on dock
 $ gsettings set org.gnome.shell.extensions.dash-to-dock show-show-apps-button false
 
-## Left Super
+# Left Super
 $ gsettings get org.gnome.mutter overlay-key
 'Super_L'
 $ gsettings set org.gnome.mutter overlay-key ''
+$
 
-## settings / keyboard shortcuts
+# settings / keyboard shortcuts
 View split on left : Super + Left arrow
 View split on right: Super + Left arrow
 Restore window     : Super + Down arrow
 Maximize window    : Super + Up arrow
 
-## Error constructing proxy for org.gnome.Terminal
+# Error constructing proxy for org.gnome.Terminal
 $ localectl set-locale LANG="en_US.UTF-8"
 
-## or,
+# or,
 $ vi /etc/default/locale
 LANG=en_US.UTF-8
 $
 
-## then restart
+# then restart
 $ shutdown -r now
 $
-
-# ubuntu server 24.10 on VirtualBox:
-Ctrl-S: freeze or pause terminal
-Ctrl-Q: resume terminal
-# it also conflicts with vi window split: Ctrl-W-S,
 
 #
 

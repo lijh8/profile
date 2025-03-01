@@ -44,16 +44,15 @@ $
 
 # without desktop environment
 # https://wiki.debian.org/NetworkConfiguration ,
-# iface ens33 inet dhcp
 
-## dynamic ip
+# dynamic ip
 $ vi /etc/network/interfaces
 auto ens33
 allow-hotplug ens33
 iface ens33 inet dhcp
 $
 
-## static ip
+# static ip
 $ vi /etc/network/interfaces
 auto ens33
 allow-hotplug ens33
@@ -70,12 +69,12 @@ $
 # reboot to take effect.
 
 # gnome desktop
-# method=auto
 $ vi /etc/NetworkManager/system-connections/ens33.nmconnection
 [ipv4]
-address1=192.168.1.5/24,192.168.1.1
-dns=192.168.1.1;8.8.8.8;
-method=manual
+method=auto
+#method=manual
+#address1=192.168.1.5/24,192.168.1.1
+#dns=192.168.1.1;8.8.8.8;
 $
 $ systemctl restart NetworkManager
 $
@@ -184,34 +183,40 @@ set nocompatible " vim-tiny, u always undo, Ctrl-r always redo,
 set nowrapscan
 "syntax off
 $
-$ apt list --installed | grep vim
+
+$ apt list --installed ifupdown openssh-server isc-dhcp-client sudo
 $
 
 # list content of installed package
-$ dpkg -L vim
-/usr/bin/vim
+$ dpkg -L gcc
+/usr/bin/c99-gcc
+/usr/bin/gcc
 $
+
 # which installed package has the file
-$ dpkg -S /usr/bin/vim
-vim: /usr/bin/vim
+$ dpkg -S /usr/bin/gcc
+gcc: /usr/bin/c99-gcc
 $
 
 $ apt install apt-file
 $ apt-file update
 $
 # package content
-$ apt-file list vim
-vim: /usr/bin/vim
+$ apt-file list gcc
+gcc: /usr/bin/c99-gcc
+gcc: /usr/bin/gcc
 $
-# package contains a file
-$ apt-file --package-only search /usr/bin/vim
+
+# query package name by a file
+$ apt-file --package-only search /usr/bin/gcc
 gcc
+gcc-11
 $
 
 $ apt install openssh-server samba
 $ systemctl enable ssh smbd nmbd
 $ systemctl start ssh smbd nmbd
-$ smbpasswd -a `whoami`
+$ sudo smbpasswd -a `whoami`
 $ vi /etc/samba/smb.conf
 [homes]
   read only = no
@@ -222,6 +227,7 @@ $
 # LeakSanitizer does not work under ptrace (strace, gdb)
 # Address Sanitizer (asan) will report memory usage problems
 # by running a program built with asan. do not run it in a debugger.
+
 $ apt install build-essential
 $ apt install gdb  # gdb-minimal in installation image .iso
 $ apt install cmake
@@ -229,6 +235,10 @@ $ apt install automake autoconf libtool pkg-config gettext
 $ apt install gcc-doc gdb-doc manpages-dev
 $ apt install clang llvm lldb libc++-dev libc++abi-dev
 $
+
+$ apt install systemd-coredump
+$ coredumpctl debug # gdb backtrace: bt
+
 
 # VSCode, cpptools, clangd, CodeLLDB
 $ apt install ./code_1.86.1-1707298119_amd64.deb
@@ -277,25 +287,45 @@ $
 $ /usr/sbin/dpkg-reconfigure console-setup
 $
 
+$ ls -l /etc/systemd/system/default.target
+/etc/systemd/system/default.target -> /lib/systemd/system/multi-user.target
 $ systemctl get-default
 graphical.target
-$
-$ ls /lib/systemd/system/*.target | grep multi-user
-/lib/systemd/system/multi-user.target
-$
 $ systemctl set-default multi-user.target  # graphical.target
 $ init 3  # 5
 $
 
+# resize lvm volume to use unallocated free space
+$ df -h
+Filesystem                         Size  Used Avail Use% Mounted on
+/dev/mapper/ubuntu--vg-ubuntu--lv   17G  6.4G  8.9G  42% /
+/dev/sda2                          2.0G  186M  1.7G  11% /boot
+$
 $ lsblk
+NAME                      MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sda                         8:0    0   35G  0 disk
+├─sda1                      8:1    0    1M  0 part
+├─sda2                      8:2    0    2G  0 part /boot
+└─sda3                      8:3    0   33G  0 part
+  └─ubuntu--vg-ubuntu--lv 252:0    0 16.5G  0 lvm  /
+sr0                        11:0    1 1024M  0 rom
+$
+$ pvresize /dev/sda3
+$ lvextend  -r  -l  +100%FREE  /dev/mapper/ubuntu--vg-ubuntu--lv
+$ resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
+$
+
 $ fdisk /dev/sdb
 $ mkfs.ext4 /dev/sdb1
+$ mkdir /mnt/data
 $ mount /dev/sdb1 /mnt/data
 $
 
 $ vi /etc/fstab
-/dev/sr0 /media/cdrom0
+  /dev/sdb1 /mnt/data ext4 defaults 0 0
+  /dev/sr0 /media/cdrom0
 $
+$ mount /mnt/data/
 
 $ df -h
 /dev/sr0 3.7G /media/cdrom0
@@ -314,7 +344,15 @@ $ dpkg-reconfigure locales
 $
 
 # chinese input method editor (ime)
+  Settings / Region & Language / Manage Installed Languages / Language
+  / Install Remove Languages... / Chinese (Simplified): * / Apply
+# restart required
+# add an input source
+  Settings / Keyboard / Input Sources / + / Chinese
+  / Chinese (intelligent pinyin) / Add
+
 $ apt install ibus-libpinyin
+$ dpkg-reconfigure locales
 $
 
 # re-login or restart to take effect
@@ -328,15 +366,31 @@ $ systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.targe
 $ gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
 $
 
-# https://extensions.gnome.org/
-# install browser extension ,
-#
-# Dash to Dock , by michel_g ,
-# Logo Activities, by orbitcorrection ,
-#
-# apt install gnome-shell-extension-prefs ,
-# /usr/bin/gnome-shell-extension-prefs ,
-#
+Ctrl-S: freeze or pause terminal
+Ctrl-Q: resume terminal
+# it also conflicts with vi window split: Ctrl-W-S,
+
+# terminal console
+
+# pseudo terminal: TTY,
+# ASCII,
+# switch: Ctrl-Alt-F1, .. , -F6,
+
+# terminal emulator: xterm, gnome-terminal,
+# UTF-8, CJK,
+
+$ tty
+$ w
+$ who
+$ tty -s && echo "In a TTY"
+# $ dpkg-reconfigure locales
+$
+
+# Old Debian releases on CD/DVD ,
+# https://cdimage.debian.org/mirror/cdimage/archive/ ,
+
+# hide "show apps" on dock
+$ gsettings set org.gnome.shell.extensions.dash-to-dock show-show-apps-button false
 
 # Left Super
 $ gsettings get org.gnome.mutter overlay-key
@@ -377,28 +431,8 @@ Debian 8 (Jessie), 2015-04, GCC 4.9;
 $ cat /etc/hostname
 abc
 $
+
 $ cat /etc/hosts
 127.0.0.1  localhost
 127.0.1.1  abc
 $
-
-# terminal console
-
-# pseudo terminal: TTY,
-# ASCII,
-# switch: Ctrl-Alt-F1, .. , -F6,
-
-# terminal emulator: xterm, gnome-terminal,
-# UTF-8, CJK,
-
-$ tty
-$ w
-$ who
-$ tty -s && echo "In a TTY"
-# $ dpkg-reconfigure locales
-$
-
-# Old Debian releases on CD/DVD ,
-# https://cdimage.debian.org/mirror/cdimage/archive/ ,
-
-#
