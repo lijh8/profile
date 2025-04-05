@@ -101,7 +101,7 @@ $
 
 # https://www.debian.org/mirror/list.html ,
 # https://mirrors.tuna.tsinghua.edu.cn/help/debian/ ,
-# https://mirror.nyist.edu.cn/help/debian/ ,
+# https://mirror.nyist.edu.cn/debian/ ,
 
 # deb822 format, debian 12 or later,
 
