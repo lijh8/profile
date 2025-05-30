@@ -52,7 +52,7 @@ filetype on
 " :messages " check for messages with echom
 set autoindent
 "set colorcolumn=80
-set cursorline
+"set cursorline
 set expandtab
 set hlsearch
 set incsearch
@@ -72,6 +72,7 @@ autocmd TextChanged,TextChangedI * if &modifiable && !&readonly && expand("%") !
 " highlight occurrences of word when cursor is inside the word,
 " cancel highlight when cursor is outside.
 "let old_isk = &iskeyword | set iskeyword=@,48-57,_,192-255 | autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . escape(expand('<cword>'), '/\.*$^~[]') . '\>/' : '//') | let &iskeyword = old_isk
+autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . escape(expand('<cword>'), '/\.*$^~[]') . '\>/' : '//')
 
 " highlight selected text by search in visual mode(v), press * or # to search,
 " search for any non-existing text to cancel the highlight.
