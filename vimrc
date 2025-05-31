@@ -34,9 +34,9 @@
 " vim command-line window history, :Ctrl-f , :Ctrl-p , :Ctrl-n , / , n , N , * ,
 " completion, Ctrl-p , Ctrl-n ,
 
-" search for a letter c in a line, fc ,
-" search forward ;
-" search backword ,
+" search for a single letter in a line with f ,
+" forward with ;
+" backword with ,
 
 " quickfix window
 " :copen , :make
@@ -71,12 +71,10 @@ autocmd TextChanged,TextChangedI * if &modifiable && !&readonly && expand("%") !
 
 " highlight occurrences of word when cursor is inside the word,
 " cancel highlight when cursor is outside.
-"let old_isk = &iskeyword | set iskeyword=@,48-57,_,192-255 | autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . escape(expand('<cword>'), '/\.*$^~[]') . '\>/' : '//') | let &iskeyword = old_isk
+"autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . expand('<cword>') . '\>/' : '//')
+let old_isk = &iskeyword | set iskeyword=@,48-57,_,192-255 | autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . expand('<cword>') . '\>/' : '//') | let &iskeyword = old_isk
 
-autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . expand('<cword>') . '\>/' : '//')
-
-
-" highlight selected text by search in visual mode(v), press * or # to search,
+" highlight portion of text selected with v visual mode, press * or # to search after select,
 " search for any non-existing text to cancel the highlight.
 "vnoremap <expr> * 'y:let @/ = @" <bar> normal! n<CR>'
 "vnoremap <expr> # 'y:let @/ = @" <bar> normal! N<CR>'
