@@ -73,7 +73,7 @@ autocmd TextChanged,TextChangedI * if &modifiable && !&readonly && expand("%") !
 " cancel highlight when cursor is outside.
 "let old_isk = &iskeyword | set iskeyword=@,48-57,_,192-255 | autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . escape(expand('<cword>'), '/\.*$^~[]') . '\>/' : '//') | let &iskeyword = old_isk
 
-autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . expand('<cword>').'\>/':'//')
+autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . expand('<cword>') . '\>/' : '//')
 
 
 " highlight selected text by search in visual mode(v), press * or # to search,
