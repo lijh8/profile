@@ -31,7 +31,7 @@
 " search / ? n N * #
 " case insensitive, /\cFOO , /\cfoo ,
 
-" vim command-line window history, :Ctrl-f , :Ctrl-p , :Ctrl-n , / , n , N , * ,
+" vim command window history, :Ctrl-f , :Ctrl-p , :Ctrl-n , / , n , N , * ,
 " completion, Ctrl-p , Ctrl-n ,
 
 " search for a single letter in a line with f ,
@@ -66,11 +66,11 @@ set tabstop=2
 set updatetime=100 " CursorHold, tagbar,
 "syntax off
 
-" auto save works with vim, not vim-tiny
+" auto save, works with vim, not vim-tiny
 autocmd TextChanged,TextChangedI * if &modifiable && !&readonly && expand("%") != "" && &buftype == "" | silent write | endif
 
-" highlight occurrences of word when cursor is inside the word,
-" cancel highlight when cursor is outside.
+" highlight occurrences of word when cursor is inside the word, cancel highlight when cursor is outside.
+" check :set iskeyword? in editor and vi help document system.
 "autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . expand('<cword>') . '\>/' : '//')
 let old_isk = &iskeyword | set iskeyword=@,48-57,_,192-255 | autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . expand('<cword>') . '\>/' : '//') | let &iskeyword = old_isk
 
