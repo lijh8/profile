@@ -1,5 +1,5 @@
-" ~/.vimrc, ~/.virc, ~/.exrc,
-" vim.org , vimhelp.org ,
+" ~/.vimrc, ~/.virc, ~/.exrc
+" vim.org , vimhelp.org
 
 " $ vi ~/.bashrc
 " stty -ixon # terminal flow control Ctrl-s conflicts with vim, emacs
@@ -28,22 +28,22 @@
 " :w , :w! , :wa , :q, :q!, :qa , :wqa ,
 " undo: u , redo: Ctrl-r , " set nocompatible
 
-" search / ? n N * #
-" case insensitive, /\cFOO , /\cfoo ,
+" search: / ? n N * #
+" case in-sensitive: /\cFOO , /\cfoo ,
 
-" vim command window history, :Ctrl-f , :Ctrl-p , :Ctrl-n , / , n , N , * ,
-" completion, Ctrl-p , Ctrl-n ,
+" vim command window history :Ctrl-f , :Ctrl-p , :Ctrl-n , / , n , N , * ,
+" completion: Ctrl-p , Ctrl-n ,
 
-" search for a single letter in a line with f ,
-" forward with ;
-" backword with ,
+" search for a single letter in a line with f command.
+" backward , forward ;
+" search for letter o in "hello" : fo ,
 
 " quickfix window
-" :copen , :make
+" :copen , :make ,
 " :grep -r "foo" *
 " :grep -r "foo" * --exclude "*.swp" --exclude "*.d" --exclude "*.o"
 
-" toggle between lower and upper case:  g~w , g~$ , g~~ ,
+" toggle between lower and upper case: g~w , g~$ , g~~ ,
 
 
 """ built-ins """
@@ -63,21 +63,16 @@ set number
 set ruler " vim-tiny, show current line number at status line
 set shiftwidth=2
 set tabstop=2
-set updatetime=100 " CursorHold, tagbar,
+set updatetime=200 " CursorHold, tagbar,
 "syntax off
 
 " auto save, works with vim, not vim-tiny
 autocmd TextChanged,TextChangedI * if &modifiable && !&readonly && expand("%") != "" && &buftype == "" | silent write | endif
 
-" highlight occurrences of word when cursor is inside the word, cancel highlight when cursor is outside.
-" check :set iskeyword? in editor and vi help document system.
+" highlight occurrences of word when cursor is inside the word boundary
+" :set iskeyword? " iskeyword is different in buffer with vi help document system.
 "autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . expand('<cword>') . '\>/' : '//')
 let old_isk = &iskeyword | set iskeyword=@,48-57,_,192-255 | autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . expand('<cword>') . '\>/' : '//') | let &iskeyword = old_isk
-
-" highlight portion of text selected with v visual mode, press * or # to search after select,
-" search for any non-existing text to cancel the highlight.
-"vnoremap <expr> * 'y:let @/ = @" <bar> normal! n<CR>'
-"vnoremap <expr> # 'y:let @/ = @" <bar> normal! N<CR>'
 
 " netrw
 "autocmd VimEnter * Lexplore
