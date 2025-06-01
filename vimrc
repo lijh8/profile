@@ -1,5 +1,5 @@
 " ~/.vimrc, ~/.virc, ~/.exrc
-" vim.org , vimhelp.org
+" vim.org, vimhelp.org
 
 " $ vi ~/.bashrc
 " stty -ixon # terminal flow control Ctrl-s conflicts with vim, emacs
@@ -26,10 +26,10 @@
 " :echo winwidth(0) , :echo winheight(0) ,
 
 " :w , :w! , :wa , :q, :q!, :qa , :wqa ,
-" undo: u , redo: Ctrl-r , " set nocompatible
+" undo: u , redo: Ctrl-r , " vim-tiny: set nocompatible
 
 " search: / ? n N * #
-" case in-sensitive: /\cFOO , /\cfoo ,
+" case in-sensitive \c: /\cFOO , /\cfoo ,
 
 " vim command window history :Ctrl-f , :Ctrl-p , :Ctrl-n , / , n , N , * ,
 " completion: Ctrl-p , Ctrl-n ,
@@ -49,6 +49,7 @@
 """ built-ins """
 
 filetype on
+filetype plugin on " netrw
 " :messages " check for messages with echom
 set autoindent
 "set colorcolumn=80
@@ -56,8 +57,8 @@ set autoindent
 set expandtab
 set hlsearch
 set incsearch
-set mouse=a " selection: Win:shift+mouse, Mac:fn+mouse,
-set nocompatible " vim-tiny, u always undo, Ctrl-r always redo,
+set mouse=a " select: Win:shift+mouse, Mac:fn+mouse,
+set nocompatible " netrw, vim-tiny: undo, redo,
 set nowrapscan
 set number
 set ruler " vim-tiny, show current line number at status line
@@ -66,11 +67,11 @@ set tabstop=2
 set updatetime=200 " CursorHold, tagbar,
 "syntax off
 
-" auto save, works with vim, not vim-tiny
-autocmd TextChanged,TextChangedI * if &modifiable && !&readonly && expand("%") != "" && &buftype == "" | silent write | endif
+" auto save
+autocmd TextChanged,TextChangedI * silent! update
 
 " highlight occurrences of word when cursor is inside the word boundary
-" :set iskeyword? " iskeyword is different in buffer with vi help document system.
+" :set iskeyword? " check iskeyword which is different in vi help document system
 "autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . expand('<cword>') . '\>/' : '//')
 let old_isk = &iskeyword | set iskeyword=@,48-57,_,192-255 | autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . expand('<cword>') . '\>/' : '//') | let &iskeyword = old_isk
 
