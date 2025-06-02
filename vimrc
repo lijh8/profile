@@ -28,13 +28,13 @@
 " :w , :w! , :wa , :q, :q!, :qa , :wqa ,
 " undo: u , redo: Ctrl-r , " vim-tiny: set nocompatible
 
-" search: / ? n N * #
-" case in-sensitive \c: /\cFOO , /\cfoo ,
+" search : / ? n N * #
+" case in-sensitive \c : /\cFOO , /\cfoo ,
 
 " vim command window history :Ctrl-f , :Ctrl-p , :Ctrl-n , / , n , N , * ,
 " completion: Ctrl-p , Ctrl-n ,
 
-" search for a single letter in a line with f command.
+" search for a single letter in a line with f command
 " backward , forward ;
 " search for letter o in "hello" : fo ,
 
@@ -57,7 +57,7 @@ set autoindent
 set expandtab
 set hlsearch
 set incsearch
-set mouse=a " select: Win:shift+mouse, Mac:fn+mouse,
+set mouse=a " select to ctrl-c: win,linux:shift+mouse, mac:fn+mouse,
 set nocompatible " netrw, vim-tiny: undo, redo,
 set nowrapscan
 set number
@@ -70,12 +70,11 @@ set updatetime=200 " CursorHold, tagbar,
 " auto save
 autocmd TextChanged,TextChangedI * silent! update
 
-" highlight occurrences of word when cursor is inside the word boundary
-" :set iskeyword? " check iskeyword which is different in vi help document system
-"autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . expand('<cword>') . '\>/' : '//')
-let old_isk = &iskeyword | set iskeyword=@,48-57,_,192-255 | autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . expand('<cword>') . '\>/' : '//') | let &iskeyword = old_isk
+" highlight occurrences of curent word. not in vim-tiny.
+" iskeyword is different in vi :help system, check :set iskeyword? ,
+let isk = &iskeyword | set iskeyword=@,48-57,_,192-255 | autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . expand('<cword>') . '\>/' : '//') | let &iskeyword = isk
 
-" netrw
+" netrw. not in vim-tiny
 "autocmd VimEnter * Lexplore
 nnoremap <F2> :Lexplore<CR>
 let g:netrw_banner = 0
