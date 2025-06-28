@@ -1,24 +1,22 @@
 
 Debian Linux install
 
-# download the first .iso ("*-DVD-1.iso"): debian-12.1.0-amd64-DVD-1.iso ,
-
-# avoid download security packages on slow network connection durign installation.
-# enable network but unplug or disconnect network cable for fast installation.
+# download the 1st dvd .iso file ("*-DVD-1.iso"): debian-12.1.0-amd64-DVD-1.iso ,
 
 # virtualbox network: Bridged Adapter,
+# avoid download security packages on slow network connection during installation.
+# enable network but unplug or disconnect network cable for fast installation.
+
 # clone virtual machine in virtualbox,
 # generate new MAC addresses for all network adapters.
 
-# add the debian installation image .iso file in cdrom, install from cdrom.
-
+# install packages from cdrom image.
 $ apt-cdrom add
 Using CD-ROM mount point /media/cdrom/
 $
 
-# E: The repository 'cdrom://[Debian GNU/Linux 12.7.0] bookworm Release' does not have a Release file.
-# add: [trusted=yes]
-#
+# The repository 'cdrom://[Debian GNU/Linux 12.7.0] bookworm Release' does not have a Release file.
+# add [trusted=yes] to sources.list
 $ cat /etc/apt/sources.list
 deb [trusted=yes] cdrom:[Debian GNU/Linux 12.7.0 _Bookworm_ - Official amd64 DVD Binary-1 with firmware 20240831-10:40]/ bookworm contrib main non-free-firmware
 $
@@ -46,6 +44,7 @@ $
 # https://wiki.debian.org/NetworkConfiguration ,
 
 # dynamic ip
+
 $ vi /etc/network/interfaces
 auto ens33
 allow-hotplug ens33
@@ -53,6 +52,11 @@ iface ens33 inet dhcp
 $
 
 # static ip
+#  address 192.168.1.2/24
+#  or,
+#  address 192.168.1.2
+#  netmask 255.255.255.0
+
 $ vi /etc/network/interfaces
 auto ens33
 allow-hotplug ens33
@@ -97,7 +101,6 @@ $
 # https://wiki.debian.org/DebianUnstable ,
 # https://wiki.debian.org/DebianTesting ,
 # Change your apt sources to point to "unstable", or "testing",
-# apt update ; apt upgrade ; apt full-upgrade ; apt autoremove ;
 
 # https://www.debian.org/mirror/list.html ,
 # https://mirrors.tuna.tsinghua.edu.cn/help/debian/ ,
@@ -115,7 +118,7 @@ Suites: bookworm bookworm-updates bookworm-backports
 Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 
-# security section is not available for sid (unstable).
+# security section is not applicable for sid (unstable).
 Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/debian-security
 #URIs: https://mirror.nyist.edu.cn/debian-security/
