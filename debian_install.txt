@@ -97,7 +97,7 @@ $
 # https://wiki.debian.org/DebianUnstable ,
 # https://wiki.debian.org/DebianTesting ,
 # Change your apt sources to point to "unstable", or "testing",
-# apt update ; apt full-upgrade ;
+# apt update ; apt upgrade ; apt full-upgrade ; apt autoremove ;
 
 # https://www.debian.org/mirror/list.html ,
 # https://mirrors.tuna.tsinghua.edu.cn/help/debian/ ,
@@ -108,6 +108,7 @@ $
 $ vi /etc/apt/sources.list.d/debian.sources
 Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/debian
+#URIs: https://mirror.nyist.edu.cn/debian/
 Suites: bookworm bookworm-updates bookworm-backports
 #Suites: testing
 #Suites: sid
@@ -117,26 +118,20 @@ Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 # security section is not available for sid (unstable).
 Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/debian-security
+#URIs: https://mirror.nyist.edu.cn/debian-security/
 Suites: bookworm-security
 #Suites: testing-security
 Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 $
 
-# older foramt,
+# old foramt,
 
 $ vi /etc/apt/sources.list
 deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm            main contrib non-free non-free-firmware
 deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm-updates    main contrib non-free non-free-firmware
 deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm-backports  main contrib non-free non-free-firmware
 deb https://mirrors.tuna.tsinghua.edu.cn/debian-security  bookworm-security   main contrib non-free non-free-firmware
-$
-
-$ vi /etc/apt/sources.list
-deb https://mirror.nyist.edu.cn/debian/          bookworm            main contrib non-free non-free-firmware
-deb https://mirror.nyist.edu.cn/debian/          bookworm-updates    main contrib non-free non-free-firmware
-deb https://mirror.nyist.edu.cn/debian/          bookworm-backports  main contrib non-free non-free-firmware
-deb https://mirror.nyist.edu.cn/debian-security  bookworm-security   main contrib non-free non-free-firmware
 $
 
 $ apt update
