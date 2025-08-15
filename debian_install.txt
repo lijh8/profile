@@ -31,7 +31,7 @@ $ groups
 sudo
 $
 
-$ apt install sudo openssh-server build-essential gdb cmake automake autoconf libtool pkg-config gettext manpages-dev
+$ apt install sudo vim openssh-server build-essential gdb cmake automake autoconf libtool pkg-config gettext manpages-dev
 $
 
 $ ls /sys/class/net/
@@ -97,22 +97,24 @@ $ lsb_release -a | grep -i codename
 Codename:       bookworm
 $
 
+# https://www.debian.org/mirror/list.html ,
+# https://www.debian.org/doc/manuals/debian-faq/ftparchives#testing ,
+# https://wiki.debian.org/SourcesList ,
 
 # https://www.debian.org/releases ,
-13 Trixie 2025-08-09 GCC 14.2;
-12 Bookworm 2023-06 GCC 12.2;
-11 Bullseye 2021-08 GCC 10.2;
-10 Buster 2019-07 GCC 8.3;
-9 Stretch 2017-06 GCC 6.3;
-8 Jessie 2015-04 GCC 4.9;
-
-
-# https://wiki.debian.org/SourcesList ,
-# https://wiki.debian.org/DebianUnstable ,
+# https://www.debian.org/releases/testing/ ,
+# https://www.debian.org/releases/sid/ ,
+# https://wiki.debian.org/DebianReleases ,
 # https://wiki.debian.org/DebianTesting ,
-# https://www.debian.org/mirror/list.html ,
-# Change your apt sources to point to "unstable", or "testing",
+# https://wiki.debian.org/DebianUnstable ,
 
+```
+# if go with testing/unstable(sid), no *-security, *-backports or *-updates in sources.list:
+# Remove, disable or comment out any other stable-specific apt sources, like *-backports or *-updates.
+# unstable main will be the only entry in sources.list.
+# The Debian Security Team only maintains security updates for the current "stable" release.
+# Compared to stable and unstable, next-stable testing has the worst security update speed. Don't prefer testing if security is a concern.
+```
 
 $ cat /etc/apt/sources.list
 # $ apt-cdrom add
@@ -124,11 +126,8 @@ deb [trusted=yes] cdrom:[Debian GNU/Linux 13.0.0 _Trixie_ - Official amd64 DVD B
 # deb http://deb.debian.org/debian/                   trixie-backports  main contrib non-free non-free-firmware
 # deb http://security.debian.org/debian-security      trixie-security   main contrib non-free non-free-firmware
 
-# *-backports or *-updates are not applicable for testing.
+# if go with testing/unstable(sid), no *-security, *-backports or *-updates in sources.list:
 deb http://deb.debian.org/debian/                   testing           main contrib non-free non-free-firmware
-deb http://security.debian.org/debian-security      testing-security  main contrib non-free non-free-firmware
-
-# security section is not applicable for sid (unstable).
 # deb http://deb.debian.org/debian/                   sid               main contrib non-free non-free-firmware
 $
 
@@ -151,7 +150,7 @@ $
 # deb822 format, debian 12 or later,
 
 $ vi /etc/apt/sources.list.d/debian.sources
-# *-backports or *-updates are not applicable for testing.
+# if go with testing/unstable(sid), no *-security, *-backports or *-updates in sources.list:
 Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/debian
 #URIs: https://mirror.nyist.edu.cn/debian
@@ -161,20 +160,17 @@ Suites: bookworm bookworm-updates bookworm-backports
 Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 
-# security section is not applicable for sid (unstable).
 Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/debian-security
 #URIs: https://mirror.nyist.edu.cn/debian-security/
 Suites: bookworm-security
-#Suites: testing-security
 Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 $
 
-
 $ apt update
 $ apt upgrade
-$ apt full-upgrade  # testing, sid (unstable): build-essential c++ gcc g++,
+$ apt full-upgrade
 $ apt autoremove
 $
 
@@ -271,7 +267,6 @@ $
 
 $ apt install systemd-coredump
 $ coredumpctl debug # gdb backtrace: bt
-
 
 # VSCode, cpptools, clangd, CodeLLDB
 $ apt install ./code_1.86.1-1707298119_amd64.deb
@@ -457,7 +452,6 @@ $
 $ PATH=$PATH:/usr/sbin /usr/sbin/update-initramfs -u
 update-initramfs: Generating /boot/initrd.img-5.10.0-20-amd64
 $
-
 
 # sudo: unable to resolve host debian: Name or service not known
 # make the host names eg. `abc` match in the two files:
