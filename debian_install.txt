@@ -105,13 +105,6 @@ $
 # https://www.debian.org/mirror/list.html ,
 # Change your apt sources to point to "unstable", or "testing",
 
-# mirror help
-# https://mirrors.tuna.tsinghua.edu.cn/help/debian/ ,
-# https://mirrors.nyist.edu.cn/help/debian/ ,
-
-# mirror
-# https://mirrors.tuna.tsinghua.edu.cn/debian/ ,
-# https://mirror.nyist.edu.cn/debian/ ,
 
 $ cat /etc/apt/sources.list
 # $ apt-cdrom add
@@ -128,13 +121,28 @@ deb http://deb.debian.org/debian/                   testing           main contr
 deb http://security.debian.org/debian-security      testing-security  main contrib non-free non-free-firmware
 $
 
+# https://mirrors.tuna.tsinghua.edu.cn/help/debian/ ,
+$ vi /etc/apt/sources.list
+deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm            main contrib non-free non-free-firmware
+deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm-updates    main contrib non-free non-free-firmware
+deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm-backports  main contrib non-free non-free-firmware
+deb https://mirrors.tuna.tsinghua.edu.cn/debian-security  bookworm-security   main contrib non-free non-free-firmware
+$
+
+# https://mirrors.nyist.edu.cn/help/debian/ ,
+$ vi /etc/apt/sources.list
+deb https://mirror.nyist.edu.cn/debian           bookworm            main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian           bookworm-updates    main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian           bookworm-backports  main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian-security  bookworm-security   main contrib non-free non-free-firmware
+$
 
 # deb822 format, debian 12 or later,
 
 $ vi /etc/apt/sources.list.d/debian.sources
 Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/debian
-#URIs: https://mirror.nyist.edu.cn/debian/
+#URIs: https://mirror.nyist.edu.cn/debian
 Suites: bookworm bookworm-updates bookworm-backports
 #Suites: testing
 #Suites: sid
@@ -151,14 +159,6 @@ Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 $
 
-# old foramt,
-
-$ vi /etc/apt/sources.list
-deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm            main contrib non-free non-free-firmware
-deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm-updates    main contrib non-free non-free-firmware
-deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm-backports  main contrib non-free non-free-firmware
-deb https://mirrors.tuna.tsinghua.edu.cn/debian-security  bookworm-security   main contrib non-free non-free-firmware
-$
 
 $ apt update
 $ apt upgrade
