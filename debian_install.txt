@@ -15,15 +15,13 @@ $ apt-cdrom add
 Using CD-ROM mount point /media/cdrom/
 $
 
-# The repository 'cdrom://[Debian GNU/Linux 12.7.0] bookworm Release' does not have a Release file.
+# error: The repository 'cdrom://[Debian GNU/Linux 12.7.0] bookworm Release' does not have a Release file.
 # add [trusted=yes] to sources.list
 $ cat /etc/apt/sources.list
 deb [trusted=yes] cdrom:[Debian GNU/Linux 12.7.0 _Bookworm_ - Official amd64 DVD Binary-1 with firmware 20240831-10:40]/ bookworm contrib main non-free-firmware
 $
-$ apt list
-$
+$ su -c "apt install sudo vim openssh-server build-essential gdb"
 
-$ su -c "apt install sudo"
 $ grep sudo /etc/group
 $ su -c "/usr/sbin/usermod -a -G sudo `whoami`"
 $ sg sudo
@@ -31,20 +29,15 @@ $ groups
 sudo
 $
 
-$ apt install sudo vim openssh-server build-essential gdb cmake automake autoconf libtool pkg-config gettext manpages-dev
-$
-
 $ ls /sys/class/net/
 ens33
 $
 $ ip addr
-$
 
 # without desktop environment
 # https://wiki.debian.org/NetworkConfiguration ,
 
 # dynamic ip
-
 $ vi /etc/network/interfaces
 auto ens33
 allow-hotplug ens33
@@ -81,7 +74,6 @@ method=auto
 #dns=192.168.1.1;8.8.8.8;
 $
 $ systemctl restart NetworkManager
-$
 
 # dns
 $ vi /etc/resolv.conf
@@ -89,7 +81,6 @@ nameserver 192.168.1.1
 nameserver 8.8.8.8
 $
 $ ping debian.org
-$
 
 $ grep -i Codename /etc/os-release
 $
@@ -172,7 +163,6 @@ $ apt update
 $ apt upgrade
 $ apt full-upgrade
 $ apt autoremove
-$
 
 # c++ program compiled on sid(unstable), testing with dynamical link, does not run on stable,
 # ./main: /lib/x86_64-linux-gnu/libstdc++.so.6: version `GLIBCXX_3.4.32' not found (required by ./main)
@@ -199,12 +189,12 @@ stty -ixon  # terminal flow control Ctrl-S conflicts with vim, emacs.
 #stty columns 80
 ulimit -c unlimited  # systemd-coredump
 $
+$ . ~/.bashrc  # source ~/.bashrc
 
 $ touch ~/.hushlogin
-$
 
-$ apt install vim  # vim-tiny pre-installed
 $ update-alternatives --config editor
+
 $ vi -u ~/.vimrc ~/.vimrc
 set hlsearch
 set incsearch
@@ -213,16 +203,21 @@ set nowrapscan
 "syntax off
 $
 
-$ apt list --installed ifupdown openssh-server isc-dhcp-client sudo
-$
+$ apt install sudo vim openssh-server build-essential gdb cmake automake autoconf libtool pkg-config gettext manpages-dev
+$ apt install gcc-doc gdb-doc
+$ apt install clang llvm lldb libc++-dev libc++abi-dev
+$ apt install systemd-coredump
+$ coredumpctl debug # gdb backtrace: bt
 
-# list content of installed package
+$ apt list --installed ifupdown openssh-server isc-dhcp-client sudo
+
+# list files in installed package
 $ dpkg -L gcc
 /usr/bin/c99-gcc
 /usr/bin/gcc
 $
 
-# which installed package has the file
+# search for file from installed package
 $ dpkg -S /usr/bin/gcc
 gcc: /usr/bin/c99-gcc
 $
@@ -230,13 +225,14 @@ $
 $ apt install apt-file
 $ apt-file update
 $
-# package content
+
+# list files in package
 $ apt-file list gcc
 gcc: /usr/bin/c99-gcc
 gcc: /usr/bin/gcc
 $
 
-# query package name by a file
+# search for file from package
 $ apt-file --package-only search /usr/bin/gcc
 gcc
 gcc-11
@@ -257,17 +253,6 @@ $
 # Address Sanitizer (asan) will report memory usage problems
 # by running a program built with asan. do not run it in a debugger.
 
-$ apt install build-essential
-$ apt install gdb  # gdb-minimal in installation image .iso
-$ apt install cmake
-$ apt install automake autoconf libtool pkg-config gettext
-$ apt install gcc-doc gdb-doc manpages-dev
-$ apt install clang llvm lldb libc++-dev libc++abi-dev
-$
-
-$ apt install systemd-coredump
-$ coredumpctl debug # gdb backtrace: bt
-
 # VSCode, cpptools, clangd, CodeLLDB
 $ apt install ./code_1.86.1-1707298119_amd64.deb
 $ dpkg -i code_1.86.1-1707298119_amd64.deb
@@ -279,41 +264,33 @@ $
 $ apt install clangd
 $ apt install clangd-13
 $ update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-13 100
-$
 
 # install multiple gcc compiler versions
 $ apt install gcc-10 gcc-9
-$
 
 $ update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90
 $ update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100
 $ update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
 $ update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 100
-$
 
 # mode: auto, manual. priority matters in auto mode.
 $ update-alternatives --config gcc
 $ update-alternatives --config g++
 $ gcc --version
 $ g++ --version
-$
 
 # tree using find
 $ find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
-$
 
 # find large size directories or files (use -h in both commands)
 $ du -h -d1 /home/* | sort -hr | head -5
-$
 
 $ timedatectl list-timezones
 $ timedatectl set-timezone "Asia/Shanghai"
 $ /usr/sbin/dpkg-reconfigure tzdata
-$
 
 # Console Font: VGA
 $ /usr/sbin/dpkg-reconfigure console-setup
-$
 
 $ ls -l /etc/systemd/system/default.target
 /etc/systemd/system/default.target -> /lib/systemd/system/multi-user.target
@@ -321,7 +298,6 @@ $ systemctl get-default
 graphical.target
 $ systemctl set-default multi-user.target  # graphical.target
 $ init 3  # 5
-$
 
 # resize lvm volume to use unallocated free space
 $ df -h
@@ -329,6 +305,7 @@ Filesystem                         Size  Used Avail Use% Mounted on
 /dev/mapper/ubuntu--vg-ubuntu--lv   17G  6.4G  8.9G  42% /
 /dev/sda2                          2.0G  186M  1.7G  11% /boot
 $
+
 $ lsblk
 NAME                      MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
 sda                         8:0    0   35G  0 disk
@@ -338,21 +315,21 @@ sda                         8:0    0   35G  0 disk
   └─ubuntu--vg-ubuntu--lv 252:0    0 16.5G  0 lvm  /
 sr0                        11:0    1 1024M  0 rom
 $
+
 $ pvresize /dev/sda3
 $ lvextend  -r  -l  +100%FREE  /dev/mapper/ubuntu--vg-ubuntu--lv
 $ resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
-$
 
 $ fdisk /dev/sdb
 $ mkfs.ext4 /dev/sdb1
 $ mkdir /mnt/data
 $ mount /dev/sdb1 /mnt/data
-$
 
 $ vi /etc/fstab
   /dev/sdb1 /mnt/data ext4 defaults 0 0
   /dev/sr0 /media/cdrom0
 $
+
 $ mount /mnt/data/
 
 $ df -h
@@ -369,7 +346,6 @@ $ apt install gparted
 # page down to select and add zh_CN.UTF-8 locale
 # keep the default locale (en_US.UTF-8)
 $ dpkg-reconfigure locales
-$
 
 # chinese input method editor (ime)
   Settings / Region & Language / Manage Installed Languages / Language
@@ -381,18 +357,15 @@ $
 
 $ apt install ibus-libpinyin
 $ dpkg-reconfigure locales
-$
 
 # re-login or restart to take effect
 # Settings / Keyboard / Input Sources / + / Chinese /
 #  Chinese (Intelligent Pinyin) / Add
-#
 
 # disable suspend or hibernation
 # automatic suspend - computer will suspend very soon because of inactivity
 $ systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
 $ gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
-$
 
 Ctrl-S: freeze or pause terminal
 Ctrl-Q: resume terminal
@@ -412,7 +385,6 @@ $ w
 $ who
 $ tty -s && echo "In a TTY"
 # $ dpkg-reconfigure locales
-$
 
 # Old Debian releases on CD/DVD ,
 # https://cdimage.debian.org/mirror/cdimage/archive/ ,
@@ -432,7 +404,6 @@ $ gsettings set org.gnome.shell.extensions.dash-to-dock show-show-apps-button fa
 $ gsettings get org.gnome.mutter overlay-key
 'Super_L'
 $ gsettings set org.gnome.mutter overlay-key ''
-$
 
 # settings / keyboard shortcuts
 View split on left : Super + Left arrow
@@ -446,7 +417,6 @@ Maximize window    : Super + Up arrow
 $ blkid
 $ vi /etc/initramfs-tools/conf.d/resume
 $ vi /etc/fstab
-$
 
 # /usr/sbin/update-initramfs: 142: mkinitramfs: not found
 $ PATH=$PATH:/usr/sbin /usr/sbin/update-initramfs -u
