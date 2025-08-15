@@ -23,7 +23,7 @@ $
 $ su -c "apt install sudo vim openssh-server build-essential gdb"
 
 $ grep sudo /etc/group
-$ su -c "/usr/sbin/usermod -a -G sudo `whoami`"
+$ su -c "/usr/sbin/usermod -a -G sudo tom"
 $ sg sudo
 $ groups
 sudo
@@ -124,18 +124,12 @@ $
 
 # https://mirrors.tuna.tsinghua.edu.cn/help/debian/ ,
 $ vi /etc/apt/sources.list
-deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm            main contrib non-free non-free-firmware
-deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm-updates    main contrib non-free non-free-firmware
-deb https://mirrors.tuna.tsinghua.edu.cn/debian           bookworm-backports  main contrib non-free non-free-firmware
-deb https://mirrors.tuna.tsinghua.edu.cn/debian-security  bookworm-security   main contrib non-free non-free-firmware
+deb https://mirrors.tuna.tsinghua.edu.cn/debian           testing            main contrib non-free non-free-firmware
 $
 
 # https://mirrors.nyist.edu.cn/help/debian/ ,
 $ vi /etc/apt/sources.list
-deb https://mirror.nyist.edu.cn/debian           bookworm            main contrib non-free non-free-firmware
-deb https://mirror.nyist.edu.cn/debian           bookworm-updates    main contrib non-free non-free-firmware
-deb https://mirror.nyist.edu.cn/debian           bookworm-backports  main contrib non-free non-free-firmware
-deb https://mirror.nyist.edu.cn/debian-security  bookworm-security   main contrib non-free non-free-firmware
+deb https://mirror.nyist.edu.cn/debian           testing            main contrib non-free non-free-firmware
 $
 
 # deb822 format, debian 12 or later,
@@ -211,13 +205,13 @@ $ coredumpctl debug # gdb backtrace: bt
 
 $ apt list --installed ifupdown openssh-server isc-dhcp-client sudo
 
-# list files in installed package
+# list files of an installed package
 $ dpkg -L gcc
 /usr/bin/c99-gcc
 /usr/bin/gcc
 $
 
-# search for file from installed package
+# search for a file from installed packages
 $ dpkg -S /usr/bin/gcc
 gcc: /usr/bin/c99-gcc
 $
@@ -226,13 +220,13 @@ $ apt install apt-file
 $ apt-file update
 $
 
-# list files in package
+# list files of a package
 $ apt-file list gcc
 gcc: /usr/bin/c99-gcc
 gcc: /usr/bin/gcc
 $
 
-# search for file from package
+# search for a file from packages
 $ apt-file --package-only search /usr/bin/gcc
 gcc
 gcc-11
