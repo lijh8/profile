@@ -98,13 +98,36 @@ Codename:       bookworm
 $
 
 
+# https://www.debian.org/releases ,
+# https://wiki.debian.org/SourcesList ,
 # https://wiki.debian.org/DebianUnstable ,
 # https://wiki.debian.org/DebianTesting ,
+# https://www.debian.org/mirror/list.html ,
 # Change your apt sources to point to "unstable", or "testing",
 
-# https://www.debian.org/mirror/list.html ,
+# mirror help
 # https://mirrors.tuna.tsinghua.edu.cn/help/debian/ ,
+# https://mirrors.nyist.edu.cn/help/debian/ ,
+
+# mirror
+# https://mirrors.tuna.tsinghua.edu.cn/debian/ ,
 # https://mirror.nyist.edu.cn/debian/ ,
+
+$ cat /etc/apt/sources.list
+# $ apt-cdrom add
+deb [trusted=yes] cdrom:[Debian GNU/Linux 13.0.0 _Trixie_ - Official amd64 DVD Binary-1 with firmware 20250809-11:21]/ trixie contrib main non-free-firmware
+
+# stable
+# deb http://deb.debian.org/debian/                   trixie            main contrib non-free non-free-firmware
+# deb http://deb.debian.org/debian/                   trixie-updates    main contrib non-free non-free-firmware
+# deb http://deb.debian.org/debian/                   trixie-backports  main contrib non-free non-free-firmware
+# deb http://security.debian.org/debian-security      trixie-security   main contrib non-free non-free-firmware
+
+# testing
+deb http://deb.debian.org/debian/                   testing           main contrib non-free non-free-firmware
+deb http://security.debian.org/debian-security      testing-security  main contrib non-free non-free-firmware
+$
+
 
 # deb822 format, debian 12 or later,
 
