@@ -15,30 +15,23 @@ Using CD-ROM mount point /media/cdrom/
 $
 
 # E: The repository 'cdrom://[Debian GNU/Linux 12.7.0] bookworm Release' does not have a Release file.
-# add: [trusted=yes]
-#
+# add: [trusted=yes] to sources.list
 $ cat /etc/apt/sources.list
 deb [trusted=yes] cdrom:[Ubuntu-Server 24.10 _Oracular Oriole_ - Release amd64 (20241007.1)]/ oracular main restricted
 $
 $ apt list
-$
 
-$ su -c "apt install sudo"
 $ grep sudo /etc/group
-$ su -c "/usr/sbin/usermod -a -G sudo `whoami`"
+$ su -c "/usr/sbin/usermod -a -G sudo ljh"
 $ sg sudo
 $ groups
 sudo
-$
-
-$ apt install sudo openssh-server build-essential gdb cmake automake autoconf libtool pkg-config gettext manpages-dev
 $
 
 $ ls /sys/class/net/
 ens33
 $
 $ ip addr
-$
 
 # dynamic ip
 $ vi /etc/network/interfaces
@@ -166,6 +159,7 @@ $
 
 $ apt update
 $ apt upgrade
+$ apt full-upgrade
 $ apt autoremove
 
 $ vi ~/.inputrc  # readline
@@ -189,11 +183,10 @@ stty -ixon  # terminal flow control Ctrl-S conflicts with vim, emacs.
 #stty columns 80
 ulimit -c unlimited  # systemd-coredump
 $
+$ . ~/.bashrc  # source ~/.bashrc
 
 $ touch ~/.hushlogin
-$
 
-$ apt install vim  # vim-tiny pre-installed
 $ update-alternatives --config editor
 $ vi -u ~/.vimrc ~/.vimrc
 set hlsearch
@@ -203,16 +196,21 @@ set nowrapscan
 "syntax off
 $
 
-$ apt list --installed ifupdown openssh-server isc-dhcp-client sudo
-$
+$ su -c "apt install sudo vim openssh-server build-essential gdb cmake automake autoconf libtool pkg-config gettext manpages-dev"
+$ apt install gcc-doc gdb-doc
+$ apt install clang llvm lldb libc++-dev libc++abi-dev
+$ apt install systemd-coredump
+$ coredumpctl debug # gdb backtrace: bt
 
-# list content of installed package
+$ apt list --installed ifupdown openssh-server isc-dhcp-client sudo
+
+# list files of an installed package
 $ dpkg -L gcc
 /usr/bin/c99-gcc
 /usr/bin/gcc
 $
 
-# which installed package has the file
+# search for a file from installed packages
 $ dpkg -S /usr/bin/gcc
 gcc: /usr/bin/c99-gcc
 $
@@ -220,13 +218,14 @@ $
 $ apt install apt-file
 $ apt-file update
 $
-# package content
+
+# list files of a package
 $ apt-file list gcc
 gcc: /usr/bin/c99-gcc
 gcc: /usr/bin/gcc
 $
 
-# query package name by a file
+# search for a file from packages
 $ apt-file --package-only search /usr/bin/gcc
 gcc
 gcc-11
@@ -252,13 +251,7 @@ $ ufw allow Samba
 # Address Sanitizer (asan) will report memory usage problems
 # by running a program built with asan. do not run it in a debugger.
 
-$ apt install build-essential
-$ apt install gdb  # gdb-minimal in installation image .iso
-$ apt install cmake
-$ apt install automake autoconf libtool pkg-config gettext
-$ apt install gcc-doc gdb-doc manpages-dev
 $ apt install clang llvm lldb libc++-dev libc++abi-dev
-$
 
 $ apt install systemd-coredump  # ubuntu default: apport-core-dump-handler,
 $ coredumpctl debug # gdb backtrace: bt

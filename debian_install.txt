@@ -20,10 +20,12 @@ $
 $ cat /etc/apt/sources.list
 deb [trusted=yes] cdrom:[Debian GNU/Linux 12.7.0 _Bookworm_ - Official amd64 DVD Binary-1 with firmware 20240831-10:40]/ bookworm contrib main non-free-firmware
 $
+$ apt list
+$
 $ su -c "apt install sudo vim openssh-server build-essential gdb"
 
 $ grep sudo /etc/group
-$ su -c "/usr/sbin/usermod -a -G sudo tom"
+$ su -c "/usr/sbin/usermod -a -G sudo ljh"
 $ sg sudo
 $ groups
 sudo
@@ -188,7 +190,6 @@ $ . ~/.bashrc  # source ~/.bashrc
 $ touch ~/.hushlogin
 
 $ update-alternatives --config editor
-
 $ vi -u ~/.vimrc ~/.vimrc
 set hlsearch
 set incsearch
