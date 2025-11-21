@@ -3,9 +3,8 @@ Debian Linux install
 
 # download the 1st dvd .iso file ("*-DVD-1.iso"): debian-12.1.0-amd64-DVD-1.iso ,
 
+# enable network but disconnect or unplug network cable for fast installation.
 # virtualbox network: Bridged Adapter,
-# avoid download security packages on slow network connection during installation.
-# enable network but unplug or disconnect network cable for fast installation.
 
 # clone virtual machine in virtualbox,
 # generate new MAC addresses for all network adapters.
@@ -47,16 +46,12 @@ iface ens33 inet dhcp
 $
 
 # static ip
-#  address 192.168.1.2/24
-#  or,
-#  address 192.168.1.2
-#  netmask 255.255.255.0
-
 $ vi /etc/network/interfaces
 auto ens33
 allow-hotplug ens33
 iface ens33 inet static
   address 192.168.1.2/24
+  netmask 255.255.255.0
   gateway 192.157.1.1
 $
 $ /usr/sbin/ifup ens33
@@ -90,54 +85,10 @@ $ lsb_release -a | grep -i codename
 Codename:       bookworm
 $
 
-# https://www.debian.org/mirror/list.html ,
-# https://www.debian.org/doc/manuals/debian-faq/ftparchives#testing ,
-# https://wiki.debian.org/SourcesList ,
-
-# https://www.debian.org/releases ,
-# https://www.debian.org/releases/testing/ ,
-# https://www.debian.org/releases/sid/ ,
-# https://wiki.debian.org/DebianReleases ,
-# https://wiki.debian.org/DebianTesting ,
-# https://wiki.debian.org/DebianUnstable ,
-
-```
-# if go with testing/unstable(sid), no *-security, *-backports or *-updates in sources.list:
-# Remove, disable or comment out any other stable-specific apt sources, like *-backports or *-updates.
-# unstable main will be the only entry in sources.list.
-# The Debian Security Team only maintains security updates for the current "stable" release.
-# Compared to stable and unstable, next-stable testing has the worst security update speed. Don't prefer testing if security is a concern.
-```
-
-$ cat /etc/apt/sources.list
-# $ apt-cdrom add
-deb [trusted=yes] cdrom:[Debian GNU/Linux 13.0.0 _Trixie_ - Official amd64 DVD Binary-1 with firmware 20250809-11:21]/ trixie contrib main non-free-firmware
-
-# stable
-# deb http://deb.debian.org/debian/                   trixie            main contrib non-free non-free-firmware
-# deb http://deb.debian.org/debian/                   trixie-updates    main contrib non-free non-free-firmware
-# deb http://deb.debian.org/debian/                   trixie-backports  main contrib non-free non-free-firmware
-# deb http://security.debian.org/debian-security      trixie-security   main contrib non-free non-free-firmware
-
-# if go with testing/unstable(sid), no *-security, *-backports or *-updates in sources.list:
-deb http://deb.debian.org/debian/                   testing           main contrib non-free non-free-firmware
-# deb http://deb.debian.org/debian/                   sid               main contrib non-free non-free-firmware
-$
-
-# https://mirrors.tuna.tsinghua.edu.cn/help/debian/ ,
-$ vi /etc/apt/sources.list
-deb https://mirrors.tuna.tsinghua.edu.cn/debian           testing            main contrib non-free non-free-firmware
-$
-
-# https://mirrors.nyist.edu.cn/help/debian/ ,
-$ vi /etc/apt/sources.list
-deb https://mirror.nyist.edu.cn/debian           testing            main contrib non-free non-free-firmware
-$
-
 # deb822 format, debian 12 or later,
 
 $ vi /etc/apt/sources.list.d/debian.sources
-# if go with testing/unstable(sid), no *-security, *-backports or *-updates in sources.list:
+# testing/unstable(sid): no security, no backports, no updates in sources.list:
 Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/debian
 # URIs: https://mirror.nyist.edu.cn/debian
@@ -159,6 +110,53 @@ $ apt update
 $ apt upgrade
 $ apt full-upgrade
 $ apt autoremove
+
+
+# https://www.debian.org/mirror/list.html ,
+# https://www.debian.org/doc/manuals/debian-faq/ftparchives#testing ,
+# https://wiki.debian.org/SourcesList ,
+
+# https://www.debian.org/releases ,
+# https://www.debian.org/releases/testing/ ,
+# https://www.debian.org/releases/sid/ ,
+# https://wiki.debian.org/DebianReleases ,
+# https://wiki.debian.org/DebianTesting ,
+# https://wiki.debian.org/DebianUnstable ,
+
+```
+# if go with testing/unstable(sid), no *-security, *-backports or *-updates in sources.list:
+# Remove, disable or comment out any other stable-specific apt sources, like *-backports or *-updates.
+# unstable main will be the only entry in sources.list.
+# The Debian Security Team only maintains security updates for the current "stable" release.
+# Compared to stable and unstable, next-stable testing has the worst security update speed. Don't prefer testing if security is a concern.
+```
+
+# older foramt,
+
+$ cat /etc/apt/sources.list
+deb [trusted=yes] cdrom:[Debian GNU/Linux 13.0.0 _Trixie_ - Official amd64 DVD Binary-1 with firmware 20250809-11:21]/ trixie contrib main non-free-firmware
+
+# stable
+# deb http://deb.debian.org/debian/                   trixie            main contrib non-free non-free-firmware
+# deb http://deb.debian.org/debian/                   trixie-updates    main contrib non-free non-free-firmware
+# deb http://deb.debian.org/debian/                   trixie-backports  main contrib non-free non-free-firmware
+# deb http://security.debian.org/debian-security      trixie-security   main contrib non-free non-free-firmware
+
+# testing/unstable(sid): no security, no backports, no updates in sources.list:
+deb http://deb.debian.org/debian/                   testing           main contrib non-free non-free-firmware
+# deb http://deb.debian.org/debian/                   sid               main contrib non-free non-free-firmware
+$
+
+# https://mirrors.tuna.tsinghua.edu.cn/help/debian/ ,
+$ vi /etc/apt/sources.list
+deb https://mirrors.tuna.tsinghua.edu.cn/debian           testing            main contrib non-free non-free-firmware
+$
+
+# https://mirrors.nyist.edu.cn/help/debian/ ,
+$ vi /etc/apt/sources.list
+deb https://mirror.nyist.edu.cn/debian           testing            main contrib non-free non-free-firmware
+$
+
 
 # c++ program compiled on sid(unstable), testing with dynamical link, does not run on stable,
 # ./main: /lib/x86_64-linux-gnu/libstdc++.so.6: version `GLIBCXX_3.4.32' not found (required by ./main)

@@ -1,15 +1,13 @@
 
 Ubuntu Linux
 
-# avoid download security packages on slow network connection durign installation.
-# enable network but unplug or disconnect network cable for fast installation.
-
+# enable network but disconnect or unplug network cable for fast installation.
 # virtualbox network: Bridged Adapter,
+
 # clone virtual machine in virtualbox,
 # generate new MAC addresses for all network adapters.
 
-# add the debian installation image .iso file in cdrom, install from cdrom.
-
+# install packages from cdrom image.
 $ apt-cdrom add
 Using CD-ROM mount point /media/cdrom/
 $
@@ -20,6 +18,8 @@ $ cat /etc/apt/sources.list
 deb [trusted=yes] cdrom:[Ubuntu-Server 24.10 _Oracular Oriole_ - Release amd64 (20241007.1)]/ oracular main restricted
 $
 $ apt list
+$
+$ su -c "apt install sudo vim openssh-server build-essential gdb"
 
 $ grep sudo /etc/group
 $ su -c "/usr/sbin/usermod -a -G sudo ljh"
@@ -33,6 +33,7 @@ ens33
 $
 $ ip addr
 
+# without desktop environment
 # dynamic ip
 $ vi /etc/network/interfaces
 auto ens33
@@ -45,7 +46,8 @@ $ vi /etc/network/interfaces
 auto ens33
 allow-hotplug ens33
 iface ens33 inet static
-  address 192.168.1.2/24
+  address 192.168.1.2
+  netmask 255.255.255.0
   gateway 192.157.1.1
 $
 $ /usr/sbin/ifup ens33
@@ -53,6 +55,7 @@ $ /usr/sbin/ifdown ens33
 $ ethtool ens33
 $
 
+# gnome desktop
 $ vi /etc/NetworkManager/system-connections/ens33.nmconnection
 [ipv4]
 method=auto
@@ -62,7 +65,13 @@ method=auto
 $
 $ systemctl restart NetworkManager
 
-# dynamic ip address
+# dns, or use netplan configuration instead,
+$ vi /etc/resolv.conf
+nameserver 192.168.1.1
+nameserver 8.8.8.8
+$
+
+# dynamic ip
 $ vi /etc/netplan/99-config.yaml
 network:
   version: 2
@@ -73,7 +82,7 @@ network:
 
 $
 
-# replace `dhcp4` with static ip, dns,
+# static ip
 $ vi /etc/netplan/99-config.yaml
 network:
   version: 2
@@ -91,19 +100,10 @@ network:
 
 $
 $ netplan apply
-
-# dns, use netplan configuration instead,
-# $ vi /etc/resolv.conf
-# nameserver 192.168.1.1
-# nameserver 8.8.8.8
-# $
-
+$
 $ ping ubuntu.com
 $
-# oracular is codename of ubuntu 24.10
-$ grep -i codename /etc/os-release
-VERSION_CODENAME=oracular
-UBUNTU_CODENAME=oracular
+$ grep -i Codename /etc/os-release
 $
 $ lsb_release -a | grep -i codename
 Codename:       oracular
@@ -112,38 +112,30 @@ $
 # deb822 format, ubuntu 24.04 or latter,
 
 $ vi /etc/apt/sources.list.d/ubuntu.sources
-# Types: deb
-# URIs: http://archive.ubuntu.com/ubuntu/
-# Suites: oracular oracular-updates oracular-backports
-# Components: main restricted universe multiverse
-# Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
-
-# Types: deb
-# URIs: http://security.ubuntu.com/ubuntu/
-# Suites: oracular-security
-# Components: main restricted universe multiverse
-# Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
-
 Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/ubuntu
+# URIs: https://mirror.nyist.edu.cn/debian
 Suites: oracular oracular-updates oracular-backports
 Components: main restricted universe multiverse
 Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
 
 Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/ubuntu
+# URIs: https://mirror.nyist.edu.cn/debian
 Suites: oracular-security
 Components: main restricted universe multiverse
 Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
 $
 
+$ apt update
+$ apt upgrade
+$ apt full-upgrade
+$ apt autoremove
+
 # older foramt,
 
-$ cp /etc/apt/sources.list /etc/apt/sources.list.bak
-$ sed -i "s@http://.*archive.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
-$ sed -i "s@http://.*security.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
-$
 $ vi /etc/apt/sources.list
+deb [trusted=yes] cdrom:[Ubuntu-Server 24.10 _Oracular Oriole_ - Release amd64 (20241007.1)]/ oracular main restricted
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular           main restricted universe multiverse
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-updates   main restricted universe multiverse
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-backports main restricted universe multiverse
@@ -156,11 +148,6 @@ deb https://mirror.nyist.edu.cn/debian/          bookworm-updates    main contri
 deb https://mirror.nyist.edu.cn/debian/          bookworm-backports  main contrib non-free non-free-firmware
 deb https://mirror.nyist.edu.cn/debian-security  bookworm-security   main contrib non-free non-free-firmware
 $
-
-$ apt update
-$ apt upgrade
-$ apt full-upgrade
-$ apt autoremove
 
 $ vi ~/.inputrc  # readline
 set editing-mode vi
