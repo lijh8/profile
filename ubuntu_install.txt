@@ -199,7 +199,7 @@ $
 $ su -c "apt install sudo vim openssh-server build-essential gdb cmake automake autoconf libtool pkg-config gettext manpages-dev"
 $ apt install gcc-doc gdb-doc
 $ apt install clang llvm lldb libc++-dev libc++abi-dev
-$ apt install systemd-coredump
+$ apt install systemd-coredump  # ubuntu default: apport-core-dump-handler,
 $ coredumpctl debug # gdb backtrace: bt
 
 $ apt list --installed ifupdown openssh-server isc-dhcp-client sudo
@@ -250,11 +250,6 @@ $ ufw allow Samba
 # LeakSanitizer does not work under ptrace (strace, gdb)
 # Address Sanitizer (asan) will report memory usage problems
 # by running a program built with asan. do not run it in a debugger.
-
-$ apt install clang llvm lldb libc++-dev libc++abi-dev
-
-$ apt install systemd-coredump  # ubuntu default: apport-core-dump-handler,
-$ coredumpctl debug # gdb backtrace: bt
 
 # apport collects and sends crash report for packaged softwares
 # on production system on user side.
