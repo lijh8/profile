@@ -1,5 +1,18 @@
 ---
 
+https://neovim.io/doc/install/#install-from-download ,
+
+The Releases page provides pre-built binaries for Linux systems.
+
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+sudo rm -rf /opt/nvim-linux-x86_64
+sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+
+Then add this to your shell config (~/.bashrc, ~/.zshrc, …):
+export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+
+---
+
 
 Install plugin using Vim's "packages" feature, without 3rd-party plugin manager.
 
