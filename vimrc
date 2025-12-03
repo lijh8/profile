@@ -45,15 +45,14 @@
 
 " toggle between lower and upper case: g~w , g~$ , g~~
 
+" :messages " check for messages with echom
+
 
 """ built-ins """
 
-filetype on
-filetype plugin on " netrw
-" :messages " check for messages with echom
 set autoindent
 "set colorcolumn=80
-"set cursorline
+set cursorline
 set expandtab
 set hlsearch
 set incsearch
@@ -72,6 +71,9 @@ autocmd TextChanged,TextChangedI * silent! update
 
 " highlight current word. not in vim-tiny
 "let old_isk = &isk | set isk=@,48-57,_,192-255 | autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . escape(expand('<cword>'), '/\') . '\>/' : '//') | let &isk = old_isk
+
+"filetype on
+"filetype plugin on " netrw
 
 " netrw. not in vim-tiny
 "autocmd VimEnter * Lexplore
@@ -96,29 +98,28 @@ autocmd TextChanged,TextChangedI * silent! update
 " vim-lsp, vim-lsp-settings
 " install for vim at "opt" directory and manually packadd
 " neovim built-in lsp: tagfunc is set to vim.lsp.tagfunc()
-if !has('nvim') && filereadable(expand('~/.vim/pack/*/*/vim-lsp/plugin/lsp.vim'))
-  packadd! vim-lsp
-  packadd! vim-lsp-settings
-  set tagfunc=lsp#tagfunc
-
-  " auto format on save by :w
-  autocmd BufWritePre * if exists(':LspDocumentFormat') | execute ':LspDocumentFormat' | endif
-endif
+"if !has('nvim') && filereadable(expand('~/.vim/pack/*/*/vim-lsp/plugin/lsp.vim'))
+"  packadd! vim-lsp
+"  packadd! vim-lsp-settings
+"  set tagfunc=lsp#tagfunc
+"  " auto format on save by :w
+"  autocmd BufWritePre * if exists(':LspDocumentFormat') | execute ':LspDocumentFormat' | endif
+"endif
 
 " Tagbar
 " https://github.com/preservim/tagbar/issues/851
-if !has('nvim') && filereadable(expand('~/.vim/pack/*/*/tagbar/plugin/tagbar.vim'))
-  packadd! tagbar
-  autocmd QuitPre * qall
-  let g:tagbar_sort = 0
-  let g:tagbar_compact = 1
-  nnoremap <F3> :TagbarToggle<CR>
-endif
+"if !has('nvim') && filereadable(expand('~/.vim/pack/*/*/tagbar/plugin/tagbar.vim'))
+"  packadd! tagbar
+"  autocmd QuitPre * qall
+"  let g:tagbar_sort = 0
+"  let g:tagbar_compact = 1
+"  nnoremap <F3> :TagbarToggle<CR>
+"endif
 
 " gutentags
 " ctags: Ctrl-], Ctrl-t, Ctrl-o, Ctrl-i
 " $ mkdir ~/myproject_root_dir/.git
-if !has('nvim') && filereadable(expand('~/.vim/pack/*/*/gutentags/plugin/gutentags.vim'))
-  packadd! gutentags
-  let g:gutentags_add_default_project_roots = 1
-endif
+"if !has('nvim') && filereadable(expand('~/.vim/pack/*/*/gutentags/plugin/gutentags.vim'))
+"  packadd! gutentags
+"  let g:gutentags_add_default_project_roots = 1
+"endif
