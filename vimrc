@@ -52,7 +52,7 @@
 
 set autoindent
 "set colorcolumn=80
-“set cursorline
+"set cursorline
 set expandtab
 set hlsearch
 set incsearch
