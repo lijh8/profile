@@ -52,7 +52,7 @@
 
 set autoindent
 "set colorcolumn=80
-set cursorline
+“set cursorline
 set expandtab
 set hlsearch
 set incsearch
@@ -64,7 +64,7 @@ set ruler " vim-tiny, show current line number at status line
 set shiftwidth=2
 set tabstop=2
 set updatetime=200 " CursorHold, tagbar
-"syntax off
+syntax off
 
 " auto save
 autocmd TextChanged,TextChangedI * silent! update

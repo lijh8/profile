@@ -193,7 +193,7 @@ set hlsearch
 set incsearch
 set nocompatible " vim-tiny, u always undo, Ctrl-r always redo,
 set nowrapscan
-"syntax off
+syntax off
 $
 
 $ apt install sudo vim openssh-server build-essential gdb cmake automake autoconf libtool pkg-config gettext manpages-dev
