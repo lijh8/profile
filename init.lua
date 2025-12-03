@@ -1,13 +1,20 @@
 -- ~/.config/nvim/init.lua
 
--- multiple windows: C-W-S , C-W-V , :close , :term ,
--- navigate: C-W-H , C-W-L , C-W-J , C-W-K ,
--- term mode: C-\ C-n , or insert mode: i , a ,
-
 -- :messages  -- check for messages with echom
+
+-- multiple windows: C-W-S , C-W-V , :close , :term ,
+-- navigation: C-W-H , C-W-L , C-W-J , C-W-K ,
+-- term mode: C-\ C-n ,
+-- insert mode: i , a ,
 
 vim.cmd('filetype off')
 vim.cmd('syntax off')
+
+-- autosave
+vim.cmd('autocmd TextChanged,TextChangedI * silent! update')
+
+-- highlight current word
+vim.cmd([[ let old_isk = &isk | set isk=@,48-57,_,192-255 | autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . escape(expand('<cword>'), '/\') . '\>/' : '//') | let &isk = old_isk ]])
 
 vim.opt.autoindent = true
 --vim.opt.colorcolumn = "80"
@@ -18,21 +25,11 @@ vim.opt.incsearch = true
 vim.opt.mouse = "a"  -- select to ctrl-c: win,linux:shift+mouse, mac:fn+mouse
 vim.opt.wrapscan = false
 vim.opt.number = true
-vim.opt.ruler = true  -- vim-tiny, show current line number at status line
+vim.opt.ruler = true
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 vim.opt.updatetime = 200  -- CursorHold, tagbar
 
--- autosave
-vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
-  pattern = "*",
-  callback = function() vim.cmd("silent! update") end,
-})
-
--- highlight current word
-vim.cmd([[
-  let old_isk = &isk | set isk=@,48-57,_,192-255 | autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . escape(expand('<cword>'), '/\') . '\>/' : '//') | let &isk = old_isk
-]])
 
 -- netrw
 vim.g.netrw_banner = 0

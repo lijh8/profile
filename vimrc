@@ -71,20 +71,17 @@ set updatetime=200 " CursorHold, tagbar
 autocmd TextChanged,TextChangedI * silent! update
 
 " highlight current word. not in vim-tiny
-" :set isk? " it is difference in vim :help buffer
-" / is regex delimiter (e.g., /pattern/).
-" \ is regex metacharacter (e.g., \w, \<).
-let old_isk = &isk | set isk=@,48-57,_,192-255 | autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . escape(expand('<cword>'), '/\') . '\>/' : '//') | let &isk = old_isk
+"let old_isk = &isk | set isk=@,48-57,_,192-255 | autocmd CursorMoved,CursorMovedI * execute 'match Visual' (getline('.')[col('.')-1] =~# '\w' ? '/\<' . escape(expand('<cword>'), '/\') . '\>/' : '//') | let &isk = old_isk
 
 " netrw. not in vim-tiny
 "autocmd VimEnter * Lexplore
-nnoremap <F2> :Lexplore<CR>
-let g:netrw_banner = 0
-let g:netrw_browse_split = 4 " press t to open file in new tab
-let g:netrw_list_hide = '.*\.swp$'
-let g:netrw_liststyle = 3
-let g:netrw_winsize = 20 " percentage of the window size
-let g:netrw_mousemaps = 0
+"nnoremap <F2> :Lexplore<CR>
+"let g:netrw_banner = 0
+"let g:netrw_browse_split = 4 " press t to open file in new tab
+"let g:netrw_list_hide = '.*\.swp$'
+"let g:netrw_liststyle = 3
+"let g:netrw_winsize = 20 " percentage of the window size
+"let g:netrw_mousemaps = 0
 
 " Termdebug
 "packadd! termdebug
