@@ -1,24 +1,23 @@
 
 Ubuntu Linux
 
-# enable network but disconnect or unplug network cable for fast installation.
-# virtualbox network: Bridged Adapter,
+# enable network but disconnect network cable for fast installation.
+# install openssh-server: Yes,
 
-# clone virtual machine in virtualbox,
+# virtualbox
+# enable network adapter: Bridged Adapter,
+# virtual cable connected: No,
+# clone virtual machine
 # generate new MAC addresses for all network adapters.
 
 # install packages from cdrom image.
 $ apt-cdrom add
-Using CD-ROM mount point /media/cdrom/
-$
 
-# E: The repository 'cdrom://[Debian GNU/Linux 12.7.0] bookworm Release' does not have a Release file.
-# add: [trusted=yes] to sources.list
-$ cat /etc/apt/sources.list
+# [trusted=yes]
+$ vi /etc/apt/sources.list
 deb [trusted=yes] cdrom:[Ubuntu-Server 24.10 _Oracular Oriole_ - Release amd64 (20241007.1)]/ oracular main restricted
 $
 $ apt list
-$
 $ su -c "apt install sudo vim openssh-server build-essential gdb"
 
 $ grep sudo /etc/group
@@ -31,31 +30,20 @@ $
 $ ls /sys/class/net/
 ens33
 $
-$ ip addr
-
-# without desktop environment
-# dynamic ip
 $ vi /etc/network/interfaces
 auto ens33
 allow-hotplug ens33
 iface ens33 inet dhcp
+#iface ens33 inet static
+#  address 192.168.1.2
+#  netmask 255.255.255.0
+#  gateway 192.157.1.1
 $
 
-# static ip
-$ vi /etc/network/interfaces
-auto ens33
-allow-hotplug ens33
-iface ens33 inet static
-  address 192.168.1.2
-  netmask 255.255.255.0
-  gateway 192.157.1.1
-$
 $ /usr/sbin/ifup ens33
 $ /usr/sbin/ifdown ens33
 $ ethtool ens33
-$
 
-# gnome desktop
 $ vi /etc/NetworkManager/system-connections/ens33.nmconnection
 [ipv4]
 method=auto
@@ -65,7 +53,7 @@ method=auto
 $
 $ systemctl restart NetworkManager
 
-# dns, or use netplan configuration instead,
+# dns
 $ vi /etc/resolv.conf
 nameserver 192.168.1.1
 nameserver 8.8.8.8
@@ -79,7 +67,6 @@ network:
   ethernets:
     eth0:
       dhcp4: true
-
 $
 
 # static ip
@@ -97,31 +84,31 @@ network:
       nameservers:
         search: [mydomain, otherdomain]
         addresses: [192.168.1.1, 8.8.8.8]
-
 $
 $ netplan apply
-$
+
 $ ping ubuntu.com
-$
+$ ip addr
+
 $ grep -i Codename /etc/os-release
 $
 $ lsb_release -a | grep -i codename
 Codename:       oracular
 $
 
-# deb822 format, ubuntu 24.04 or latter,
+# deb822 format since ubuntu 24.04
 
 $ vi /etc/apt/sources.list.d/ubuntu.sources
 Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/ubuntu
-# URIs: https://mirror.nyist.edu.cn/debian
+#URIs: https://mirror.nyist.edu.cn/debian
 Suites: oracular oracular-updates oracular-backports
 Components: main restricted universe multiverse
 Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
 
 Types: deb
 URIs: https://mirrors.tuna.tsinghua.edu.cn/ubuntu
-# URIs: https://mirror.nyist.edu.cn/debian
+#URIs: https://mirror.nyist.edu.cn/debian
 Suites: oracular-security
 Components: main restricted universe multiverse
 Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
@@ -132,7 +119,7 @@ $ apt upgrade
 $ apt full-upgrade
 $ apt autoremove
 
-# older foramt,
+# older format
 
 $ vi /etc/apt/sources.list
 deb [trusted=yes] cdrom:[Ubuntu-Server 24.10 _Oracular Oriole_ - Release amd64 (20241007.1)]/ oracular main restricted
